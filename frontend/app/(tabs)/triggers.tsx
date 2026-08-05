@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 //import { LinearGradient } from 'expo-linear-gradient';
-import TriggerHeader from '../../components/TriggerPage/trigger-header';
+import TriggerHeader from '../../components/TriggerLog/trigger-header';
 import CheckInCard from '../../components/CheckInScreen/check-in-card';
 import UrgeButtons from '../../components/CheckInScreen/urge-swiper-card';
 import { Colors } from '@/constants/theme';
@@ -21,14 +21,6 @@ export default function DailyCheckInScreen() {
 
   const handleBack = () => {
     // navigation.goBack()
-  };
-
-  const handleStrongUrge = () => {
-    // record "strong urge" answer, advance to next step
-  };
-
-  const handleNoUrge = () => {
-    // record "no urge" answer, advance to next step
   };
 
   const scheme = useColorScheme() ?? 'light';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, TouchableOpacity } from 'react-native';
 import { ChevronLeft } from 'lucide-react-native';
 
 type Props = {
@@ -8,15 +8,15 @@ type Props = {
 
 export default function TriggerHeader({ onBack }: Props) {
   return (
-    <View className="px-5 pt-4">
-      <Pressable
-        onPress={onBack}
-        hitSlop={10}
-        className="flex-row items-center self-start py-2"
+    <View className="px-5 pt-16">
+      <TouchableOpacity
+              onPress={onBack}
+              activeOpacity={0.7}
+              className="flex-row items-center self-start"
       >
-        <ChevronLeft size={24} color="#a9b8a9" />
-        <Text className="text-[#a9b8a9] text-xl ml-1">Back</Text>
-      </Pressable>
+        <ChevronLeft size={16} color="#d1e7d4" />
+        <Text className="text-emerald-100/80 text-sm ml-0.5">Back</Text>
+      </TouchableOpacity>
 
       <Text className="text-[#f3efe3] text-3xl font-serif mt-2">
         Trigger Log
