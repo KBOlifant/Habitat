@@ -10,16 +10,15 @@ import DevTimeTravel from '../../components/Home/dev-time-travel';
 import { useColorScheme } from 'react-native';
 import { Gradients } from '@/constants/theme';
 
-
 export default function HomeScreen() {
-    const scheme = useColorScheme() ?? 'light';
-    const gradientColors =
-      scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
+  const scheme = useColorScheme() ?? 'light';
+  const gradientColors =
+    scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
 
   return (
-    <LinearGradient colors={gradientColors} style={{ flex: 1 }} >
+    <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
       <ScrollView
-        className='px-6'
+        className="px-6"
         contentContainerStyle={{ paddingTop: 64, paddingBottom: 40 }}
       >
         <HomeHeader />
@@ -28,8 +27,7 @@ export default function HomeScreen() {
         <AdditionalButtons />
         <QuoteSection />
         <DevTimeTravel />
-    </ScrollView>
+      </ScrollView>
     </LinearGradient>
-    
   );
 }
