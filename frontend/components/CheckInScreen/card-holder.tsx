@@ -15,7 +15,7 @@ export default function CardHolder() {
   const current = steps[index];
 
   return (
-    <SwipeableCard onSwipeLeft={next} onSwipeRight={next}>
+    <SwipeableCard key={index} onSwipeLeft={next} onSwipeRight={next}>
       <CheckInCard
         step={index + 1}
         totalSteps={steps.length}

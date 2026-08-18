@@ -9,11 +9,14 @@ import QuoteSection from '../../components/Home/quote-section';
 import DevTimeTravel from '../../components/Home/dev-time-travel';
 import { useColorScheme } from 'react-native';
 import { Gradients } from '@/constants/theme';
+import React, { useState } from 'react';
 
 export default function HomeScreen() {
   const scheme = useColorScheme() ?? 'light';
   const gradientColors =
     scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
+
+  const [progress, setProgress] = useState(50); // Hardcoded progress for now
 
   return (
     <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
@@ -22,7 +25,7 @@ export default function HomeScreen() {
         contentContainerStyle={{ paddingTop: 64, paddingBottom: 40 }}
       >
         <HomeHeader />
-        <BonsaiScreen />
+        <BonsaiScreen progress={progress} />
         <CheckInButton />
         <AdditionalButtons />
         <QuoteSection />
