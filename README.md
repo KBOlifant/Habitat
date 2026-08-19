@@ -14,7 +14,7 @@ Habitat helps users quit habits smoking, drinking, doomscrolling, gambling, nail
 ## Core Concept
 
 - **Main object**: Break a habit, one day at a time.
-- **Main feature**: A daily swipe-card check-in — swipe right for "no urge," left for "strong urge" — that "feeds" the bonsai.
+- **Main feature**: A daily swipe-card check-in swipe right for "no urge," left for "strong urge" that "feeds" Your Bonsai plant.
 - **Restriction**: Landscape-only orientation, forcing a slower, more intentional interaction than a typical vertical scroll app.
 
 ---
@@ -28,7 +28,7 @@ Landing dashboard on open. Greets the user by name and time of day, displays cur
 A 5-card swipeable deck, one question per card (e.g. *"Are you feeling an urge to engage in your habit right now?"*). Swipe or tap to answer — no urge / strong urge. Completing the deck each day counts as feeding the bonsai and extends the streak.
 
 ### ⚠️ Trigger Log
-A log of urges and triggers the user records outside the daily check-in. Empty state reads *"No triggers logged yet"* until the first entry. A floating "+" button adds a new log — capturing what set off a craving in the moment.
+A log of urges and triggers the user records outside the daily check-in. Empty state reads *"No triggers logged yet"* until the first entry. A floating "+" button adds a new log  capturing what set off a craving in the moment.
 
 ### 📊 Progress
 The stats hub. Top row shows streak count, times resisted, and relapses. A 30-day grid visualizes each day as checked-in, relapsed, or missed. Below that, a **Tree Growth** ladder tracks bonsai stages (Dormant Seed → First Sprout → Taking Root → Young Sapling → Growing Bonsai → Formed Bonsai → Ancient Wisdom), each unlocking at a day threshold. A **Milestones** list marks streak achievements (3 days, one week, two weeks, one month, etc.) with countdowns to the next unlock.
@@ -44,7 +44,7 @@ A developer-only widget on Home that lets the streak be simulated forward or bac
 ## UI & Brand Style
 
 - **Palette**: Deep charcoal-green backgrounds with muted sage and moss accents; warm dusty-pink used sparingly for primary actions (e.g. the check-in CTA).
-- **Tone**: Calm, botanical, low-stimulation — soft rounded cards, generous spacing, minimal iconography (leaf, shield, chart bars, trigger warning).
+- **Tone**: Calm, botanical, low-stimulation, soft rounded cards, generous spacing, minimal iconography (leaf, shield, chart bars, trigger warning).
 - **Orientation**: Landscape-locked throughout, reinforcing a deliberate "sit down and check in" pace over passive scrolling.
 - **Iconography**: Line-style icons (home, check-in, triggers, progress) anchor a persistent bottom nav.
 
