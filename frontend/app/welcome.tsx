@@ -42,7 +42,7 @@ export default function WelcomeScreen() {
                 </View>
                 <View className="space-y-2">
                   <View className="h-4 w-32 rounded-full bg-slate-100/30" />
-                  <View className="h-4 w-48 rounded-full bg-slate-100/20" />
+                  <View className="h-4 w-48 rounded-full bg-slate-100/50" />
                 </View>
               </View>
             </View>
