@@ -54,11 +54,11 @@ A developer-only widget on Home that lets the streak be simulated forward or bac
 
 | Layer          | Technology   | Purpose                          |
 | -------------- | ------------ | --------------------------------- |
-| **Frontend**   | *TBD*        | Mobile UI, swipe interactions     |
-| **Backend**    | *TBD*        | Streak logic, user data           |
-| **Database**   | *TBD*        | Persisting streaks, triggers, logs |
-| **Auth**       | *TBD*        | User accounts                     |
-| **Deployment** | *TBD*        | Hosting / distribution            |
+| **Frontend**   | React-Native        | Mobile UI, swipe interactions     |
+| **Backend**    | Firebase        | Streak logic, user data           |
+| **Database**   | Firestore       | Persisting streaks, triggers, logs |
+| **Auth**       | Firebase Auth       | User accounts                     |
+| **Deployment** | Playstore (Potentially)        | Hosting / distribution            |
 
 *(Fill in once the stack is finalized — happy to update this table.)*
 
