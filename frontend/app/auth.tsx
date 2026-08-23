@@ -32,8 +32,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ArrowRight } from 'lucide-react-native';
-import GoogleButton from '../../components/Auth/GoogleButton';
-import { signInWithEmail, signUpWithEmail, authErrorMessage } from '../lib/auth';
+import GoogleButton from '../components/Auth/GoogleButton';
+import { signInWithEmail, signUpWithEmail, authErrorMessage } from './lib/auth';
 
 type Mode = 'signIn' | 'signUp';
 
@@ -41,8 +41,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function AuthScreen() {
   const [mode, setMode] = useState<Mode>('signUp');
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +71,12 @@ export default function AuthScreen() {
       } else {
         await signInWithEmail(email, password);
       }
-      router.replace('/'); // land on the home / bonsai screen
+    
+      if(isSignUp){
+        router.replace('/habit');
+      }else{
+        router.replace('/home');
+      }
     } catch (err) {
       setError(authErrorMessage(err));
     } finally {

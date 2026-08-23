@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text } from 'react-native';
+import { Pressable, Text } from 'react-native';
 import { Sprout } from 'lucide-react-native';
 
 type PlantSeedButtonProps = {
@@ -13,10 +13,9 @@ export default function PlantSeedButton({
   label = 'Plant my seed',
 }: PlantSeedButtonProps) {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       disabled={disabled}
-      activeOpacity={0.85}
       className={`mx-6 flex-row items-center justify-center rounded-2xl py-4 ${
         disabled ? 'bg-emerald-800/50' : 'bg-[#5a6b4c]'
       }`}
@@ -30,6 +29,6 @@ export default function PlantSeedButton({
         {label}
       </Text>
       <Sprout size={18} color={disabled ? '#6b7a63' : '#ffffff'} />
-    </TouchableOpacity>
+    </Pressable>
   );
 }

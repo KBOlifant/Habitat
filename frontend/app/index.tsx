@@ -1,47 +1,48 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useColorScheme } from 'react-native';
+import { onAuthStateChanged } from 'firebase/auth';
 import { Gradients } from '@/constants/theme';
-
-const NAME_KEY = 'habitat_user_name';
-const HABIT_KEY = 'habitat_user_habit';
+import { auth } from './lib/firebase';
 
 export default function IndexRedirectScreen() {
   const router = useRouter();
   const scheme = useColorScheme() ?? 'light';
   const gradientColors =
     scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
+  const [isLoggedIn, setAuthState] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function restoreState() {
-      try {
-        const name = await SecureStore.getItemAsync(NAME_KEY);
-        const habit = await SecureStore.getItemAsync(HABIT_KEY);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      const loggedIn = !!user;
+      setAuthState(loggedIn);
+      console.log(loggedIn ? `User is logged in: ${user?.uid}` : 'User is logged out.');
+    });
 
-        if (!name) {
-          router.replace('/welcome');
-          return;
-        }
+    return () => unsubscribe();
+  }, []);
 
-        if (!habit) {
-          router.replace('/habit');
-          return;
-        }
-
-        router.replace('/home');
-      } catch {
-        router.replace('/welcome');
-      } finally {
-        setLoading(false);
-      }
+  useEffect(() => {
+    if (isLoggedIn === null) {
+      return;
     }
 
-    restoreState();
-  }, [router]);
+    try {
+      if (!isLoggedIn) {
+        router.replace('/auth');
+        return;
+      }
+
+      router.replace('/home');
+    } catch {
+      router.replace('/auth');
+    } finally {
+      setLoading(false);
+    }
+  }, [isLoggedIn, router]);
 
   if (!loading) {
     return null;

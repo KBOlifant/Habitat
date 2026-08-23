@@ -17,16 +17,25 @@ type SwipeableCardProps = {
   children: React.ReactNode;
   onSwipeRight?: () => void;
   onSwipeLeft?: () => void;
+  animationSpeed?: number;
 };
 
 export default function SwipeableCard({
   children,
   onSwipeRight,
   onSwipeLeft,
+  animationSpeed = 1,
 }: SwipeableCardProps) {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const rotate = useSharedValue(0);
+
+  const springConfig = (velocity: number) => ({
+    velocity,
+    stiffness: 260 * animationSpeed,
+    damping: 18,
+    mass: 0.9,
+  });
 
   const gesture = Gesture.Pan()
     .onUpdate(event => {
@@ -44,30 +53,27 @@ export default function SwipeableCard({
       const isSwipeLeft = translateX.value < -swipeThreshold;
 
       if (isSwipeRight) {
-        // Animate completely off screen
-        translateX.value = withSpring(screenWidth * 1.5, { velocity: event.velocityX }, () => {
-          // 1. Tell parent to load next data
+        translateX.value = withSpring(screenWidth * 1.2, springConfig(event.velocityX), () => {
           if (onSwipeRight) {
             runOnJS(onSwipeRight)();
           }
-          // 2. Animate the card back to the center position
-          translateX.value = withSpring(0);
-          translateY.value = withSpring(0);
-          rotate.value = withSpring(0);
+          translateX.value = withSpring(0, springConfig(0));
+          translateY.value = withSpring(0, springConfig(0));
+          rotate.value = withSpring(0, springConfig(0));
         });
       } else if (isSwipeLeft) {
-        translateX.value = withSpring(-screenWidth * 1.5, { velocity: event.velocityX }, () => {
+        translateX.value = withSpring(-screenWidth * 1.2, springConfig(event.velocityX), () => {
           if (onSwipeLeft) {
             runOnJS(onSwipeLeft)();
           }
-          translateX.value = withSpring(0);
-          translateY.value = withSpring(0);
-          rotate.value = withSpring(0);
+          translateX.value = withSpring(0, springConfig(0));
+          translateY.value = withSpring(0, springConfig(0));
+          rotate.value = withSpring(0, springConfig(0));
         });
       } else {
-        translateX.value = withSpring(0);
-        translateY.value = withSpring(0);
-        rotate.value = withSpring(0);
+        translateX.value = withSpring(0, springConfig(0));
+        translateY.value = withSpring(0, springConfig(0));
+        rotate.value = withSpring(0, springConfig(0));
       }
     });
 

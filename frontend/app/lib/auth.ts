@@ -34,7 +34,6 @@ async function ensureUserDoc(cred: UserCredential, name?: string) {
     name: name ?? cred.user.displayName ?? '',
     email: cred.user.email,
     createdAt: serverTimestamp(),
-    streak: 0,
   });
 }
 
