@@ -3,8 +3,6 @@ import { View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 //import { LinearGradient } from 'expo-linear-gradient';
 import CheckInHeader from '../../components/CheckInScreen/check-in-header';
-import CheckInCard from '../../components/CheckInScreen/check-in-card';
-import UrgeButtons from '../../components/CheckInScreen/urge-swiper-card';
 import { Colors } from '@/constants/theme';
 import { Gradients } from '@/constants/theme';
 import { useColorScheme } from 'react-native';
@@ -23,14 +21,6 @@ export default function DailyCheckInScreen() {
     // navigation.goBack()
   };
 
-  const handleStrongUrge = () => {
-    // record "strong urge" answer, advance to next step
-  };
-
-  const handleNoUrge = () => {
-    // record "no urge" answer, advance to next step
-  };
-
   const scheme = useColorScheme() ?? 'light';
   const gradientColors =
     scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
@@ -43,8 +33,6 @@ return (
       <CardHolder />
 
       <View className="flex-1" />
-
-      <UrgeButtons onStrongUrge={handleStrongUrge} onNoUrge={handleNoUrge} />
 
       <View className="h-16" />
     </View>

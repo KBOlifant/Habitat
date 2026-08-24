@@ -385,6 +385,32 @@ function BonsaiSvg({ tree, growth }) {
   );
 }
 
+export function BonsaiCanvas({ growth }) {
+  const [seed, setSeed] = useState(20260824);
+
+  // New Adjustments (0.0 to 1.0)
+  const [leavesPot, setLeavesPot] = useState(0.5);
+  const [flowersPot, setFlowersPot] = useState(0.5);
+  const [heightPot, setHeightPot] = useState(0.5);
+  
+  const tree = useMemo(() => buildTree(seed, leavesPot, flowersPot, heightPot), [seed, leavesPot, flowersPot, heightPot]);
+  const stage = getStage(growth);
+  
+  return(
+    <>
+      <View className="mx-6 mt-4 rounded-3xl bg-sky-50 border border-stone-200 items-center justify-center py-4 shadow-sm" style={{ height: 380 }}>
+        <BonsaiSvg tree={tree} growth={growth} />
+      </View>
+
+      <View className="items-center mt-4">
+        <Text className="text-lg font-semibold text-emerald-800">{stage.label}</Text>
+        <Text className="text-stone-400 text-xs mt-1">{Math.round(growth * 100)}% grown</Text>
+      </View>
+    </>
+  );
+  
+}
+
 function G_Seed({ opacity }) {
   if (opacity <= 0.01) return null;
   return (

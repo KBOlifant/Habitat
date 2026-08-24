@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ScrollView, View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useColorScheme } from 'react-native';
 import { Gradients } from '@/constants/theme';

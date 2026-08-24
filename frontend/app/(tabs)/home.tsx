@@ -11,12 +11,13 @@ import { useColorScheme } from 'react-native';
 import { Gradients } from '@/constants/theme';
 import React, { useState } from 'react';
 
+
 export default function HomeScreen() {
   const scheme = useColorScheme() ?? 'light';
   const gradientColors =
     scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
 
-  const [progress, setProgress] = useState(50); // Hardcoded progress for now
+  const [progress, setProgress] = useState(0.5); // Hardcoded progress for now
 
   return (
     <LinearGradient colors={gradientColors} style={{ flex: 1 }}>

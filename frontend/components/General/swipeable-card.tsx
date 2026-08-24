@@ -1,5 +1,5 @@
-import React from 'react';
-import { Dimensions } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Dimensions, StyleSheet } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -15,6 +15,8 @@ const swipeThreshold = screenWidth * 0.3;
 
 type SwipeableCardProps = {
   children: React.ReactNode;
+  nextCard?: React.ReactNode;
+  nextCardKey?: string | number;
   onSwipeRight?: () => void;
   onSwipeLeft?: () => void;
   animationSpeed?: number;
@@ -22,13 +24,16 @@ type SwipeableCardProps = {
 
 export default function SwipeableCard({
   children,
+  nextCard,
+  nextCardKey,
   onSwipeRight,
   onSwipeLeft,
   animationSpeed = 1,
 }: SwipeableCardProps) {
   const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
   const rotate = useSharedValue(0);
+  const currentCardScale = useSharedValue(1);
+  const hasMounted = useRef(false);
 
   const springConfig = (velocity: number) => ({
     velocity,
@@ -37,10 +42,25 @@ export default function SwipeableCard({
     mass: 0.9,
   });
 
+  useEffect(() => {
+    if (nextCardKey === undefined || !hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+
+    translateX.value = 0;
+    rotate.value = 0;
+    currentCardScale.value = 0;
+    currentCardScale.value = withSpring(1, {
+      stiffness: 260 * animationSpeed,
+      damping: 18,
+      mass: 0.9,
+    });
+  }, [animationSpeed, currentCardScale, nextCardKey, rotate, translateX]);
+
   const gesture = Gesture.Pan()
     .onUpdate(event => {
       translateX.value = event.translationX;
-      translateY.value = event.translationY;
       rotate.value = interpolate(
         translateX.value,
         [-screenWidth / 2, screenWidth / 2],
@@ -57,37 +77,49 @@ export default function SwipeableCard({
           if (onSwipeRight) {
             runOnJS(onSwipeRight)();
           }
-          translateX.value = withSpring(0, springConfig(0));
-          translateY.value = withSpring(0, springConfig(0));
-          rotate.value = withSpring(0, springConfig(0));
         });
       } else if (isSwipeLeft) {
         translateX.value = withSpring(-screenWidth * 1.2, springConfig(event.velocityX), () => {
           if (onSwipeLeft) {
             runOnJS(onSwipeLeft)();
           }
-          translateX.value = withSpring(0, springConfig(0));
-          translateY.value = withSpring(0, springConfig(0));
-          rotate.value = withSpring(0, springConfig(0));
         });
       } else {
         translateX.value = withSpring(0, springConfig(0));
-        translateY.value = withSpring(0, springConfig(0));
         rotate.value = withSpring(0, springConfig(0));
       }
     });
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
+      { scale: currentCardScale.value },
       { translateX: translateX.value },
-      { translateY: translateY.value },
       { rotate: `${rotate.value}deg` },
     ],
   }));
 
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View style={[animatedStyle]}>{children}</Animated.View>
+      <Animated.View>
+        {nextCard && (
+          <Animated.View
+            pointerEvents="none"
+            style={[StyleSheet.absoluteFillObject, styles.nextCard]}
+          >
+            {nextCard}
+          </Animated.View>
+        )}
+        <Animated.View style={[animatedStyle, styles.currentCard]}>{children}</Animated.View>
+      </Animated.View>
     </GestureDetector>
   );
 }
+
+const styles = StyleSheet.create({
+  nextCard: {
+    transform: [{ scale: 0 }],
+  },
+  currentCard: {
+    zIndex: 1,
+  },
+});
