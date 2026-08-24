@@ -3,8 +3,11 @@ import CheckInCard from './check-in-card';
 import SwipeableCard from '../General/swipeable-card';
 
 const steps = [
-  { title: 'Urge Check', question: 'Are you feeling an urge to engage in your habit right now?' },
-  { title: 'Mood Check', question: 'How are you feeling right now?' },
+  { title: 'Mood Check', question: 'Are you feeling an urge to engage in your habit right now?' },
+  { title: 'Urge Check', question: 'How are you feeling right now?' },
+  { title: 'Minfullness Check', question: 'How are you feeling right now?' },
+  { title: 'Gratitude Check', question: 'How are you feeling right now?' },
+  { title: 'Relapse Check', question: 'How are you feeling right now?' },
 ];
 
 export default function CardHolder() {

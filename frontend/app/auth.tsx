@@ -32,7 +32,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ArrowRight } from 'lucide-react-native';
-import GoogleButton from '../components/Auth/GoogleButton';
+// import GoogleButton from '../components/Auth/GoogleButton';
 import { signInWithEmail, signUpWithEmail, authErrorMessage } from './lib/auth';
 
 type Mode = 'signIn' | 'signUp';
@@ -183,10 +183,10 @@ export default function AuthScreen() {
                 <View className="h-px flex-1 bg-[#3a4230]" />
               </View>
 
-              <GoogleButton
+              {/* <GoogleButton
                 onError={setError}
                 onSuccess={() => router.replace('/')}
-              />
+              /> */}
             </View>
 
             {/* Footer toggle */}
