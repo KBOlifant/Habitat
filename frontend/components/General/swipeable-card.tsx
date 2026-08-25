@@ -35,12 +35,15 @@ export default function SwipeableCard({
   const currentCardScale = useSharedValue(1);
   const hasMounted = useRef(false);
 
-  const springConfig = (velocity: number) => ({
-    velocity,
-    stiffness: 260 * animationSpeed,
-    damping: 18,
-    mass: 0.9,
-  });
+  const springConfig = (velocity: number) => {
+    'worklet';
+    return {
+      velocity,
+      stiffness: 260 * animationSpeed,
+      damping: 18,
+      mass: 0.9,
+    };
+  };
 
   useEffect(() => {
     if (nextCardKey === undefined || !hasMounted.current) {

@@ -7,13 +7,15 @@ import { auth } from '@/app/lib/firebase';
 type HomeHeaderProps = {
   userName?: string;
   streakDays?: number;
-  smokeFreeDays?: number;
+  habitFreeDays?: number;
+  habitName?: string;
 };
 
 export default function HomeHeader({
   userName = 'User',
   streakDays = 3,
-  smokeFreeDays = 3,
+  habitFreeDays = 3,
+  habitName = 'Smoking',
 }: HomeHeaderProps) {
   const router = useRouter();
 
@@ -34,7 +36,7 @@ export default function HomeHeader({
         </Text>
         <Text className="mt-1 text-3xl font-bold text-white">{userName}</Text>
         <Text className="mt-1 text-sm text-emerald-100/70">
-          {smokeFreeDays} Days Free From Smoking
+          {habitFreeDays} Days Free From {habitName}
         </Text>
       </View>
 

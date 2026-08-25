@@ -19,6 +19,8 @@ export default function TriggerLogHeader({
           <TouchableOpacity
             onPress={onBack}
             activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
             className="flex-row items-center self-start"
           >
             <ChevronLeft size={16} color="#d1e7d4" />
@@ -34,6 +36,8 @@ export default function TriggerLogHeader({
         <TouchableOpacity
           onPress={onAdd}
           activeOpacity={0.85}
+          accessibilityRole="button"
+          accessibilityLabel="Log a new trigger"
           className="w-11 h-11 rounded-full bg-lime-600 items-center justify-center"
         >
           <Plus size={22} color="#052e16" strokeWidth={2.5} />

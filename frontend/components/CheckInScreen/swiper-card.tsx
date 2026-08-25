@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { 
   useFonts, 
@@ -39,114 +39,37 @@ export const Card = ({
   }
 
   return (
-    <View style={styles.cardStyle}>
+    <View className="h-[340px] w-4/5 overflow-hidden rounded-[24px] border border-[rgba(104,150,29,0.38)] bg-[#142014]">
       {/* Top Header: Progress (Left) & Icon (Right) */}
-      <View style={styles.header}>
-        <Text style={styles.progressText}>{progress}</Text>
+      <View className="flex-row items-center justify-between px-5 pt-5">
+        <Text className="text-sm font-semibold text-[#7A9B6A]">{progress}</Text>
         <Ionicons name="sparkles-outline" size={22} color="#8EFA00" />
       </View>
 
       {/* Middle Content Section */}
-      <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
+      <View className="mt-12 mb-auto items-start px-5">
+        <Text className="mb-4 font-[FrauncesBold] text-left text-xl text-[#eaf0e2]">{title}</Text>
+        <Text className="font-[FrauncesRegular] text-left text-sm leading-5 text-[#cddac7]">
+          {description}
+        </Text>
       </View>
 
       {/* Bottom Seamless Action Buttons */}
-      <View style={styles.actionsContainer}>
+      <View className="flex-row border-t border-[rgba(104,150,29,0.25)]">
         <Pressable 
-          style={({ pressed }) => [
-            styles.button, 
-            styles.borderRight,
-            pressed && styles.pressed
-          ]} 
+          className="flex-1 items-center justify-center border-r border-[rgba(104,150,29,0.25)] py-4 active:bg-[rgba(104,150,29,0.15)]"
           onPress={onSecondaryPress}
         >
-          <Text style={styles.secondaryButtonText}>Skip</Text>
+          <Text className="font-[FrauncesRegular] text-[15px] text-white/60">Skip</Text>
         </Pressable>
 
         <Pressable 
-          style={({ pressed }) => [
-            styles.button, 
-            pressed && styles.pressed
-          ]} 
+          className="flex-1 items-center justify-center py-4 active:bg-[rgba(104,150,29,0.15)]"
           onPress={onPrimaryPress}
         >
-          <Text style={styles.primaryButtonText}>Continue</Text>
+          <Text className="font-[FrauncesBold] text-[15px] text-[#8EFA00]">Continue</Text>
         </Pressable>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  cardStyle: {
-    width: '80%',
-    height: 340,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(104, 150, 29, 0.38)',
-    backgroundColor: '#142014',
-    overflow: 'hidden', // Ensures seamless bottom buttons follow the card's border radius
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
-  progressText: {
-    color: '#7A9B6A',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  content: {
-    paddingHorizontal: 20,
-    alignItems: 'flex-start', // Text aligns left
-    marginBottom: 'auto',   // Keeps title and description centered vertically
-    marginTop: 48
-  },
-  title: {
-    fontFamily: 'FrauncesBold',
-    fontSize: 20,
-    color: '#eaf0e2',
-    marginBottom: 16,
-    textAlign: 'left',
-  },
-  description: {
-    fontFamily: 'FrauncesRegular',
-    fontSize: 14,
-    color: "#cddac7",
-    lineHeight: 20,
-    textAlign: 'left',
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(104, 150, 29, 0.25)',
-  },
-  button: {
-    flex: 1,
-    paddingVertical: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  borderRight: {
-    borderRightWidth: 1,
-    borderRightColor: 'rgba(104, 150, 29, 0.25)',
-  },
-  pressed: {
-    backgroundColor: 'rgba(104, 150, 29, 0.15)',
-  },
-  primaryButtonText: {
-    fontFamily: 'FrauncesBold',
-    fontSize: 15,
-    color: '#8EFA00',
-  },
-  secondaryButtonText: {
-    fontFamily: 'FrauncesRegular',
-    fontSize: 15,
-    color: 'rgba(255, 255, 255, 0.6)',
-  },
-});

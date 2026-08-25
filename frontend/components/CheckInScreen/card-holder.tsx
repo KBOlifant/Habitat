@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckInCard from './check-in-card';
 import SwipeableCard from '../General/swipeable-card';
+import { addDoc, collection } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from '../../app/lib/firebase';
 
 const CHECK_PROGRESS_KEY = 'habitat_check_progress';
 
@@ -40,8 +43,15 @@ export default function CardHolder() {
   const [index, setIndex] = useState(0);
   const [checks, setChecks] = useState<CheckRecord[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    return onAuthStateChanged(auth, (user) => {
+      setUserId(user?.uid ?? null);
+    });
+  }, []);
+
+  useEffect(() => {
     const loadProgress = async () => {
       try {
         const savedProgress = await AsyncStorage.getItem(CHECK_PROGRESS_KEY);
@@ -89,21 +99,47 @@ export default function CardHolder() {
     setChecks([]);
   };
 
-  const recordCheck = (action: CheckRecord['action'], answer?: CheckRecord['answer']) => {
+  const recordCheck = async (action: CheckRecord['action'], answer?: CheckRecord['answer']) => {
     const current = steps[index];
     if (!current) return;
 
-    setChecks((existingChecks) => [
-      ...existingChecks.filter((check) => check.step !== index + 1),
-      {
-        step: index + 1,
-        title: current.title,
-        action,
-        answer,
-        completedAt: new Date().toISOString(),
-      },
-    ]);
+    const check: CheckRecord = {
+      step: index + 1,
+      title: current.title,
+      action,
+      completedAt: new Date().toISOString(),
+      ...(answer ? { answer } : {}),
+    };
+
+    const completeChecks = [
+      ...checks.filter((existingCheck) => existingCheck.step !== check.step),
+      check,
+    ];
+
+    setChecks(completeChecks);
     setIndex((currentIndex) => currentIndex + 1);
+
+    if (index !== steps.length - 1) {
+      return;
+    }
+
+    const currentUserId = auth.currentUser?.uid ?? userId;
+    if (!currentUserId) {
+      console.warn('All checks recorded locally because no Firebase user is signed in');
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, 'users', currentUserId, 'check_in_record'), {
+        daily_check: true,
+        has_relapsed: false,
+        checks: completeChecks,
+        uid: currentUserId,
+        completedAt: check.completedAt,
+      });
+    } catch (error) {
+      console.error('Unable to save completed check-in to Firestore', error);
+    }
   };
 
   if (!isHydrated) {
@@ -127,7 +163,7 @@ export default function CardHolder() {
             onPress={clearProgress}
             className="mt-5 self-start rounded-xl border border-[#6f8a6f] px-4 py-2"
           >
-            <Text className="text-[#cfe0cf]">Clear saved progress</Text>
+            <Text className="text-[#9cc49c]">Clear saved progress</Text>
           </Pressable>
         )}
       </View>
@@ -156,9 +192,9 @@ export default function CardHolder() {
           <Pressable
             accessibilityRole="button"
             onPress={clearProgress}
-            className="mt-2 self-start"
+            className="mt-2 self-start border rounded-lg p-2 bg-red-200 border-red-600"
           >
-            <Text className="text-[#c96b5f] text-sm">Clear saved progress</Text>
+            <Text className="text-[#c96b5f] text-sm font-semibold">Clear saved progress</Text>
           </Pressable>
         )}
       </View>
