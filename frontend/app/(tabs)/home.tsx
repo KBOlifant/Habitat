@@ -18,7 +18,8 @@ export default function HomeScreen() {
   const [userName, setUserName] = useState<string>('User');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [habit, setHabit] = useState('');
-  const [currentDevDate, setDevDate] = useState('');
+  const initialDate = '2026-08-26';
+  const [currentDevDate, setDevDate] = useState(initialDate);
 
   useEffect(() => {
     return onAuthStateChanged(auth, (user) => {
@@ -55,11 +56,31 @@ export default function HomeScreen() {
     fetchHabit();
   }, [currentUser]);
 
+  const [progress, setProgress] = useState(0.5); // Hardcoded progress for now
+
+  const calculateProgress = (currentDate: Date): number => {
+    const targetDate = new Date(initialDate);
+    targetDate.setDate(targetDate.getDate() + 90);
+    const startMs = new Date(initialDate.replace(/-/g, '/')).getTime();
+    const targetMs = new Date(targetDate.toDateString().replace(/-/g, '/')).getTime();
+    const currentMs = currentDate.getTime();
+
+    const totalDuration = targetMs - startMs;
+    if (totalDuration === 0) return 0; // Prevent division by zero
+
+    const progress = (currentMs - startMs) / totalDuration;
+
+    // Clamps the result strictly to [0, 1]
+    return Math.min(Math.max(progress, 0), 1);
+  };
+
+  useEffect(() => {
+    setProgress(calculateProgress(new Date(currentDevDate)));
+  }, [currentDevDate]);
+
   const scheme = useColorScheme() ?? 'light';
   const gradientColors =
-    scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
-
-  const [progress, setProgress] = useState(0.5); // Hardcoded progress for now
+  scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
 
   return (
     <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
@@ -72,7 +93,7 @@ export default function HomeScreen() {
         <CheckInButton />
         <AdditionalButtons />
         <QuoteSection />
-        <DevTimeTravel  />
+        <DevTimeTravel initialDate={initialDate} returnCurrentDate={(currentDate) => setDevDate(currentDate)} />
       </ScrollView>
     </LinearGradient>
   );

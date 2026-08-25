@@ -62,9 +62,9 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="progress"
+        name="dashboard"
         options={{
-          title: 'Progress',
+          title: 'Dashboard',
           tabBarIcon: ({ color }) => <IconSymbol size={26} name="chart.bar.fill" color={color} />,
         }}
       />
