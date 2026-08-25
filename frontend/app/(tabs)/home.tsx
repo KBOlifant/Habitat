@@ -18,6 +18,7 @@ export default function HomeScreen() {
   const [userName, setUserName] = useState<string>('User');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [habit, setHabit] = useState('');
+  const [currentDevDate, setDevDate] = useState('');
 
   useEffect(() => {
     return onAuthStateChanged(auth, (user) => {
@@ -71,7 +72,7 @@ export default function HomeScreen() {
         <CheckInButton />
         <AdditionalButtons />
         <QuoteSection />
-        <DevTimeTravel />
+        <DevTimeTravel  />
       </ScrollView>
     </LinearGradient>
   );

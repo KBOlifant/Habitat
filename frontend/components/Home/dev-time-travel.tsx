@@ -4,19 +4,23 @@ import { Minus, Plus, FlaskConical } from 'lucide-react-native';
 
 type DevTimeTravelProps = {
   initialDate?: string; // 'YYYY-MM-DD'
+  returnCurrentDate?: (currentDate: string) => void;
 };
 
 export default function DevTimeTravel({
   initialDate = '2026-07-18',
+  returnCurrentDate
 }: DevTimeTravelProps) {
-  const [date, setDate] = useState(new Date(initialDate));
+  const [date, setDate] = useState(() => new Date(initialDate.replace(/-/g, '/')));
 
   const shiftDate = (deltaDays: number) => {
-    setDate((prev) => {
-      const next = new Date(prev);
-      next.setDate(next.getDate() + deltaDays);
-      return next;
-    });
+    const next = new Date(date);
+    next.setDate(next.getDate() + deltaDays);
+
+    setDate(next);
+
+    // Side effects executed outside the state updater
+    returnCurrentDate?.(next.toDateString());
   };
 
   const isToday = date.toDateString() === new Date().toDateString();
@@ -27,7 +31,7 @@ export default function DevTimeTravel({
       <View className="flex-row items-center mb-3">
         <FlaskConical size={13} color="#84cc16" />
         <Text className="text-lime-500 text-[11px] font-bold tracking-[1.5px] uppercase ml-1.5">
-          Dev — Time Travel
+          Dev Time Travel
         </Text>
       </View>
 

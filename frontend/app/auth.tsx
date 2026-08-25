@@ -40,7 +40,7 @@ type Mode = 'signIn' | 'signUp';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function AuthScreen() {
-  const [mode, setMode] = useState<Mode>('signUp');
+  const [mode, setMode] = useState<Mode>('signIn');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');

@@ -13,7 +13,7 @@ export default function TriggerLogHeader({
   subtitle = 'Awareness is the first step.',
 }: TriggerLogHeaderProps) {
   return (
-    <View className="px-6">
+    <View className="">
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
           <TouchableOpacity
