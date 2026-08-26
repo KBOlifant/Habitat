@@ -114,7 +114,7 @@ export default function TriggerLogScreen() {
 
         <View
         {...swipeUpHandlers}
-        className="items-center pt-2 pb-6 self-end"
+        className="items-center pt-2 pb-6 "
         accessibilityRole="button"
         accessibilityLabel="Swipe up to log a trigger"
       >

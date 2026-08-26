@@ -63,7 +63,7 @@ export default function TodaysReflection({
   );
 
   return (
-    <View className="mt-4 bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-5 h-32">
+    <View className="mt-4 bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-5 ">
       <Text className="text-emerald-100/50 uppercase mb-4" style={Typography.sectionLabel}>
         Today&apos;s Reflection
       </Text>
@@ -87,7 +87,7 @@ export default function TodaysReflection({
       ) : (
         <>
           <Text className="text-white italic text-2xl py-4 leading-6 mt-3">{quoteText}</Text>
-          {author && <Text className="text-emerald-100/50 text-sm mt-2">- {author}</Text>}
+          {author && <Text className="text-emerald-100/50 text-sm mt-4">- {author}</Text>}
         </>
       )}
     </View>
