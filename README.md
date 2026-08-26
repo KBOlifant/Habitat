@@ -168,4 +168,8 @@ npm run lint
 
 ## License
 
-No license file is currently included in the repository. Add one before distributing the project publicly.
+under the MIT License. See [LICENSE](./LICENSE) for more information.
+
+<div align="center">
+Made with 🌱 by Keabetswe Olifant
+</div>
