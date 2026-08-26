@@ -151,20 +151,17 @@ npx tsc --noEmit
 npm run lint
 ```
 
-## Roadmap
-
-- Push notifications and daily check-in reminders
-- Progress history export
-- Additional bonsai themes
-- Automated tests and stronger Firestore security rules
-- Server-side proxy or caching for the quote service
-
 ## Contributing
 
 1. Create a feature branch.
 2. Keep changes focused and follow the existing Expo/React Native patterns.
 3. Run TypeScript and lint checks before opening a pull request.
 4. Describe user-facing behavior and any Firestore schema changes.
+
+
+## Demo Video
+
+https://drive.google.com/drive/folders/1DpvFGlGrIhNJou3QP8Las2hfHzAL_lSD?usp=sharing
 
 ## License
 
