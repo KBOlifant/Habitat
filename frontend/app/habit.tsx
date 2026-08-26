@@ -12,6 +12,7 @@ import HabitGrid from '@/components/Onboarding2/habit-grid';
 import OtherHabitInput from '@/components/Onboarding2/other-habit-input';
 import PlantSeedButton from '@/components/Onboarding2/plant-seed-button';
 import { auth, db } from './lib/firebase';
+import { goBackOrHome } from './lib/navigation';
 
 export default function HabitSelectScreen() {
   const router = useRouter();
@@ -91,7 +92,7 @@ export default function HabitSelectScreen() {
         className="px-6"
         contentContainerStyle={{ paddingTop: 64, paddingBottom: 40, flexGrow: 1 }}
       >
-        <HabitSelectHeader onBack={() => router.back()} />
+        <HabitSelectHeader onBack={() => goBackOrHome(router)} />
 
         <HabitGrid
           selected={isOtherSelected ? null : selected}

@@ -13,6 +13,7 @@ import TriggerListItem from '../../components/TriggerLog/trigger-list-item';
 import LogTriggerModal from '../../components/TriggerLog/log-trigger-modal';
 import { useSwipeGesture } from '../lib/hooks/use-swipe-gesture';
 import { auth } from '../lib/firebase';
+import { goBackOrHome } from '../lib/navigation';
 import {
   getTriggers,
   addTrigger,
@@ -72,11 +73,11 @@ export default function TriggerLogScreen() {
   return (
     <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
       <ScrollView
-        contentContainerStyle={{ paddingTop: 64, paddingBottom: 40, flexGrow: 1 }}
+        contentContainerStyle={{ paddingTop: 64, paddingBottom: 120, flexGrow: 1 }}
         className="px-6"
       >
         <TriggerLogHeader
-          onBack={() => router.back()}
+          onBack={() => goBackOrHome(router)}
           onAdd={() => setIsModalVisible(true)}
         />
 
@@ -97,12 +98,10 @@ export default function TriggerLogScreen() {
               ))}
           </View>
         )}
-      </ScrollView>
 
-      {/* Pinned swipe-up handle — doesn't scroll, so it never fights the ScrollView's own gesture. */}
-      <View
+        <View
         {...swipeUpHandlers}
-        className="items-center pt-2 pb-6"
+        className="items-center pt-2 pb-6 self-end"
         accessibilityRole="button"
         accessibilityLabel="Swipe up to log a trigger"
       >
@@ -111,6 +110,10 @@ export default function TriggerLogScreen() {
           Swipe up to log a trigger
         </Text>
       </View>
+      </ScrollView>
+
+      {/* Pinned swipe-up handle — doesn't scroll, so it never fights the ScrollView's own gesture. */}
+      
 
       <TriggerReasoningModal
         trigger={selectedTrigger}

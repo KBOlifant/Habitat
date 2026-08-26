@@ -1,64 +1,78 @@
+// Target path: components/Milestones/milestones.tsx
 import { View, Text } from 'react-native';
 import { CircleCheck, Sprout, Leaf } from 'lucide-react-native';
 
-export type Milestone = {
-  title: string;
-  subtitle?: string;
-  achieved: boolean;
-};
-
-type MilestonesProps = {
-  milestones?: Milestone[];
-};
-
-const DEFAULT_MILESTONES: Milestone[] = [
-  { title: 'First day', achieved: true },
-  { title: '3 days', subtitle: '2 days away', achieved: false },
-  { title: 'One week', subtitle: '6 days away', achieved: false },
+const HARDCODED_MILESTONES = [
+  { title: 'First day', days: 1 },
+  { title: '3 days', days: 3 },
+  { title: 'One week', days: 7 },
+  { title: 'Three weeks', days: 21 },
+  { title: 'One Month', days: 30 },
+  { title: '3 Months', days: 90 },
+  { title: '6 Months', days: 180 },
+  { title: '1 Year', days: 365 },
+  { title: '3 Years', days: 1095 },
+  { title: '5 Years', days: 1825 },
 ];
 
-export default function Milestones({
-  milestones = DEFAULT_MILESTONES,
-}: MilestonesProps) {
+function formatDaysAway(days: number): string {
+  if (days <= 1) return '1 day away';
+  if (days < 30) return `${days} days away`;
+  if (days < 365) return `${Math.round(days / 30)} months away`;
+  return `${(days / 365).toFixed(1).replace('.0', '')} years away`;
+}
+
+type MilestonesProps = {
+  /** Current unbroken streak in days — same number shown in StatsRow/Tree Growth. */
+  streakDays?: number;
+};
+
+export default function Milestones({ streakDays = 0 }: MilestonesProps) {
   return (
     <View className="mx-6 mt-5 mb-6 bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-5">
       <Text className="text-emerald-100/50 text-xs font-semibold tracking-[2px] uppercase mb-3">
         Milestones
       </Text>
 
-      {milestones.map((milestone, index) => (
-        <View
-          key={milestone.title}
-          className={`flex-row items-center justify-between bg-emerald-950/40 rounded-2xl px-4 py-3.5 ${
-            index === 0 ? '' : 'mt-3'
-          }`}
-        >
-          <View className="flex-row items-center flex-1">
-            {milestone.achieved ? (
-              <Sprout size={16} color="#4ade80" />
-            ) : (
-              <Leaf size={16} color="#3f5a44" />
-            )}
+      {HARDCODED_MILESTONES.map((milestone) => {
+        const isAchieved = streakDays >= milestone.days;
+        const daysRemaining = milestone.days - streakDays;
+        const subtitle = isAchieved
+          ? undefined
+          : formatDaysAway(Math.max(1, daysRemaining));
 
-            <View className="ml-3">
-              <Text
-                className={`text-sm font-semibold ${
-                  milestone.achieved ? 'text-white' : 'text-emerald-100/70'
-                }`}
-              >
-                {milestone.title}
-              </Text>
-              {milestone.subtitle && (
-                <Text className="text-emerald-100/40 text-xs mt-0.5">
-                  {milestone.subtitle}
-                </Text>
+        return (
+          <View
+            key={milestone.title}
+            className="flex-row items-center justify-between bg-emerald-950/40 rounded-2xl px-4 py-3.5 mb-3 last:mb-0"
+          >
+            <View className="flex-row items-center flex-1">
+              {isAchieved ? (
+                <Sprout size={16} color="#4ade80" />
+              ) : (
+                <Leaf size={16} color="#3f5a44" />
               )}
-            </View>
-          </View>
 
-          {milestone.achieved && <CircleCheck size={18} color="#4ade80" />}
-        </View>
-      ))}
+              <View className="ml-3 flex-1 pr-2">
+                <Text
+                  className={`text-sm font-semibold ${
+                    isAchieved ? 'text-white' : 'text-emerald-100/70'
+                  }`}
+                >
+                  {milestone.title}
+                </Text>
+                {subtitle && (
+                  <Text className="text-emerald-100/40 text-xs mt-0.5">
+                    {subtitle}
+                  </Text>
+                )}
+              </View>
+            </View>
+
+            {isAchieved && <CircleCheck size={18} color="#4ade80" />}
+          </View>
+        );
+      })}
     </View>
   );
 }

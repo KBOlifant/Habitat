@@ -26,7 +26,7 @@ function formatLoggedAt(iso: string): string {
 }
 
 function intensityColor(intensity: number): string {
-  if (intensity >= 8) return '#f87171'; // red
+  if (intensity >= 3) return '#f87171'; // red
   if (intensity >= 5) return '#facc15'; // yellow
   return '#4ade80'; // green
 }

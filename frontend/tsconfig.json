@@ -16,5 +16,5 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "nativewind-env.d.ts"
-, "app/(tabs)/check-in.tsx", "app/(tabs)/Bonsai.jsx", "app/(tabs)/Bonsai.jsx"  ]
+, "app/(tabs)/check-in.tsx", "app/Bonsai.jsx", "app/Bonsai.jsx"  ]
 }

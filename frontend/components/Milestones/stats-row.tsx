@@ -1,3 +1,4 @@
+// Target path: components/Milestones/stats-row.tsx
 import { View, Text } from 'react-native';
 import { Droplet, Circle, Triangle } from 'lucide-react-native';
 
@@ -8,7 +9,7 @@ type StatsRowProps = {
 };
 
 export default function StatsRow({
-  streak = 1,
+  streak = 0,
   resisted = 0,
   relapses = 0,
 }: StatsRowProps) {

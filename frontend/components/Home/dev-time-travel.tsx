@@ -2,29 +2,53 @@ import { useState } from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 import { Minus, Plus, FlaskConical } from 'lucide-react-native';
 
+const MIN_DATE = new Date(2000, 0, 1);
+const MAX_DATE = new Date(2100, 11, 31);
+
 type DevTimeTravelProps = {
   initialDate?: string; // 'YYYY-MM-DD'
   returnCurrentDate?: (currentDate: string) => void;
+};
+
+export const parseDate = (value: string): Date => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return new Date();
+
+  const [, year, month, day] = match;
+  const parsed = new Date(Number(year), Number(month) - 1, Number(day));
+  const isValidDate =
+    parsed.getFullYear() === Number(year) &&
+    parsed.getMonth() === Number(month) - 1 &&
+    parsed.getDate() === Number(day);
+
+  return isValidDate ? parsed : new Date();
+};
+
+const formatIsoDate = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 export default function DevTimeTravel({
   initialDate = '2026-07-18',
   returnCurrentDate
 }: DevTimeTravelProps) {
-  const [date, setDate] = useState(() => new Date(initialDate.replace(/-/g, '/')));
+  const [date, setDate] = useState(() => parseDate(initialDate));
 
   const shiftDate = (deltaDays: number) => {
     const next = new Date(date);
     next.setDate(next.getDate() + deltaDays);
 
-    setDate(next);
+    if (next < MIN_DATE || next > MAX_DATE) return;
 
-    // Side effects executed outside the state updater
-    returnCurrentDate?.(next.toDateString());
+    setDate(next);
+    returnCurrentDate?.(formatIsoDate(next));
   };
 
   const isToday = date.toDateString() === new Date().toDateString();
-  const isoDate = date.toISOString().slice(0, 10);
+  const isoDate = formatIsoDate(date);
 
   return (
     <View className="mt-4 bg-emerald-950 border border-dashed border-emerald-800/60 rounded-2xl p-4">

@@ -13,18 +13,24 @@ import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth, db } from '../../app/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import { fetchProgressStats, syncPlantState, getLocalDate } from '../../app/lib/progress';
+
+// Matches Tree Growth's "Ancient wisdom" stage (90+ days) so Home and the
+// Progress screen agree on what a "fully grown" bonsai means.
+const STREAK_DAYS_TO_FULL_GROWTH = 90;
 
 export default function HomeScreen() {
   const [userName, setUserName] = useState<string>('User');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [habit, setHabit] = useState('');
-  const initialDate = '2026-08-26';
+  const initialDate = getLocalDate(new Date());
   const [currentDevDate, setDevDate] = useState(initialDate);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     return onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
-      setUserName(user?.displayName ?? "User");
+      setUserName(user?.displayName ?? 'User');
       if (!user) setHabit('');
     });
   }, []);
@@ -56,37 +62,43 @@ export default function HomeScreen() {
     fetchHabit();
   }, [currentUser]);
 
-  const [progress, setProgress] = useState(0.5); // Hardcoded progress for now
-
-  const calculateProgress = (currentDate: Date): number => {
-    const targetDate = new Date(initialDate);
-    targetDate.setDate(targetDate.getDate() + 90);
-    const startMs = new Date(initialDate.replace(/-/g, '/')).getTime();
-    const targetMs = new Date(targetDate.toDateString().replace(/-/g, '/')).getTime();
-    const currentMs = currentDate.getTime();
-
-    const totalDuration = targetMs - startMs;
-    if (totalDuration === 0) return 0; // Prevent division by zero
-
-    const progress = (currentMs - startMs) / totalDuration;
-
-    // Clamps the result strictly to [0, 1]
-    return Math.min(Math.max(progress, 0), 1);
-  };
-
+  // Bonsai growth was previously a fixed 90-day window off a hardcoded date,
+  // completely disconnected from Firestore. It now tracks the same "current
+  // streak" used on the Progress screen (components/Milestones/tree-growth.tsx),
+  // so a relapse or missed check-in correctly sets the bonsai back too.
   useEffect(() => {
-    setProgress(calculateProgress(new Date(currentDevDate)));
-  }, [currentDevDate]);
+    if (!currentUser) {
+      setProgress(0);
+      return;
+    }
+
+    let cancelled = false;
+
+    fetchProgressStats(currentUser.uid, currentDevDate)
+      .then((stats) => {
+        if (cancelled) return;
+        setProgress(Math.min(stats.streak / STREAK_DAYS_TO_FULL_GROWTH, 1));
+        syncPlantState(currentUser.uid, stats);
+      })
+      .catch((error) => {
+        console.error('Unable to load bonsai progress from Firestore', error);
+        if (!cancelled) setProgress(0);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentUser, currentDevDate]);
 
   const scheme = useColorScheme() ?? 'light';
   const gradientColors =
-  scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
+    scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
 
   return (
     <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
       <ScrollView
         className="px-6"
-        contentContainerStyle={{ paddingTop: 64, paddingBottom: 40 }}
+        contentContainerStyle={{ paddingTop: 64, paddingBottom: 120 }}
       >
         <HomeHeader habitName={habit} userName={userName} />
         <BonsaiScreen progress={progress} />

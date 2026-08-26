@@ -1,35 +1,46 @@
+// Target path: components/Milestones/tree-growth.tsx
 import { View, Text } from 'react-native';
 import { Check, Circle } from 'lucide-react-native';
+
+export type TreeStageState = 'complete' | 'current' | 'locked';
 
 export type TreeStage = {
   title: string;
   subtitle: string;
-  state: 'complete' | 'current' | 'locked';
+  state: TreeStageState;
 };
 
+const STAGE_DEFINITIONS: { title: string; subtitle: string; threshold: number }[] = [
+  { title: 'Dormant seed', subtitle: 'Day 0', threshold: 0 },
+  { title: 'First sprout', subtitle: '1+ days', threshold: 1 },
+  { title: 'Young sapling', subtitle: '7+ days', threshold: 7 },
+  { title: 'Juvenile bonsai', subtitle: '14+ days', threshold: 14 },
+  { title: 'Mature bonsai', subtitle: '30+ days', threshold: 30 },
+  { title: 'Ancient wisdom', subtitle: '90+ days', threshold: 90 },
+];
+
+function computeStages(streakDays: number): TreeStage[] {
+  let currentIndex = 0;
+  STAGE_DEFINITIONS.forEach((stage, index) => {
+    if (streakDays >= stage.threshold) currentIndex = index;
+  });
+
+  return STAGE_DEFINITIONS.map((stage, index) => ({
+    title: stage.title,
+    subtitle: stage.subtitle,
+    state: index < currentIndex ? 'complete' : index === currentIndex ? 'current' : 'locked',
+  }));
+}
+
 type TreeGrowthProps = {
+  /** Current unbroken streak in days — same number shown in StatsRow/Milestones. Drives which stage is "current". */
+  streakDays?: number;
+  /** Escape hatch to render an explicit set of stages instead of deriving them from streakDays. */
   stages?: TreeStage[];
 };
 
-const DEFAULT_STAGES: TreeStage[] = [
-  { title: 'Dormant seed', subtitle: 'Day 0', state: 'complete' },
-  { title: 'First sprout', subtitle: '1+ days', state: 'current' },
-  { title: 'Taking root', subtitle: '3+ days', state: 'locked' },
-  { title: 'Young sapling', subtitle: '7+ days', state: 'locked' },
-  { title: 'Growing bonsai', subtitle: '14+ days', state: 'locked' },
-  { title: 'Formed bonsai', subtitle: '30+ days', state: 'locked' },
-  { title: 'Ancient wisdom', subtitle: '60+ days', state: 'locked' },
-];
-
 function StageIcon({ state }: { state: TreeStage['state'] }) {
-  if (state === 'complete') {
-    return (
-      <View className="w-6 h-6 rounded-full bg-emerald-500 items-center justify-center">
-        <Check size={14} color="#052e16" strokeWidth={3} />
-      </View>
-    );
-  }
-  if (state === 'current') {
+  if (state === 'complete' || state === 'current') {
     return (
       <View className="w-6 h-6 rounded-full bg-emerald-500 items-center justify-center">
         <Check size={14} color="#052e16" strokeWidth={3} />
@@ -43,14 +54,16 @@ function StageIcon({ state }: { state: TreeStage['state'] }) {
   );
 }
 
-export default function TreeGrowth({ stages = DEFAULT_STAGES }: TreeGrowthProps) {
+export default function TreeGrowth({ streakDays = 0, stages }: TreeGrowthProps) {
+  const resolvedStages = stages ?? computeStages(streakDays);
+
   return (
     <View className="mx-6 mt-5 bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-5">
       <Text className="text-emerald-100/50 text-xs font-semibold tracking-[2px] uppercase mb-4">
         Tree Growth
       </Text>
 
-      {stages.map((stage, index) => {
+      {resolvedStages.map((stage, index) => {
         const isLocked = stage.state === 'locked';
         return (
           <View

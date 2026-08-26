@@ -1,3 +1,4 @@
+// Target path: components/Milestones/last-30-days.tsx
 import { View, Text } from 'react-native';
 
 export type DayStatus = 'checked-in' | 'relapsed' | 'missed';
@@ -18,13 +19,12 @@ const LEGEND: { status: DayStatus; label: string }[] = [
   { status: 'missed', label: 'Missed' },
 ];
 
-function generateDefaultDays(): DayStatus[] {
-  // Placeholder: mostly checked-in for the demo.
-  return Array.from({ length: 30 }, () => 'checked-in');
-}
+// Placeholder shown only until Firestore data resolves. Real data comes from
+// lib/progress.ts -> fetchProgressStats(uid).last30Days, passed down from dashboard.tsx.
+const EMPTY_30_DAYS: DayStatus[] = Array.from({ length: 30 }, () => 'missed');
 
 export default function Last30Days({
-  days = generateDefaultDays(),
+  days = EMPTY_30_DAYS,
 }: Last30DaysProps) {
   return (
     <View className="mx-6 mt-5 bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-5">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 //import { LinearGradient } from 'expo-linear-gradient';
@@ -7,6 +8,7 @@ import { Colors } from '@/constants/theme';
 import { Gradients } from '@/constants/theme';
 import { useColorScheme } from 'react-native';
 import CardHolder from '../../components/CheckInScreen/card-holder';
+import { goBackOrHome } from '../lib/navigation';
 
 
 function useThemeColor(colorName: keyof typeof Colors.light) {
@@ -15,11 +17,7 @@ function useThemeColor(colorName: keyof typeof Colors.light) {
 }
 
 export default function DailyCheckInScreen() {
-  const backgroundColor = useThemeColor('background');
-
-  const handleBack = () => {
-    // navigation.goBack()
-  };
+  const router = useRouter();
 
   const scheme = useColorScheme() ?? 'light';
   const gradientColors =
@@ -28,7 +26,7 @@ export default function DailyCheckInScreen() {
 return (
   <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
     <View style={{ flex: 1 }}>
-      <CheckInHeader onBack={handleBack} />
+      <CheckInHeader onBack={() => goBackOrHome(router)} />
 
       <CardHolder />
 

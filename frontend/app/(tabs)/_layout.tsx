@@ -26,7 +26,7 @@ export default function TabLayout() {
           height: 70,
           paddingHorizontal: 10,
           backgroundColor:
-            colorScheme === 'dark' ? 'rgba(15, 23, 42, 0.96)' : 'rgba(248, 250, 252, 0.96)',
+            colorScheme === 'dark' ? 'rgba(15, 23, 42, 0.95)' : 'rgba(248, 250, 252, 0.95)',
           borderTopWidth: 0,
           shadowColor: '#000',
           shadowOpacity: 0.12,
