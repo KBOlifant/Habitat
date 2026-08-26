@@ -1,6 +1,7 @@
 // Target path: components/Milestones/milestones.tsx
 import { View, Text } from 'react-native';
 import { CircleCheck, Sprout, Leaf } from 'lucide-react-native';
+import { Typography } from '@/constants/typography';
 
 const HARDCODED_MILESTONES = [
   { title: 'First day', days: 1 },
@@ -30,7 +31,7 @@ type MilestonesProps = {
 export default function Milestones({ streakDays = 0 }: MilestonesProps) {
   return (
     <View className="mx-6 mt-5 mb-6 bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-5">
-      <Text className="text-emerald-100/50 text-xs font-semibold tracking-[2px] uppercase mb-3">
+      <Text className="text-emerald-100/50 uppercase mb-3" style={Typography.sectionLabel}>
         Milestones
       </Text>
 
@@ -55,14 +56,14 @@ export default function Milestones({ streakDays = 0 }: MilestonesProps) {
 
               <View className="ml-3 flex-1 pr-2">
                 <Text
-                  className={`text-sm font-semibold ${
+                  className={`text-base font-semibold ${
                     isAchieved ? 'text-white' : 'text-emerald-100/70'
                   }`}
                 >
                   {milestone.title}
                 </Text>
                 {subtitle && (
-                  <Text className="text-emerald-100/40 text-xs mt-0.5">
+                  <Text className="text-emerald-100/40 text-sm mt-0.5">
                     {subtitle}
                   </Text>
                 )}

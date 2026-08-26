@@ -3,7 +3,6 @@ import {
   Modal,
   Animated,
   PanResponder,
-  Dimensions,
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
@@ -11,13 +10,15 @@ import {
   TextInput,
   View,
   Text,
+  ScrollView,
+  useWindowDimensions,
 } from 'react-native';
 import { X } from 'lucide-react-native';
+import { Typography } from '@/constants/typography';
 
 import IntensitySelector from './intensity-selector';
 import RelapseCheckbox from './relapse-checkbox';
 import type { NewTriggerInput } from '../../app/lib/storage/trigger-storage';
-import { BlurView } from 'expo-blur';
 
 type LogTriggerModalProps = {
   visible: boolean;
@@ -32,10 +33,6 @@ const EMPTY_FORM = {
   relapsed: false,
 };
 
-const SCREEN_HEIGHT = Dimensions.get('window').height;
-// How far the sheet must be dragged down (or how fast it must be flung)
-// before it counts as "let go, close me" rather than "snap back open".
-const CLOSE_DISTANCE_THRESHOLD = SCREEN_HEIGHT * 0.2;
 const CLOSE_VELOCITY_THRESHOLD = 0.5;
 
 function clamp(value: number, min: number, max: number) {
@@ -49,12 +46,17 @@ export default function LogTriggerModal({
 }: LogTriggerModalProps) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [isSaving, setIsSaving] = useState(false);
+  const { height, width } = useWindowDimensions();
+  const isLandscape = width > height;
+  const isWide = width >= 700;
+  const dimensions = useRef({ height, width });
+  dimensions.current = { height, width };
 
-  // 0 = fully open (resting position). SCREEN_HEIGHT = fully hidden below
+  // 0 = fully open (resting position). The current screen height = fully hidden below
   // the screen. The drag gesture is clamped to this range so the sheet can
   // never be pulled above its open position or pushed further than
   // fully off-screen.
-  const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+  const translateY = useRef(new Animated.Value(height)).current;
   const dragStartValue = useRef(0);
 
   const canSave = form.name.trim().length > 0 && form.intensity !== null;
@@ -62,7 +64,7 @@ export default function LogTriggerModal({
   // Slide in whenever the modal is opened.
   useEffect(() => {
     if (visible) {
-      translateY.setValue(SCREEN_HEIGHT);
+      translateY.setValue(dimensions.current.height);
       Animated.timing(translateY, {
         toValue: 0,
         duration: 260,
@@ -73,7 +75,7 @@ export default function LogTriggerModal({
 
   const animateClosed = (onDone: () => void) => {
     Animated.timing(translateY, {
-      toValue: SCREEN_HEIGHT,
+      toValue: dimensions.current.height,
       duration: 220,
       useNativeDriver: true,
     }).start(() => onDone());
@@ -118,7 +120,7 @@ export default function LogTriggerModal({
         const next = clamp(
           dragStartValue.current + gesture.dy,
           0,
-          SCREEN_HEIGHT
+          dimensions.current.height,
         );
         translateY.setValue(next);
       },
@@ -126,10 +128,10 @@ export default function LogTriggerModal({
         const current = clamp(
           dragStartValue.current + gesture.dy,
           0,
-          SCREEN_HEIGHT
+          dimensions.current.height,
         );
         const shouldClose =
-          current > CLOSE_DISTANCE_THRESHOLD ||
+          current > dimensions.current.height * 0.2 ||
           gesture.vy > CLOSE_VELOCITY_THRESHOLD;
 
         if (shouldClose) {
@@ -157,16 +159,24 @@ export default function LogTriggerModal({
     >
       {/* Backdrop */}
       <TouchableWithoutFeedback onPress={handleClose}>
-        <View className="flex-1 bg-black/40 justify-end">
+        <View
+          className="flex-1 justify-end"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.58)' }}
+        >
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            style={{ alignItems: 'center', width: '100%' }}
           >
             {/* Swallow taps so they don't bubble to the backdrop */}
             <TouchableWithoutFeedback onPress={() => {}}>
               <Animated.View
-                className="bg-[#152318] rounded-t-3xl px-6 pt-5"
+                className="rounded-t-3xl pt-5"
                 style={{
-                  paddingBottom: 32,
+                  width: isWide ? 560 : '100%',
+                  maxHeight: isLandscape ? height - 24 : height * 0.92,
+                  paddingHorizontal: isLandscape ? 32 : 24,
+                  paddingBottom: isLandscape ? 20 : 32,
+                  backgroundColor: '#152318',
                   transform: [{ translateY }],
                 }}
                 accessibilityViewIsModal
@@ -191,69 +201,76 @@ export default function LogTriggerModal({
                 </View>
 
                 {/* Trigger name */}
-                <Text className="text-emerald-100/50 text-xs font-semibold tracking-[2px] uppercase mt-5 mb-2">
-                  Trigger Name
-                </Text>
-                <TextInput
-                  value={form.name}
-                  onChangeText={(name) => setForm((f) => ({ ...f, name }))}
-                  placeholder="e.g. Stressful meeting"
-                  placeholderTextColor="#5c6b52"
-                  accessibilityLabel="Trigger name"
-                  className="bg-[#a9b596] rounded-2xl px-4 py-3.5 text-[#2f3a2a] text-base"
-                />
-
-                {/* Reason */}
-                <Text className="text-emerald-100/50 text-xs font-semibold tracking-[2px] uppercase mt-5 mb-2">
-                  Notes & Reasonaing
-                </Text>
-                <TextInput
-                  value={form.reason}
-                  onChangeText={(reason) => setForm((f) => ({ ...f, reason }))}
-                  placeholder="Any Notes? What was going on? (Optional)"
-                  placeholderTextColor="#5c6b52"
-                  multiline
-                  numberOfLines={3}
-                  accessibilityLabel="Reason for the trigger"
-                  className="bg-[#a9b596] rounded-2xl px-4 py-3.5 text-[#2f3a2a] text-base"
-                  style={{ minHeight: 80, textAlignVertical: 'top' }}
-                />
-
-                {/* Intensity */}
-                <IntensitySelector
-                  value={form.intensity}
-                  onChange={(intensity) => setForm((f) => ({ ...f, intensity }))}
-                />
-
-                {/* Relapse checkbox */}
-                <RelapseCheckbox
-                  checked={form.relapsed}
-                  onToggle={() =>
-                    setForm((f) => ({ ...f, relapsed: !f.relapsed }))
-                  }
-                />
-
-                {/* Save */}
-                <TouchableOpacity
-                  onPress={handleSave}
-                  disabled={!canSave || isSaving}
-                  activeOpacity={0.85}
-                  accessibilityRole="button"
-                  accessibilityLabel="Save trigger"
-                  className={`mt-6 rounded-2xl py-4 items-center justify-center ${
-                    canSave && !isSaving ? 'bg-lime-600' : 'bg-emerald-800/50'
-                  }`}
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled"
+                  contentContainerStyle={{ paddingBottom: 4 }}
                 >
-                  <Text
-                    className={`text-base font-semibold ${
-                      canSave && !isSaving
-                        ? 'text-emerald-950'
-                        : 'text-emerald-100/40'
+                  {/* Trigger name */}
+                  <Text className="text-emerald-100/50 uppercase mt-5 mb-2" style={Typography.sectionLabel}>
+                    Trigger Name
+                  </Text>
+                  <TextInput
+                    value={form.name}
+                    onChangeText={(name) => setForm((f) => ({ ...f, name }))}
+                    placeholder="e.g. Stressful meeting"
+                    placeholderTextColor="#5c6b52"
+                    accessibilityLabel="Trigger name"
+                    className="bg-[#a9b596] rounded-2xl px-4 py-3.5 text-[#2f3a2a] text-base"
+                  />
+
+                  {/* Reason */}
+                  <Text className="text-emerald-100/50 uppercase mt-5 mb-2" style={Typography.sectionLabel}>
+                    Notes & Reasonaing
+                  </Text>
+                  <TextInput
+                    value={form.reason}
+                    onChangeText={(reason) => setForm((f) => ({ ...f, reason }))}
+                    placeholder="Any Notes? What was going on? (Optional)"
+                    placeholderTextColor="#5c6b52"
+                    multiline
+                    numberOfLines={3}
+                    accessibilityLabel="Reason for the trigger"
+                    className="bg-[#a9b596] rounded-2xl px-4 py-3.5 text-[#2f3a2a] text-base"
+                    style={{ minHeight: 80, textAlignVertical: 'top' }}
+                  />
+
+                  {/* Intensity */}
+                  <IntensitySelector
+                    value={form.intensity}
+                    onChange={(intensity) => setForm((f) => ({ ...f, intensity }))}
+                  />
+
+                  {/* Relapse checkbox */}
+                  <RelapseCheckbox
+                    checked={form.relapsed}
+                    onToggle={() =>
+                      setForm((f) => ({ ...f, relapsed: !f.relapsed }))
+                    }
+                  />
+
+                  {/* Save */}
+                  <TouchableOpacity
+                    onPress={handleSave}
+                    disabled={!canSave || isSaving}
+                    activeOpacity={0.85}
+                    accessibilityRole="button"
+                    accessibilityLabel="Save trigger"
+                    className={`mt-6 rounded-2xl py-4 items-center justify-center ${
+                      canSave && !isSaving ? 'bg-lime-600' : 'bg-emerald-800/50'
                     }`}
                   >
-                    {isSaving ? 'Saving…' : 'Save trigger'}
-                  </Text>
-                </TouchableOpacity>
+                    <Text
+                      className={`text-base font-semibold ${
+                        canSave && !isSaving
+                          ? 'text-emerald-950'
+                          : 'text-emerald-100/40'
+                      }`}
+                    >
+                      {isSaving ? 'Saving…' : 'Save trigger'}
+                    </Text>
+                  </TouchableOpacity>
+                </ScrollView>
               </Animated.View>
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>

@@ -1,5 +1,6 @@
 // Target path: components/Milestones/last-30-days.tsx
 import { View, Text } from 'react-native';
+import { Typography } from '@/constants/typography';
 
 export type DayStatus = 'checked-in' | 'relapsed' | 'missed';
 
@@ -28,7 +29,7 @@ export default function Last30Days({
 }: Last30DaysProps) {
   return (
     <View className="mx-6 mt-5 bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-5">
-      <Text className="text-emerald-100/50 text-xs font-semibold tracking-[2px] uppercase">
+      <Text className="text-emerald-100/50 uppercase" style={Typography.sectionLabel}>
         Last 30 Days
       </Text>
 
@@ -49,7 +50,7 @@ export default function Last30Days({
               className="w-2 h-2 rounded-full mr-1.5"
               style={{ backgroundColor: STATUS_COLOR[status] }}
             />
-            <Text className="text-emerald-100/50 text-xs">{label}</Text>
+            <Text className="text-emerald-100/50 text-sm">{label}</Text>
           </View>
         ))}
       </View>

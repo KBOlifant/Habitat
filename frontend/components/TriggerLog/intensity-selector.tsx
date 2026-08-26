@@ -1,4 +1,5 @@
 import { ScrollView, TouchableOpacity, View, Text } from 'react-native';
+import { Typography } from '@/constants/typography';
 
 const SCALE = Array.from({ length: 5 }, (_, i) => i + 1);
 
@@ -16,7 +17,7 @@ export default function IntensitySelector({
   return (
     <View className="mt-5">
       <View className="flex-row items-baseline justify-between">
-        <Text className="text-emerald-100/50 text-xs font-semibold tracking-[2px] uppercase">
+        <Text className="text-emerald-100/50 uppercase" style={Typography.sectionLabel}>
           {label}
         </Text>
         <Text className="text-white text-sm font-semibold">

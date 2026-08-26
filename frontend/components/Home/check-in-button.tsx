@@ -25,7 +25,7 @@ export default function CheckInButton({
             <Text className="text-[#2f2a24] font-bold text-base">
               Daily Check-in
             </Text>
-            <Text className="text-[#2f2a24]/70 text-xs mt-0.5">
+            <Text className="text-[#2f2a24]/70 text-sm mt-0.5">
               {cardsAwait} mindfulness cards await
             </Text>
           </View>

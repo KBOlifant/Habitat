@@ -1,5 +1,6 @@
 import { TouchableOpacity, View, Text } from 'react-native';
 import { ChevronLeft, Plus } from 'lucide-react-native';
+import { Typography } from '@/constants/typography';
 
 type TriggerLogHeaderProps = {
   onBack?: () => void;
@@ -27,10 +28,10 @@ export default function TriggerLogHeader({
             <Text className="text-emerald-100/80 text-sm ml-0.5">Back</Text>
           </TouchableOpacity>
 
-          <Text className="text-white text-3xl font-bold mt-3">
+          <Text className="text-white mt-3" style={Typography.title}>
             Trigger Log
           </Text>
-          <Text className="text-emerald-100/60 text-sm mt-1">{subtitle}</Text>
+          <Text className="text-emerald-100/60 mt-1" style={Typography.subtitle}>{subtitle}</Text>
         </View>
 
         <TouchableOpacity

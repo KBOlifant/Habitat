@@ -18,19 +18,19 @@ export default function StatsRow({
       <View className="flex-1 bg-emerald-900/50 border border-emerald-800/50 rounded-2xl py-4 items-center">
         <Droplet size={16} color="#4ade80" />
         <Text className="text-white text-xl font-bold mt-2">{streak}</Text>
-        <Text className="text-emerald-100/50 text-xs mt-0.5">Streak</Text>
+        <Text className="text-emerald-100/50 text-sm mt-0.5">Streak</Text>
       </View>
 
       <View className="flex-1 bg-emerald-900/50 border border-emerald-800/50 rounded-2xl py-4 items-center">
         <Circle size={16} color="#34d399" />
         <Text className="text-white text-xl font-bold mt-2">{resisted}</Text>
-        <Text className="text-emerald-100/50 text-xs mt-0.5">Resisted</Text>
+        <Text className="text-emerald-100/50 text-sm mt-0.5">Resisted</Text>
       </View>
 
       <View className="flex-1 bg-emerald-900/50 border border-emerald-800/50 rounded-2xl py-4 items-center">
         <Triangle size={16} color="#f97316" />
         <Text className="text-white text-xl font-bold mt-2">{relapses}</Text>
-        <Text className="text-emerald-100/50 text-xs mt-0.5">Relapses</Text>
+        <Text className="text-emerald-100/50 text-sm mt-0.5">Relapses</Text>
       </View>
     </View>
   );

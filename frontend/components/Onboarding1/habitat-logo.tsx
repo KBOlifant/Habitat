@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { Typography } from '@/constants/typography';
 
 const TRUNK_COLOR = '#a9663f';
 const CANOPY_COLOR = '#4d6b45';
@@ -138,8 +139,8 @@ export default function HabitatLogo({
       <Text className="text-emerald-100/50 text-xs font-semibold tracking-[3px] uppercase mt-3">
         Welcome to
       </Text>
-      <Text className="text-white text-4xl font-bold mt-1">{appName}</Text>
-      <Text className="text-emerald-100/60 text-sm text-center leading-5 mt-3">
+      <Text className="text-white mt-1" style={Typography.title}>{appName}</Text>
+      <Text className="text-emerald-100/60 text-center mt-3" style={Typography.subtitle}>
         {tagline}
       </Text>
     </View>

@@ -39,7 +39,7 @@ export default function HabitGrid({
             style={{ width: '47%' }}
           >
             <Text
-              className={`text-sm font-medium ${
+              className={`text-base font-medium ${
                 isSelected ? 'text-emerald-950' : 'text-[#2f3a2a]'
               }`}
             >

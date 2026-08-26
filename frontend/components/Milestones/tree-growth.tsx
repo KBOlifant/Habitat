@@ -1,5 +1,6 @@
 // Target path: components/Milestones/tree-growth.tsx
 import { View, Text } from 'react-native';
+import { Typography } from '@/constants/typography';
 import { Check, Circle } from 'lucide-react-native';
 
 export type TreeStageState = 'complete' | 'current' | 'locked';
@@ -59,7 +60,7 @@ export default function TreeGrowth({ streakDays = 0, stages }: TreeGrowthProps) 
 
   return (
     <View className="mx-6 mt-5 bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-5">
-      <Text className="text-emerald-100/50 text-xs font-semibold tracking-[2px] uppercase mb-4">
+      <Text className="text-emerald-100/50 uppercase mb-4" style={Typography.sectionLabel}>
         Tree Growth
       </Text>
 
@@ -74,14 +75,14 @@ export default function TreeGrowth({ streakDays = 0, stages }: TreeGrowthProps) 
 
             <View className="flex-1 ml-3">
               <Text
-                className={`text-sm font-semibold ${
+                className={`text-base font-semibold ${
                   isLocked ? 'text-emerald-100/35' : 'text-white'
                 }`}
               >
                 {stage.title}
               </Text>
               <Text
-                className={`text-xs mt-0.5 ${
+                className={`text-sm mt-0.5 ${
                   isLocked ? 'text-emerald-100/25' : 'text-emerald-100/50'
                 }`}
               >
@@ -91,7 +92,7 @@ export default function TreeGrowth({ streakDays = 0, stages }: TreeGrowthProps) 
 
             {stage.state === 'current' && (
               <View className="bg-emerald-700/50 border border-emerald-600/50 rounded-full px-2.5 py-1">
-                <Text className="text-emerald-200 text-[10px] font-semibold">
+                <Text className="text-emerald-200 text-xs font-semibold">
                   Current
                 </Text>
               </View>

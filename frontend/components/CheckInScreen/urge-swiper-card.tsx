@@ -15,7 +15,7 @@ export default function UrgeButtons({ onStrongUrge, onNoUrge }: Props) {
         className="flex-1 flex-row items-center justify-center bg-[#182518] border border-[#3a4a3a] rounded-2xl py-4 active:opacity-80"
       >
         <X size={16} color="#c96b5f" />
-        <Text className="text-[#e8e4d8] text-base ml-2">Strong urge</Text>
+        <Text className="text-[#e8e4d8] text-base ml-2">Strong urdge</Text>
       </Pressable>
 
       <Pressable

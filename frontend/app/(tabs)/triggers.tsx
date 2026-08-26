@@ -106,7 +106,7 @@ export default function TriggerLogScreen() {
         accessibilityLabel="Swipe up to log a trigger"
       >
         <ChevronUp size={16} color="#6b7a63" />
-        <Text className="text-emerald-100/40 text-[11px] mt-0.5">
+        <Text className="text-emerald-100/40 text-sm mt-0.5">
           Swipe up to log a trigger
         </Text>
       </View>

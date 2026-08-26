@@ -74,10 +74,10 @@ export default function ProgressScreen() {
         <Last30Days days={stats.last30Days} />
         <TreeGrowth streakDays={stats.streak} />
         <Milestones streakDays={stats.streak} />
-        <DevTimeTravel
+        {/* <DevTimeTravel
           initialDate={currentDate}
           returnCurrentDate={setSelectedDate}
-        />
+        /> */}
       </ScrollView>
     </LinearGradient>
   );

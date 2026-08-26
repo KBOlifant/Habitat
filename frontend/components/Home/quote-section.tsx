@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { Typography } from '@/constants/typography';
 
 type TodaysReflectionProps = {
   quote?: string;
@@ -9,7 +10,7 @@ export default function TodaysReflection({
 }: TodaysReflectionProps) {
   return (
     <View className="mt-4 bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-5">
-      <Text className="text-emerald-100/50 text-xs font-semibold tracking-[2px] uppercase">
+      <Text className="text-emerald-100/50 uppercase" style={Typography.sectionLabel}>
         Today&apos;s Reflection
       </Text>
       <Text className="text-white italic text-[15px] leading-6 mt-3">

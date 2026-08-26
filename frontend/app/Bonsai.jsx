@@ -8,6 +8,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import Svg, { Line, Ellipse, Circle, Path } from 'react-native-svg';
 import Slider from '@react-native-community/slider';
+import { Typography } from '../constants/typography';
 
 /* ------------------------------------------------------------------ */
 /* Math helpers                                                       */
@@ -404,7 +405,7 @@ export function BonsaiCanvas({ growth }) {
 
       <View className="items-center mt-4">
         <Text className="text-lg font-semibold text-emerald-800">{stage.label}</Text>
-        <Text className="text-stone-400 text-xs mt-1">{Math.round(growth * 100)}% grown</Text>
+        <Text className="text-stone-400 text-sm mt-1">{Math.round(growth * 100)}% grown</Text>
       </View>
     </>
   );
@@ -447,8 +448,8 @@ export default function BonsaiGrower() {
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View className="pt-6 pb-2 items-center">
-          <Text className="text-2xl font-bold text-stone-800">Bonsai Grower</Text>
-          <Text className="text-stone-500 text-sm mt-1">Scrub the slider to watch it grow</Text>
+          <Text className="text-stone-800" style={Typography.title}>Bonsai Grower</Text>
+          <Text className="text-stone-500 text-base mt-1">Scrub the slider to watch it grow</Text>
         </View>
 
         {/* Canvas */}
@@ -459,7 +460,7 @@ export default function BonsaiGrower() {
         {/* Stage label */}
         <View className="items-center mt-4">
           <Text className="text-lg font-semibold text-emerald-800">{stage.label}</Text>
-          <Text className="text-stone-400 text-xs mt-1">{Math.round(growth * 100)}% grown</Text>
+          <Text className="text-stone-400 text-sm mt-1">{Math.round(growth * 100)}% grown</Text>
         </View>
 
         {/* Growth Slider */}
@@ -480,7 +481,7 @@ export default function BonsaiGrower() {
 
         {/* Adjustments Section */}
         <View className="px-8 mt-6">
-          <Text className="text-sm font-bold text-stone-500 mb-4 uppercase tracking-wider">Adjustments</Text>
+          <Text className="text-base font-bold text-stone-500 mb-4 uppercase tracking-wider">Adjustments</Text>
           
           {/* Leaves */}
           <View className="flex-row items-center mb-1">
@@ -536,7 +537,7 @@ export default function BonsaiGrower() {
           >
             <Text className="text-white font-semibold">New Bonsai</Text>
           </TouchableOpacity>
-          <Text className="text-stone-400 text-xs mt-2">seed #{seed}</Text>
+          <Text className="text-stone-400 text-sm mt-2">seed #{seed}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

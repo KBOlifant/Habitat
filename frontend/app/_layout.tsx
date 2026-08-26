@@ -6,6 +6,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import './global.css';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import {
+  Fraunces_400Regular,
+  Fraunces_700Bold,
+  useFonts,
+} from '@expo-google-fonts/fraunces';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -13,6 +18,12 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const [fontsLoaded] = useFonts({
+    Fraunces_400Regular,
+    Fraunces_700Bold,
+  });
+
+  if (!fontsLoaded) return null;
 
   return (
     <GestureHandlerRootView>

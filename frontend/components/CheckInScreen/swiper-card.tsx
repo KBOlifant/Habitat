@@ -42,14 +42,14 @@ export const Card = ({
     <View className="h-[340px] w-4/5 overflow-hidden rounded-[24px] border border-[rgba(104,150,29,0.38)] bg-[#142014]">
       {/* Top Header: Progress (Left) & Icon (Right) */}
       <View className="flex-row items-center justify-between px-5 pt-5">
-        <Text className="text-sm font-semibold text-[#7A9B6A]">{progress}</Text>
+        <Text className="text-base font-semibold text-[#7A9B6A]">{progress}</Text>
         <Ionicons name="sparkles-outline" size={22} color="#8EFA00" />
       </View>
 
       {/* Middle Content Section */}
       <View className="mt-12 mb-auto items-start px-5">
-        <Text className="mb-4 font-[FrauncesBold] text-left text-xl text-[#eaf0e2]">{title}</Text>
-        <Text className="font-[FrauncesRegular] text-left text-sm leading-5 text-[#cddac7]">
+        <Text className="mb-4 font-[FrauncesBold] text-left text-2xl text-[#eaf0e2]">{title}</Text>
+        <Text className="font-[FrauncesRegular] text-left text-base leading-6 text-[#cddac7]">
           {description}
         </Text>
       </View>
@@ -60,14 +60,14 @@ export const Card = ({
           className="flex-1 items-center justify-center border-r border-[rgba(104,150,29,0.25)] py-4 active:bg-[rgba(104,150,29,0.15)]"
           onPress={onSecondaryPress}
         >
-          <Text className="font-[FrauncesRegular] text-[15px] text-white/60">Skip</Text>
+          <Text className="font-[FrauncesRegular] text-base text-white/60">Skip</Text>
         </Pressable>
 
         <Pressable 
           className="flex-1 items-center justify-center py-4 active:bg-[rgba(104,150,29,0.15)]"
           onPress={onPrimaryPress}
         >
-          <Text className="font-[FrauncesBold] text-[15px] text-[#8EFA00]">Continue</Text>
+          <Text className="font-[FrauncesBold] text-base text-[#8EFA00]">Continue</Text>
         </Pressable>
       </View>
     </View>

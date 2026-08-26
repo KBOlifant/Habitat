@@ -3,6 +3,7 @@ import { Flame, LogOut } from 'lucide-react-native';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'expo-router';
 import { auth } from '@/app/lib/firebase';
+import { Typography } from '@/constants/typography';
 
 type HomeHeaderProps = {
   userName?: string;
@@ -31,11 +32,11 @@ export default function HomeHeader({
   return (
     <View className="flex-row items-start justify-between">
       <View>
-        <Text className="text-emerald-100/60 text-xs font-semibold tracking-[3px] uppercase">
+        <Text className="text-emerald-100/60 text-sm font-semibold tracking-[3px] uppercase">
           Good Evening
         </Text>
-        <Text className="mt-1 text-3xl font-bold text-white">{userName}</Text>
-        <Text className="mt-1 text-sm text-emerald-100/70">
+        <Text className="mt-1 text-white" style={Typography.title}>{userName}</Text>
+        <Text className="mt-1 text-emerald-100/70" style={Typography.subtitle}>
           {habitFreeDays} Days Free From {habitName}
         </Text>
       </View>

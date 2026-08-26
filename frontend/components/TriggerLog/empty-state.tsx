@@ -17,7 +17,7 @@ export default function EmptyState({
       <Text className="text-white text-base font-semibold mt-5 text-center">
         {title}
       </Text>
-      <Text className="text-emerald-100/40 text-xs mt-2 text-center leading-5">
+      <Text className="text-emerald-100/40 text-sm mt-2 text-center leading-6">
         {subtitle}
       </Text>
     </View>

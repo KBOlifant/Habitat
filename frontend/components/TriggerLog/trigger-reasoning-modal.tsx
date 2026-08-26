@@ -61,10 +61,10 @@ export const TriggerReasoningModalInner = forwardRef<
     >
       <View className="flex-row items-start justify-between mb-1">
         <View className="flex-1 pr-4">
-          <Text className="text-xs font-medium text-emerald-600 uppercase tracking-wide">
+          <Text className="text-sm font-medium text-emerald-600 uppercase tracking-wide">
             {shown.name ?? 'Trigger'}
           </Text>
-          <Text className="text-gray-400 text-xs mt-0.5">{formattedDate}</Text>
+          <Text className="text-gray-400 text-sm mt-0.5">{formattedDate}</Text>
         </View>
         <Pressable
           onPress={onClose}

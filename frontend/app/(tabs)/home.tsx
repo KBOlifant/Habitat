@@ -105,7 +105,7 @@ export default function HomeScreen() {
         <CheckInButton />
         <AdditionalButtons />
         <QuoteSection />
-        <DevTimeTravel initialDate={initialDate} returnCurrentDate={(currentDate) => setDevDate(currentDate)} />
+        {/* <DevTimeTravel initialDate={initialDate} returnCurrentDate={(currentDate) => setDevDate(currentDate)} /> */}
       </ScrollView>
     </LinearGradient>
   );

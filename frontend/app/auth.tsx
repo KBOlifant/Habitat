@@ -34,6 +34,7 @@ import { router } from 'expo-router';
 import { ArrowRight } from 'lucide-react-native';
 // import GoogleButton from '../components/Auth/GoogleButton';
 import { signInWithEmail, signUpWithEmail, authErrorMessage } from './lib/auth';
+import { Typography } from '@/constants/typography';
 
 type Mode = 'signIn' | 'signUp';
 
@@ -101,12 +102,12 @@ export default function AuthScreen() {
                 WELCOME TO
               </Text>
               <Text
-                className="mt-2 text-center text-4xl text-[#e9e6d8]"
-                style={{ fontFamily: 'PlayfairDisplay-Bold' /* fallback to serif system font if not loaded */ }}
+                className="mt-2 text-center text-[#e9e6d8]"
+                style={Typography.title}
               >
                 Habitat
               </Text>
-              <Text className="mt-3 text-center text-sm text-[#a9b08e]">
+              <Text className="mt-3 text-center text-[#a9b08e]" style={Typography.subtitle}>
                 {isSignUp
                   ? 'Break habits. Grow stillness.\nTend your inner bonsai.'
                   : 'Welcome back — your bonsai\nhas been waiting.'}
@@ -148,7 +149,7 @@ export default function AuthScreen() {
 
               {error && (
                 <Text
-                  className="text-center text-sm text-[#e0a37a]"
+                  className="text-center text-base text-[#e0a37a]"
                   accessibilityLiveRegion="polite"
                 >
                   {error}
@@ -199,7 +200,7 @@ export default function AuthScreen() {
               className="mt-8 items-center py-2"
               style={{ minHeight: 44, justifyContent: 'center' }}
             >
-              <Text className="text-sm text-[#a9b08e]">
+              <Text className="text-base text-[#a9b08e]">
                 {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
                 <Text className="font-semibold text-[#e9e6d8]">
                   {isSignUp ? 'Sign in' : 'Sign up'}

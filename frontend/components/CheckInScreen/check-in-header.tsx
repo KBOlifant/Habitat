@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { ChevronLeft } from 'lucide-react-native';
+import { Typography } from '@/constants/typography';
 
 type Props = {
   onBack?: () => void;
@@ -18,10 +19,10 @@ export default function CheckInHeader({ onBack }: Props) {
         <Text className="text-emerald-100/80 text-sm ml-0.5">Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-[#f3efe3] text-3xl font-serif mt-2">
+      <Text className="text-[#f3efe3] mt-2" style={Typography.title}>
         Daily Check-in
       </Text>
-      <Text className="text-[#8a9a8a] text-base mt-1">
+      <Text className="text-[#8a9a8a] mt-1" style={Typography.subtitle}>
         Swipe right if yes, left if no
       </Text>
 

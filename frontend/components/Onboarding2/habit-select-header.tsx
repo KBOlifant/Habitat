@@ -1,5 +1,6 @@
 import { TouchableOpacity, View, Text } from 'react-native';
 import { ChevronLeft } from 'lucide-react-native';
+import { Typography } from '@/constants/typography';
 
 type HabitSelectHeaderProps = {
   onBack?: () => void;
@@ -23,10 +24,10 @@ export default function HabitSelectHeader({
         <Text className="text-emerald-100/80 text-sm ml-0.5">Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-white text-[28px] leading-9 font-bold mt-4">
+      <Text className="text-white mt-4" style={Typography.title}>
         What habit are{'\n'}you breaking, {userName}?
       </Text>
-      <Text className="text-emerald-100/60 text-sm mt-2">{subtitle}</Text>
+      <Text className="text-emerald-100/60 mt-2" style={Typography.subtitle}>{subtitle}</Text>
     </View>
   );
 }

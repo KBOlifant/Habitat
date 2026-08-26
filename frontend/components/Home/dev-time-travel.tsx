@@ -54,7 +54,7 @@ export default function DevTimeTravel({
     <View className="mt-4 bg-emerald-950 border border-dashed border-emerald-800/60 rounded-2xl p-4">
       <View className="flex-row items-center mb-3">
         <FlaskConical size={13} color="#84cc16" />
-        <Text className="text-lime-500 text-[11px] font-bold tracking-[1.5px] uppercase ml-1.5">
+        <Text className="text-lime-500 text-xs font-bold tracking-[1.5px] uppercase ml-1.5">
           Dev Time Travel
         </Text>
       </View>
@@ -72,7 +72,7 @@ export default function DevTimeTravel({
           <Text className="text-white font-semibold text-base">
             {isToday ? 'Today' : date.toDateString()}
           </Text>
-          <Text className="text-emerald-100/50 text-xs mt-0.5">{isoDate}</Text>
+          <Text className="text-emerald-100/50 text-sm mt-0.5">{isoDate}</Text>
         </View>
 
         <TouchableOpacity
@@ -84,7 +84,7 @@ export default function DevTimeTravel({
         </TouchableOpacity>
       </View>
 
-      <Text className="text-emerald-100/40 text-[11px] text-center mt-3">
+      <Text className="text-emerald-100/40 text-sm text-center mt-3">
         Simulates streak as if it were that day
       </Text>
     </View>

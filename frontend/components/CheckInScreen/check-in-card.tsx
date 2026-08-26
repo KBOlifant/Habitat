@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Wind, X, Check } from 'lucide-react-native';
+import { Typography } from '@/constants/typography';
 
 type Props = {
   step: number;
@@ -23,7 +24,7 @@ export default function CheckInCard({ step, totalSteps, title, question }: Props
       </View>
 
       {/* Title + question */}
-      <Text className="text-[#f3efe3] text-2xl font-serif mt-5">{title}</Text>
+      <Text className="text-[#f3efe3] mt-5" style={Typography.title}>{title}</Text>
       <Text className="text-[#b9c7b9] text-base leading-6 mt-3">
         {question}
       </Text>
@@ -32,10 +33,10 @@ export default function CheckInCard({ step, totalSteps, title, question }: Props
       <View className="flex-row items-center justify-between mt-32">
         <View className="flex-row items-center">
           <X size={14} color="#6f8a6f" />
-          <Text className="text-[#6f8a6f] text-sm ml-1.5">Strong urge</Text>
+          <Text className="text-[#6f8a6f] text-base ml-1.5">Mark Unchecked</Text>
         </View>
         <View className="flex-row items-center">
-          <Text className="text-[#6f8a6f] text-sm mr-1.5">No urge</Text>
+          <Text className="text-[#6f8a6f] text-base mr-1.5">Mark Checked</Text>
           <Check size={14} color="#6f8a6f" />
         </View>
       </View>

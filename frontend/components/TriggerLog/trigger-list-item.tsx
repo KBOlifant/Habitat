@@ -51,14 +51,14 @@ export default function TriggerListItem({ trigger, onPress }: TriggerListItemPro
 
         {!!trigger.reason && (
           <Text
-            className="text-emerald-100/50 text-xs mt-1"
+            className="text-emerald-100/50 text-sm mt-1"
             numberOfLines={2}
           >
             {trigger.reason}
           </Text>
         )}
 
-        <Text className="text-emerald-100/30 text-[11px] mt-2">
+        <Text className="text-emerald-100/30 text-sm mt-2">
           {formatLoggedAt(trigger.loggedAt)}
         </Text>
       </View>
@@ -68,7 +68,7 @@ export default function TriggerListItem({ trigger, onPress }: TriggerListItemPro
         style={{ backgroundColor: `${intensityColor(trigger.intensity)}20` }}
       >
         <Text
-          className="text-xs font-bold"
+          className="text-sm font-bold"
           style={{ color: intensityColor(trigger.intensity) }}
         >
           {trigger.intensity}

@@ -22,7 +22,7 @@ export default function AdditionalButtons({
             <Text className="text-white font-semibold text-sm mt-2">
               Log Trigger
             </Text>
-            <Text className="text-emerald-100/60 text-xs mt-0.5">
+            <Text className="text-emerald-100/60 text-sm mt-0.5">
               Track what sets you off
             </Text>
           </TouchableOpacity>
@@ -37,7 +37,7 @@ export default function AdditionalButtons({
             <Text className="text-white font-semibold text-sm mt-2">
               Progress
             </Text>
-            <Text className="text-emerald-100/60 text-xs mt-0.5">
+            <Text className="text-emerald-100/60 text-sm mt-0.5">
               {triggerStreakDays}-day streak
             </Text>
           </TouchableOpacity>
