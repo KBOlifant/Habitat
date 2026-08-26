@@ -28,7 +28,7 @@ export default function AdditionalButtons({
           </TouchableOpacity>
         </Link>
 
-        <Link href="/" asChild>
+        <Link href="/dashboard" asChild>
           <TouchableOpacity
             activeOpacity={0.85}
             className="flex-1 bg-emerald-900/60 border border-emerald-800/60 rounded-2xl p-4"

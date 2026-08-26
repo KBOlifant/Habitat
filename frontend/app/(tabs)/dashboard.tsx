@@ -20,6 +20,7 @@ import {
   type ProgressStats,
 } from '../../app/lib/progress';
 import { goBackOrHome } from '../lib/navigation';
+import ScreenTransition from '../../components/General/screen-transition';
 
 const EMPTY_STATS: ProgressStats = {
   streak: 0,
@@ -72,20 +73,22 @@ export default function ProgressScreen() {
 
   return (
     <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
-      <ScrollView
-        className="pt-16"
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
-        <ProgressHeader onBack={() => goBackOrHome(router)} />
-        <StatsRow streak={stats.streak} resisted={stats.resisted} relapses={stats.relapses} />
-        <Last30Days days={stats.last30Days} />
-        <TreeGrowth streakDays={stats.streak} />
-        <Milestones streakDays={stats.streak} />
-        {/* <DevTimeTravel
-          initialDate={currentDate}
-          returnCurrentDate={setSelectedDate}
-        /> */}
-      </ScrollView>
+      <ScreenTransition>
+        <ScrollView
+          className="pt-16"
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
+          <ProgressHeader onBack={() => goBackOrHome(router)} />
+          <StatsRow streak={stats.streak} resisted={stats.resisted} relapses={stats.relapses} />
+          <Last30Days days={stats.last30Days} />
+          <TreeGrowth streakDays={stats.streak} />
+          <Milestones streakDays={stats.streak} />
+          {/* <DevTimeTravel
+            initialDate={currentDate}
+            returnCurrentDate={setSelectedDate}
+          /> */}
+        </ScrollView>
+      </ScreenTransition>
     </LinearGradient>
   );
 }

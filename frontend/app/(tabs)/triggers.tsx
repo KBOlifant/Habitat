@@ -14,6 +14,7 @@ import LogTriggerModal from '../../components/TriggerLog/log-trigger-modal';
 import { useSwipeGesture } from '../lib/hooks/use-swipe-gesture';
 import { auth } from '../lib/firebase';
 import { goBackOrHome } from '../lib/navigation';
+import ScreenTransition from '../../components/General/screen-transition';
 import {
   getTriggers,
   addTrigger,
@@ -82,10 +83,11 @@ export default function TriggerLogScreen() {
 
   return (
     <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
-      <ScrollView
-        contentContainerStyle={{ paddingTop: 64, paddingBottom: 120, flexGrow: 1 }}
-        className="px-6"
-      >
+      <ScreenTransition>
+        <ScrollView
+          contentContainerStyle={{ paddingTop: 64, paddingBottom: 120, flexGrow: 1 }}
+          className="px-6"
+        >
         <TriggerLogHeader
           onBack={() => goBackOrHome(router)}
           onAdd={() => setIsModalVisible(true)}
@@ -121,7 +123,8 @@ export default function TriggerLogScreen() {
           Swipe up to log a trigger
         </Text>
       </View>
-      </ScrollView>
+        </ScrollView>
+      </ScreenTransition>
 
       {/* Pinned swipe-up handle — doesn't scroll, so it never fights the ScrollView's own gesture. */}
       
@@ -137,6 +140,7 @@ export default function TriggerLogScreen() {
         onClose={() => setIsModalVisible(false)}
         onSave={handleSave}
       />
+
     </LinearGradient>
   );
 }

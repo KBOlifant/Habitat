@@ -10,6 +10,7 @@ import { useColorScheme } from 'react-native';
 import CardHolder from '../../components/CheckInScreen/card-holder';
 import { goBackOrHome } from '../lib/navigation';
 import { ScrollView } from 'react-native-gesture-handler';
+import ScreenTransition from '../../components/General/screen-transition';
 
 
 function useThemeColor(colorName: keyof typeof Colors.light) {
@@ -26,17 +27,19 @@ export default function DailyCheckInScreen() {
 
 return (
   <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
-    <ScrollView contentContainerStyle={{paddingBottom: 80}}>
-      <View style={{ flex: 1 }}>
-        <CheckInHeader onBack={() => goBackOrHome(router)} />
+    <ScreenTransition>
+      <ScrollView contentContainerStyle={{paddingBottom: 80}}>
+        <View style={{ flex: 1 }}>
+          <CheckInHeader onBack={() => goBackOrHome(router)} />
 
-        <CardHolder />
+          <CardHolder />
 
-        <View className="flex-1" />
+          <View className="flex-1" />
 
-        <View className="h-16" />
-      </View>
-    </ScrollView>
+          <View className="h-16" />
+        </View>
+      </ScrollView>
+    </ScreenTransition>
   </LinearGradient>
 );
 }

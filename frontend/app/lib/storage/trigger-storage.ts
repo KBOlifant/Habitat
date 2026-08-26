@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 export type Trigger = {
@@ -8,6 +8,13 @@ export type Trigger = {
   intensity: number;
   relapsed: boolean;
   loggedAt: string;
+  followUp?: TriggerFollowUp;
+};
+
+export type TriggerFollowUp = {
+  wasTriggered: boolean;
+  note?: string;
+  createdAt: string;
 };
 
 export type NewTriggerInput = {
@@ -15,6 +22,11 @@ export type NewTriggerInput = {
   reason: string;
   intensity: number;
   relapsed: boolean;
+};
+
+export type TriggerFollowUpInput = {
+  wasTriggered: boolean;
+  note?: string;
 };
 
 async function getTriggerLogCollection() {
@@ -89,4 +101,18 @@ export async function addTrigger(input: NewTriggerInput): Promise<Trigger> {
 export async function deleteTrigger(id: string): Promise<void> {
   const triggerLog = await getTriggerLogCollection();
   await deleteDoc(doc(triggerLog, id));
+}
+
+export async function updateTriggerFollowUp(
+  id: string,
+  input: TriggerFollowUpInput,
+): Promise<void> {
+  const triggerLog = await getTriggerLogCollection();
+  await updateDoc(doc(triggerLog, id), {
+    followUp: {
+      wasTriggered: input.wasTriggered,
+      ...(input.note?.trim() ? { note: input.note.trim() } : {}),
+      createdAt: new Date().toISOString(),
+    } satisfies TriggerFollowUp,
+  });
 }

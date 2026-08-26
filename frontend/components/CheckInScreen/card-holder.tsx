@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckInCard from './check-in-card';
 import SwipeableCard from '../General/swipeable-card';
@@ -7,6 +7,12 @@ import DevTimeTravel from '../Home/dev-time-travel';
 import { addDoc, collection, deleteDoc, getDocs } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../../app/lib/firebase';
+import { Typography } from '@/constants/typography';
+import {
+  getTriggers,
+  updateTriggerFollowUp,
+  type Trigger,
+} from '../../app/lib/storage/trigger-storage';
 
 const CHECK_PROGRESS_KEY = 'habitat_check_progress';
 
@@ -17,6 +23,95 @@ const steps = [
   // { title: 'Gratitude Check', question: 'How are you feeling right now?' },
   { title: 'Today\'s Intention', question: 'Your bonsai grows day by day. What small choice can you make today that your future self will thank you for?' },
 ];
+
+const TOTAL_STEPS = steps.length + 1;
+
+type RelapseNoteCardProps = {
+  step: number;
+  totalSteps: number;
+  trigger: Trigger;
+  onSkip: () => void;
+  onSave: (wasTriggered: boolean, note: string) => void;
+};
+
+function RelapseNoteCard({
+  step,
+  totalSteps,
+  trigger,
+  onSkip,
+  onSave,
+}: RelapseNoteCardProps) {
+  const [wasTriggered, setWasTriggered] = useState<boolean | null>(null);
+  const [note, setNote] = useState('');
+
+  return (
+    <View className="mx-5 mt-8 rounded-3xl border border-[#2f3f2f] bg-[#182518] p-5">
+      <Text className="text-[#8a9a8a] text-sm">{step} / {totalSteps}</Text>
+      <Text className="mt-5 text-[#f3efe3]" style={Typography.title}>
+        Were you triggered by {trigger.name}?
+      </Text>
+      <Text className="mt-3 text-[#b9c7b9] text-base leading-6">
+        This optional note can help you understand what happened.
+      </Text>
+
+      <View className="mt-5 flex-row" style={{ gap: 10 }}>
+        {([true, false] as const).map((value) => (
+          <Pressable
+            key={String(value)}
+            onPress={() => setWasTriggered(value)}
+            accessibilityRole="button"
+            accessibilityState={{ selected: wasTriggered === value }}
+            className={`flex-1 items-center rounded-xl border py-3 ${
+              wasTriggered === value ? 'border-lime-500 bg-lime-600' : 'border-[#6f8a6f]'
+            }`}
+          >
+            <Text className={`text-base font-semibold ${
+              wasTriggered === value ? 'text-emerald-950' : 'text-[#b9c7b9]'
+            }`}>
+              {value ? 'Yes' : 'No'}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+
+      <TextInput
+        value={note}
+        onChangeText={setNote}
+        multiline
+        maxLength={1000}
+        placeholder="What did you notice? (Optional)"
+        placeholderTextColor="#6f8a6f"
+        textAlignVertical="top"
+        accessibilityLabel="Optional relapse note"
+        className="mt-5 min-h-[120px] rounded-2xl bg-[#a9b596] px-4 py-3 text-base text-[#2f3a2a]"
+      />
+
+      <View className="mt-5 flex-row" style={{ gap: 10 }}>
+        <Pressable
+          onPress={onSkip}
+          accessibilityRole="button"
+          className="flex-1 items-center rounded-xl border border-[#6f8a6f] py-3"
+        >
+          <Text className="text-base font-semibold text-[#b9c7b9]">Skip</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => wasTriggered !== null && onSave(wasTriggered, note.trim())}
+          disabled={wasTriggered === null}
+          accessibilityRole="button"
+          className={`flex-1 items-center rounded-xl py-3 ${
+            wasTriggered === null ? 'bg-emerald-800/50' : 'bg-lime-600'
+          }`}
+        >
+          <Text className={`text-base font-semibold ${
+            wasTriggered === null ? 'text-emerald-100/40' : 'text-emerald-950'
+          }`}>
+            Save note
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
 
 export type CheckRecord = {
   step: number;
@@ -58,12 +153,33 @@ export default function CardHolder() {
   const [devDate, setDevDate] = useState(getStorageDate());
   const [isDevActionRunning, setIsDevActionRunning] = useState(false);
   const [devMessage, setDevMessage] = useState<string | null>(null);
+  const [relapseTrigger, setRelapseTrigger] = useState<Trigger | null>(null);
+  const [isSavingRelapseNote, setIsSavingRelapseNote] = useState(false);
 
   useEffect(() => {
     return onAuthStateChanged(auth, (user) => {
       setUserId(user?.uid ?? null);
     });
   }, []);
+
+  useEffect(() => {
+    if (!userId) {
+      setRelapseTrigger(null);
+      return;
+    }
+
+    getTriggers()
+      .then((triggers) => {
+        const unreviewedRelapse = triggers.find(
+          (trigger) => trigger.relapsed && !trigger.followUp,
+        );
+        setRelapseTrigger(unreviewedRelapse ?? null);
+      })
+      .catch((error) => {
+        console.warn('Unable to check for relapse triggers', error);
+        setRelapseTrigger(null);
+      });
+  }, [userId]);
 
   useEffect(() => {
     const loadProgress = async () => {
@@ -227,6 +343,42 @@ export default function CardHolder() {
     </View>
   ) : null;
 
+  const saveCompletedCheckIn = async (completeChecks: CheckRecord[], note?: string) => {
+    const currentUserId = auth.currentUser?.uid ?? userId;
+    if (!currentUserId) {
+      console.warn('All checks recorded locally because no Firebase user is signed in');
+      return;
+    }
+
+    try {
+      const completedAt = new Date().toISOString();
+      await addDoc(collection(db, 'users', currentUserId, 'check_in_record'), {
+        daily_check: true,
+        has_relapsed: false,
+        checks: completeChecks,
+        ...(note ? { note, noteDate: getStorageDate() } : {}),
+        uid: currentUserId,
+        completedAt,
+      });
+    } catch (error) {
+      console.error('Unable to save completed check-in to Firestore', error);
+    }
+  };
+
+  const finishRelapseNote = async (wasTriggered: boolean, note: string) => {
+    if (!relapseTrigger || isSavingRelapseNote) return;
+
+    setIsSavingRelapseNote(true);
+    try {
+      await updateTriggerFollowUp(relapseTrigger.id, { wasTriggered, note });
+      await saveCompletedCheckIn(checks);
+      setRelapseTrigger(null);
+      setIndex(TOTAL_STEPS);
+    } finally {
+      setIsSavingRelapseNote(false);
+    }
+  };
+
   const recordCheck = async (action: CheckRecord['action'], answer?: CheckRecord['answer']) => {
     const current = steps[index];
     if (!current) return;
@@ -245,29 +397,18 @@ export default function CardHolder() {
     ];
 
     setChecks(completeChecks);
-    setIndex((currentIndex) => currentIndex + 1);
-
     if (index !== steps.length - 1) {
+      setIndex((currentIndex) => currentIndex + 1);
       return;
     }
 
-    const currentUserId = auth.currentUser?.uid ?? userId;
-    if (!currentUserId) {
-      console.warn('All checks recorded locally because no Firebase user is signed in');
+    if (relapseTrigger) {
+      setIndex(steps.length);
       return;
     }
 
-    try {
-      await addDoc(collection(db, 'users', currentUserId, 'check_in_record'), {
-        daily_check: true,
-        has_relapsed: false,
-        checks: completeChecks,
-        uid: currentUserId,
-        completedAt: check.completedAt,
-      });
-    } catch (error) {
-      console.error('Unable to save completed check-in to Firestore', error);
-    }
+    await saveCompletedCheckIn(completeChecks);
+    setIndex(TOTAL_STEPS);
   };
 
   if (!isHydrated) {
@@ -277,6 +418,23 @@ export default function CardHolder() {
         <View className="px-5 mt-8">
           <Text className="text-[#8a9a8a] text-sm">Loading saved progress...</Text>
         </View>
+      </>
+    );
+  }
+
+  if (index === steps.length && relapseTrigger) {
+    return (
+      <>
+        {devTools}
+        <RelapseNoteCard
+          step={steps.length + 1}
+          totalSteps={TOTAL_STEPS}
+          trigger={relapseTrigger}
+          onSkip={async () => {
+            await finishRelapseNote(false, '');
+          }}
+          onSave={finishRelapseNote}
+        />
       </>
     );
   }
@@ -308,7 +466,7 @@ export default function CardHolder() {
   const renderCard = (step: (typeof steps)[number], stepIndex: number) => (
     <CheckInCard
       step={stepIndex + 1}
-      totalSteps={steps.length}
+      totalSteps={TOTAL_STEPS}
       title={step.title}
       question={step.question}
     />

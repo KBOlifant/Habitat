@@ -12,8 +12,10 @@ export default function TabLayout() {
   return (
     <Tabs
       initialRouteName="home"
+      backBehavior="history"
       screenOptions={{
         headerShown: false,
+        animation: 'none',
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tabIconDefault,
         tabBarButton: HapticTab,
@@ -36,14 +38,6 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="home"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="house.fill" color={color} />,
-        }}
-      />
-
-      <Tabs.Screen
         name="check-in"
         options={{
           title: 'Check-In',
@@ -62,10 +56,26 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
+        name="home"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color }) => <IconSymbol size={26} name="house.fill" color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
         name="dashboard"
         options={{
           title: 'Dashboard',
           tabBarIcon: ({ color }) => <IconSymbol size={26} name="chart.bar.fill" color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="check-in-notes"
+        options={{
+          title: 'Notes',
+          tabBarIcon: ({ color }) => <IconSymbol size={26} name="note.text" color={color} />,
         }}
       />
     </Tabs>

@@ -8,6 +8,7 @@ import CheckInButton from '../../components/Home/check-in-button';
 import AdditionalButtons from '../../components/Home/home-additional-buttons';
 import QuoteSection from '../../components/Home/quote-section';
 import DevTimeTravel from '../../components/Home/dev-time-travel';
+import ScreenTransition from '../../components/General/screen-transition';
 import { useColorScheme } from 'react-native';
 import { Gradients } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
@@ -15,6 +16,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth, db } from '../../app/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { fetchProgressStats, syncPlantState, getLocalDate } from '../../app/lib/progress';
+
 
 // Matches Tree Growth's "Ancient wisdom" stage (90+ days) so Home and the
 // Progress screen agree on what a "fully grown" bonsai means.
@@ -104,17 +106,19 @@ export default function HomeScreen() {
 
   return (
     <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
-      <ScrollView
-        className="px-6"
-        contentContainerStyle={{ paddingTop: 64, paddingBottom: 120 }}
-      >
-        <HomeHeader habitName={habit} userName={userName} />
-        <BonsaiScreen progress={progress} />
-        <CheckInButton />
-        <AdditionalButtons />
-        <QuoteSection />
-        {/* <DevTimeTravel initialDate={initialDate} returnCurrentDate={(currentDate) => setDevDate(currentDate)} /> */}
-      </ScrollView>
+      <ScreenTransition>
+        <ScrollView
+          className="px-6"
+          contentContainerStyle={{ paddingTop: 64, paddingBottom: 120 }}
+        >
+          <HomeHeader habitName={habit} userName={userName} />
+          <BonsaiScreen progress={progress} />
+          <CheckInButton />
+          <AdditionalButtons />
+          <QuoteSection />
+          {/* <DevTimeTravel initialDate={initialDate} returnCurrentDate={(currentDate) => setDevDate(currentDate)} /> */}
+        </ScrollView>
+      </ScreenTransition>
     </LinearGradient>
   );
 }

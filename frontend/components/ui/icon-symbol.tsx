@@ -18,6 +18,7 @@ const MAPPING = {
   'checkmark.circle.fill': 'check-circle',
   'flame.fill': 'local-fire-department',
   'chart.bar.fill': 'show-chart',
+  'note.text': 'notes',
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',

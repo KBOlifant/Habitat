@@ -1,6 +1,7 @@
-import { TouchableOpacity, View, Text } from 'react-native';
+import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { Sparkles, ChevronRight } from 'lucide-react-native';
 import { Link } from 'expo-router';
+import CheckInImage from './assets/Home1.jpeg';
 
 type CheckInButtonProps = {
   cardsAwait?: number;
