@@ -5,15 +5,20 @@ import { getFirestore } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-// Your web app's Firebase configuration
+const requiredEnv = (name: string): string => {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing required environment variable: ${name}`);
+  return value;
+};
+
 const firebaseConfig = {
-  apiKey: 'AIzaSyAuYrN-vzacl5H3ZGgJk0_gcfHTTJTPZeM',
-  authDomain: 'habitat-e91e4.firebaseapp.com',
-  projectId: 'habitat-e91e4',
-  storageBucket: 'habitat-e91e4.firebasestorage.app',
-  messagingSenderId: '538273366409',
-  appId: '1:538273366409:web:947a59cf0837ed46a12158',
-  measurementId: 'G-3578T4ZE8T',
+  apiKey: requiredEnv('EXPO_PUBLIC_FIREBASE_API_KEY'),
+  authDomain: requiredEnv('EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN'),
+  projectId: requiredEnv('EXPO_PUBLIC_FIREBASE_PROJECT_ID'),
+  storageBucket: requiredEnv('EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET'),
+  messagingSenderId: requiredEnv('EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID'),
+  appId: requiredEnv('EXPO_PUBLIC_FIREBASE_APP_ID'),
+  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 // Avoid re-initializing on fast refresh / multiple imports

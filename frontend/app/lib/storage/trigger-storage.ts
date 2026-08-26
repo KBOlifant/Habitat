@@ -1,4 +1,12 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  deleteField,
+  doc,
+  getDocs,
+  updateDoc,
+} from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 export type Trigger = {
@@ -115,4 +123,9 @@ export async function updateTriggerFollowUp(
       createdAt: new Date().toISOString(),
     } satisfies TriggerFollowUp,
   });
+}
+
+export async function deleteTriggerFollowUp(id: string): Promise<void> {
+  const triggerLog = await getTriggerLogCollection();
+  await updateDoc(doc(triggerLog, id), { followUp: deleteField() });
 }
