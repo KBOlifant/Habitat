@@ -187,7 +187,7 @@ export default function CardHolder() {
   };
 
   const devTools = __DEV__ ? (
-    <View className="px-5 mt-5">
+    <View className="px-5 mt-5 ">
       <DevTimeTravel
         initialDate={getStorageDate()}
         returnCurrentDate={setDevDate}
@@ -316,6 +316,7 @@ export default function CardHolder() {
 
   return (
     <>
+    
       {devTools}
 
       <View className="px-5 mt-5">

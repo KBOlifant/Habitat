@@ -1,10 +1,11 @@
-import { View, Text, Pressable } from 'react-native';
-import { AlertTriangle } from 'lucide-react-native';
+import { Alert, View, Text, Pressable } from 'react-native';
+import { AlertTriangle, Trash2 } from 'lucide-react-native';
 import type { Trigger } from '../../app/lib/storage/trigger-storage';
 
 type TriggerListItemProps = {
   trigger: Trigger;
   onPress?: () => void;
+  onDelete?: () => void | Promise<void>;
 };
 
 function formatLoggedAt(iso: string): string {
@@ -26,12 +27,35 @@ function formatLoggedAt(iso: string): string {
 }
 
 function intensityColor(intensity: number): string {
-  if (intensity >= 3) return '#f87171'; // red
-  if (intensity >= 5) return '#facc15'; // yellow
+  if (intensity >= 4) return '#f87171'; // red
+  if (intensity >= 3) return '#facc15'; // yellow
   return '#4ade80'; // green
 }
 
-export default function TriggerListItem({ trigger, onPress }: TriggerListItemProps) {
+export default function TriggerListItem({ trigger, onPress, onDelete }: TriggerListItemProps) {
+  const handleDelete = () => {
+    if (!onDelete) return;
+
+    Alert.alert(
+      'Delete trigger log?',
+      'This entry will be permanently removed from Firestore.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await onDelete();
+            } catch {
+              Alert.alert('Unable to delete', 'The trigger log could not be removed.');
+            }
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <Pressable onPress={onPress} className="bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-4 flex-row items-start">
       <View className="flex-1">
@@ -74,6 +98,19 @@ export default function TriggerListItem({ trigger, onPress }: TriggerListItemPro
           {trigger.intensity}
         </Text>
       </View>
+
+      <Pressable
+        onPress={(event) => {
+          event.stopPropagation();
+          handleDelete();
+        }}
+        hitSlop={8}
+        accessibilityRole="button"
+        accessibilityLabel={`Delete ${trigger.name}`}
+        className="w-9 h-9 rounded-full items-center justify-center ml-2 bg-red-500/10"
+      >
+        <Trash2 size={16} color="#f87171" />
+      </Pressable>
     </Pressable>
   );
 }

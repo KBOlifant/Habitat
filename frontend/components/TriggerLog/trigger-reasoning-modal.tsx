@@ -1,18 +1,18 @@
 import React, { forwardRef } from 'react';
-import { ScrollView, Text, View, Pressable } from 'react-native';
-import { X } from 'lucide-react-native';
+import { Alert, ScrollView, Text, View, Pressable } from 'react-native';
+import { Trash2, X } from 'lucide-react-native';
 import SwipeableModal, { SwipeableModalRef } from '../General/SwipeableModal';
 import type { Trigger } from '../../app/lib/storage/trigger-storage';
 
 type TriggerReasoningModalProps = {
   trigger: Trigger | null;
   onClose: () => void;
+  onDelete: (trigger: Trigger) => Promise<void>;
 };
 
 /**
  * Bottom sheet that shows the full 'reasoning' text for a trigger log entry.
  * Swipe down, tap the backdrop, or tap the close icon to dismiss.
- *
  * Usage in trigger-log screen:
  *   const [selectedTrigger, setSelectedTrigger] = useState<Trigger | null>(null);
  *   ...
@@ -31,7 +31,7 @@ type TriggerReasoningModalProps = {
 export const TriggerReasoningModalInner = forwardRef<
   SwipeableModalRef,
   TriggerReasoningModalProps
->(({ trigger, onClose }, ref) => {
+>(({ trigger, onClose, onDelete }, ref) => {
   // Cache the last non-null trigger so its content stays visible while the
   // sheet is animating closed (trigger flips to null the instant the parent
   // clears selection, but the slide-down animation still needs data to render).
@@ -50,6 +50,24 @@ export const TriggerReasoningModalInner = forwardRef<
     hour: 'numeric',
     minute: '2-digit',
   });
+
+  const handleDelete = () => {
+    Alert.alert('Delete trigger log?', 'This entry will be permanently removed from Firestore.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await onDelete(shown);
+            onClose();
+          } catch {
+            Alert.alert('Unable to delete', 'The trigger log could not be removed.');
+          }
+        },
+      },
+    ]);
+  };
 
   return (
     <SwipeableModal
@@ -83,6 +101,16 @@ export const TriggerReasoningModalInner = forwardRef<
           {shown.reason?.trim() ? shown.reason : 'No notes were added for this entry.'}
         </Text>
       </ScrollView>
+
+      <Pressable
+        onPress={handleDelete}
+        accessibilityRole="button"
+        accessibilityLabel="Delete trigger log"
+        className="mt-5 flex-row items-center justify-center rounded-xl border border-red-300/40 bg-red-500/10 py-3"
+      >
+        <Trash2 size={16} color="#dc2626" />
+        <Text className="ml-2 text-sm font-semibold text-red-600">Delete trigger log</Text>
+      </Pressable>
     </SwipeableModal>
   );
 });
@@ -97,6 +125,7 @@ TriggerReasoningModalInner.displayName = 'TriggerReasoningModalInner';
 export default function TriggerReasoningModal({
   trigger,
   onClose,
+  onDelete,
 }: TriggerReasoningModalProps) {
   const ref = React.useRef<SwipeableModalRef>(null);
 
@@ -109,6 +138,11 @@ export default function TriggerReasoningModal({
   }, [trigger]);
 
   return (
-    <TriggerReasoningModalInner ref={ref} trigger={trigger} onClose={onClose} />
+    <TriggerReasoningModalInner
+      ref={ref}
+      trigger={trigger}
+      onClose={onClose}
+      onDelete={onDelete}
+    />
   );
 }

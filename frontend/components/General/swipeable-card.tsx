@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -11,7 +11,8 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const { width: screenWidth } = Dimensions.get('window');
-const swipeThreshold = screenWidth * 0.3;
+const CARD_WIDTH = 400;
+const swipeThreshold = CARD_WIDTH * 0.35;
 
 type SwipeableCardProps = {
   children: React.ReactNode;
@@ -62,6 +63,8 @@ export default function SwipeableCard({
   }, [animationSpeed, currentCardScale, nextCardKey, rotate, translateX]);
 
   const gesture = Gesture.Pan()
+    // Activates gesture only when dragged horizontally past 10px, letting vertical swipes fall through to scroll views
+    .activeOffsetX([-10, 10])
     .onUpdate(event => {
       translateX.value = event.translationX;
       rotate.value = interpolate(
@@ -102,27 +105,41 @@ export default function SwipeableCard({
   }));
 
   return (
-    <GestureDetector gesture={gesture}>
-      <Animated.View>
-        {nextCard && (
-          <Animated.View
-            pointerEvents="none"
-            style={[StyleSheet.absoluteFillObject, styles.nextCard]}
-          >
-            {nextCard}
+    <View style={styles.outerContainer}>
+      <GestureDetector gesture={gesture}>
+        <Animated.View style={styles.cardContainer}>
+          {nextCard && (
+            <Animated.View
+              pointerEvents="none"
+              style={[StyleSheet.absoluteFillObject, styles.nextCard]}
+            >
+              {nextCard}
+            </Animated.View>
+          )}
+          <Animated.View style={[animatedStyle, styles.currentCard]}>
+            {children}
           </Animated.View>
-        )}
-        <Animated.View style={[animatedStyle, styles.currentCard]}>{children}</Animated.View>
-      </Animated.View>
-    </GestureDetector>
+        </Animated.View>
+      </GestureDetector>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  cardContainer: {
+    width: CARD_WIDTH,
+    maxWidth: '100%', // Prevents overflow on screen sizes narrower than 400px
+    alignItems: 'center',
+  },
   nextCard: {
     transform: [{ scale: 0 }],
   },
   currentCard: {
+    width: '100%',
     zIndex: 1,
   },
 });

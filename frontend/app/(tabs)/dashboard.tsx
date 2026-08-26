@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import '../global.css';
 import ProgressHeader from '../../components/Milestones/progress-header';
@@ -34,6 +34,13 @@ export default function ProgressScreen() {
   const currentDate = getLocalDate(new Date());
   const [selectedDate, setSelectedDate] = useState(currentDate);
   const [stats, setStats] = useState<ProgressStats>(EMPTY_STATS);
+  const [focusVersion, setFocusVersion] = useState(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      setFocusVersion((version) => version + 1);
+    }, []),
+  );
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
@@ -57,7 +64,7 @@ export default function ProgressScreen() {
     return () => {
       unsubscribeAuth();
     };
-  }, [selectedDate]);
+  }, [selectedDate, focusVersion]);
 
   const scheme = useColorScheme() ?? 'light';
   const gradientColors =

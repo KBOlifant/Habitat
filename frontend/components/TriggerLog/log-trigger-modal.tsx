@@ -52,16 +52,11 @@ export default function LogTriggerModal({
   const dimensions = useRef({ height, width });
   dimensions.current = { height, width };
 
-  // 0 = fully open (resting position). The current screen height = fully hidden below
-  // the screen. The drag gesture is clamped to this range so the sheet can
-  // never be pulled above its open position or pushed further than
-  // fully off-screen.
   const translateY = useRef(new Animated.Value(height)).current;
   const dragStartValue = useRef(0);
 
   const canSave = form.name.trim().length > 0 && form.intensity !== null;
 
-  // Slide in whenever the modal is opened.
   useEffect(() => {
     if (visible) {
       translateY.setValue(dimensions.current.height);
@@ -105,8 +100,6 @@ export default function LogTriggerModal({
     }
   };
 
-  // Drag-to-dismiss: the sheet tracks the finger 1:1 while dragging, then
-  // either springs back open or animates fully closed on release.
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -155,25 +148,25 @@ export default function LogTriggerModal({
       visible={visible}
       animationType="none"
       transparent
+      statusBarTranslucent
       onRequestClose={handleClose}
     >
       {/* Backdrop */}
       <TouchableWithoutFeedback onPress={handleClose}>
         <View
-          className="flex-1 justify-end"
+          className="flex-1 justify-end items-center"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.58)' }}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
             style={{ alignItems: 'center', width: '100%' }}
           >
-            {/* Swallow taps so they don't bubble to the backdrop */}
             <TouchableWithoutFeedback onPress={() => {}}>
               <Animated.View
                 className="rounded-t-3xl pt-5"
                 style={{
-                  width: isWide ? 560 : '100%',
-                  maxHeight: isLandscape ? height - 24 : height * 0.92,
+                  width: isWide || isLandscape ? Math.min(width * 0.85, 560) : '100%',
+                  maxHeight: isLandscape ? height * 0.8 : height * 0.92,
                   paddingHorizontal: isLandscape ? 32 : 24,
                   paddingBottom: isLandscape ? 20 : 32,
                   backgroundColor: '#152318',
@@ -181,7 +174,7 @@ export default function LogTriggerModal({
                 }}
                 accessibilityViewIsModal
               >
-                {/* Drag zone: grabber + header. Follows the finger to open/close. */}
+                {/* Drag zone: grabber + header. */}
                 <View {...panResponder.panHandlers}>
                   <View className="w-10 h-1 rounded-full bg-emerald-800/60 self-center mb-4" />
 
@@ -200,13 +193,12 @@ export default function LogTriggerModal({
                   </View>
                 </View>
 
-                {/* Trigger name */}
+                {/* Form Content */}
                 <ScrollView
                   showsVerticalScrollIndicator={false}
                   keyboardShouldPersistTaps="handled"
                   contentContainerStyle={{ paddingBottom: 4 }}
                 >
-                  {/* Trigger name */}
                   <Text className="text-emerald-100/50 uppercase mt-5 mb-2" style={Typography.sectionLabel}>
                     Trigger Name
                   </Text>
@@ -219,9 +211,8 @@ export default function LogTriggerModal({
                     className="bg-[#a9b596] rounded-2xl px-4 py-3.5 text-[#2f3a2a] text-base"
                   />
 
-                  {/* Reason */}
                   <Text className="text-emerald-100/50 uppercase mt-5 mb-2" style={Typography.sectionLabel}>
-                    Notes & Reasonaing
+                    Notes & Reasoning
                   </Text>
                   <TextInput
                     value={form.reason}
@@ -235,13 +226,11 @@ export default function LogTriggerModal({
                     style={{ minHeight: 80, textAlignVertical: 'top' }}
                   />
 
-                  {/* Intensity */}
                   <IntensitySelector
                     value={form.intensity}
                     onChange={(intensity) => setForm((f) => ({ ...f, intensity }))}
                   />
 
-                  {/* Relapse checkbox */}
                   <RelapseCheckbox
                     checked={form.relapsed}
                     onToggle={() =>
@@ -249,7 +238,6 @@ export default function LogTriggerModal({
                     }
                   />
 
-                  {/* Save */}
                   <TouchableOpacity
                     onPress={handleSave}
                     disabled={!canSave || isSaving}

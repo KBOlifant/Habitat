@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollView, View, Text, ActivityIndicator, useColorScheme } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ChevronUp } from 'lucide-react-native';
 import { Gradients } from '@/constants/theme';
@@ -17,6 +17,7 @@ import { goBackOrHome } from '../lib/navigation';
 import {
   getTriggers,
   addTrigger,
+  deleteTrigger,
   type Trigger,
   type NewTriggerInput,
 } from '../lib/storage/trigger-storage';
@@ -52,15 +53,24 @@ export default function TriggerLogScreen() {
     return onAuthStateChanged(auth, setUser);
   }, []);
 
-  useEffect(() => {
-    loadTriggers();
-  }, [loadTriggers]);
+  useFocusEffect(
+    useCallback(() => {
+      loadTriggers();
+    }, [loadTriggers]),
+  );
 
   const handleSave = async (input: NewTriggerInput) => {
     const trigger = await addTrigger(input);
 
     setTriggers((existingTriggers) => [trigger, ...existingTriggers]);
     setIsModalVisible(false);
+  };
+
+  const handleDelete = async (trigger: Trigger) => {
+    await deleteTrigger(trigger.id);
+    setTriggers((existingTriggers) =>
+      existingTriggers.filter((existingTrigger) => existingTrigger.id !== trigger.id),
+    );
   };
 
   // Swipe up on the handle bar below the list to open the log-trigger modal.
@@ -94,6 +104,7 @@ export default function TriggerLogScreen() {
                   key={trigger.id}
                   trigger={trigger}
                   onPress={() => setSelectedTrigger(trigger)}
+                  onDelete={() => handleDelete(trigger)}
                 />
               ))}
           </View>
@@ -118,6 +129,7 @@ export default function TriggerLogScreen() {
       <TriggerReasoningModal
         trigger={selectedTrigger}
         onClose={() => setSelectedTrigger(null)}
+        onDelete={handleDelete}
       />
 
       <LogTriggerModal

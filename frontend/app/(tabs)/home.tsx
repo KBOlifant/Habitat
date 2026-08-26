@@ -1,4 +1,5 @@
 import { ScrollView } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import '../global.css';
 import HomeHeader from '../../components/Home/home-header';
@@ -9,7 +10,7 @@ import QuoteSection from '../../components/Home/quote-section';
 import DevTimeTravel from '../../components/Home/dev-time-travel';
 import { useColorScheme } from 'react-native';
 import { Gradients } from '@/constants/theme';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth, db } from '../../app/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
@@ -26,6 +27,13 @@ export default function HomeScreen() {
   const initialDate = getLocalDate(new Date());
   const [currentDevDate, setDevDate] = useState(initialDate);
   const [progress, setProgress] = useState(0);
+  const [focusVersion, setFocusVersion] = useState(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      setFocusVersion((version) => version + 1);
+    }, []),
+  );
 
   useEffect(() => {
     return onAuthStateChanged(auth, (user) => {
@@ -60,7 +68,7 @@ export default function HomeScreen() {
     };
 
     fetchHabit();
-  }, [currentUser]);
+  }, [currentUser, focusVersion]);
 
   // Bonsai growth was previously a fixed 90-day window off a hardcoded date,
   // completely disconnected from Firestore. It now tracks the same "current
@@ -88,7 +96,7 @@ export default function HomeScreen() {
     return () => {
       cancelled = true;
     };
-  }, [currentUser, currentDevDate]);
+  }, [currentUser, currentDevDate, focusVersion]);
 
   const scheme = useColorScheme() ?? 'light';
   const gradientColors =
