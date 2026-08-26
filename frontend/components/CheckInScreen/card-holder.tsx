@@ -474,14 +474,14 @@ export default function CardHolder() {
 
   return (
     <>
-    
-      {devTools}
+{/*     
+      {devTools} */}
 
       <View className="px-5 mt-5">
         <Text className="text-[#8a9a8a] text-sm">
           {checks.length} / {steps.length} checks completed
         </Text>
-        {__DEV__ && (
+        {/* {__DEV__ && (
           <Pressable
             accessibilityRole="button"
             onPress={clearProgress}
@@ -489,7 +489,7 @@ export default function CardHolder() {
           >
             <Text className="text-[#c96b5f] text-sm font-semibold">Clear saved progress</Text>
           </Pressable>
-        )}
+        )} */}
       </View>
 
       <SwipeableCard
