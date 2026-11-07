@@ -8,6 +8,17 @@ import { Platform } from 'react-native';
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
+export const HabitatColors = {
+  canvas: '#F3F0E6',
+  surface: '#FFFCF4',
+  ink: '#1B1C16',
+  muted: '#62665D',
+  lime: '#D7FF00',
+  green: '#176A22',
+  pale: '#E7E4D9',
+  danger: '#B42318',
+} as const;
+
 export const Colors = {
   light: {
     text: '#11181C',

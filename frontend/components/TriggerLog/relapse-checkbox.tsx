@@ -1,5 +1,6 @@
 import { TouchableOpacity, View, Text } from 'react-native';
 import { Check } from 'lucide-react-native';
+import { HabitatColors } from '@/constants/theme';
 
 type RelapseCheckboxProps = {
   checked: boolean;
@@ -25,14 +26,15 @@ export default function RelapseCheckbox({
       <View
         className={`w-6 h-6 rounded-md items-center justify-center border ${
           checked
-            ? 'bg-red-500/80 border-red-500/80'
-            : 'bg-emerald-900/60 border-emerald-700/60'
+            ? 'bg-[#D7FF00] border-[#1B1C16]'
+            : 'bg-[#FFFCF4] border-[#1B1C16]'
         }`}
+        style={{ borderWidth: 2 }}
       >
-        {checked && <Check size={14} color="#fff" strokeWidth={3} />}
+        {checked && <Check size={14} color={HabitatColors.ink} strokeWidth={3} />}
       </View>
 
-      <Text className="text-white text-sm font-medium ml-3">{label}</Text>
+      <Text className="ml-3 text-sm font-bold" style={{ color: HabitatColors.ink }}>{label}</Text>
     </TouchableOpacity>
   );
 }

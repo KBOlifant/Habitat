@@ -1,9 +1,9 @@
 import { View, Text, Pressable } from 'react-native';
 import { Flame, LogOut } from 'lucide-react-native';
-import { signOut } from 'firebase/auth';
 import { useRouter } from 'expo-router';
-import { auth } from '@/app/lib/firebase';
+import { signOutUser } from '@/functions/auth';
 import { Typography } from '@/constants/typography';
+import { HabitatColors } from '@/constants/theme';
 
 type HomeHeaderProps = {
   userName?: string;
@@ -13,16 +13,18 @@ type HomeHeaderProps = {
 };
 
 export default function HomeHeader({
-  userName = 'User',
-  streakDays = 3,
-  habitFreeDays = 3,
-  habitName = 'Smoking',
+  userName = 'Friend',
+  streakDays = 0,
+  habitFreeDays = streakDays,
+  habitName = 'your habit',
 }: HomeHeaderProps) {
   const router = useRouter();
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      await signOutUser();
       router.replace('/auth');
     } catch (error) {
       console.error('Logout failed:', error);
@@ -30,33 +32,48 @@ export default function HomeHeader({
   };
 
   return (
-    <View className="flex-row items-start justify-between">
-      <View>
-        <Text className="text-emerald-100/60 text-sm font-semibold tracking-[3px] uppercase">
-          Good Evening
-        </Text>
-        <Text className="mt-1 text-white" style={Typography.title}>{userName}</Text>
-        <Text className="mt-1 text-emerald-100/70" style={Typography.subtitle}>
-          {habitFreeDays} Days Free From {habitName}
-        </Text>
-      </View>
-
-      <View className="flex-row items-center gap-3">
-        <View className="mt-1 flex-row items-center rounded-full border border-emerald-800 bg-emerald-900/70 px-3 py-1.5">
-          <Flame size={14} color="#fb923c" fill="#fb923c" />
-          <Text className="ml-1.5 text-xs font-semibold text-white">Day {streakDays}</Text>
-        </View>
-
-        <Pressable
-          onPress={handleLogout}
-          accessibilityRole="button"
-          accessibilityLabel="Log out"
-          className="mt-1 flex-row items-center rounded-full border border-rose-300/30 bg-rose-500/15 px-3 py-1.5 active:opacity-80"
+    <View className="flex-row items-start">
+      <View className="flex-1 pr-3">
+        <View
+          className="flex-row items-center justify-between border-b-2 pb-3"
+          style={{ borderColor: HabitatColors.ink }}
         >
-          <LogOut size={14} color="#f8d7d7" />
-          <Text className="ml-1.5 text-xs font-semibold text-rose-100">Logout</Text>
-        </Pressable>
+          <Text style={{ color: HabitatColors.ink, fontSize: 19, fontWeight: '900', letterSpacing: 0.5 }}>
+            ROOTS.
+          </Text>
+          <View className="flex-row items-center">
+            <Flame size={16} color={HabitatColors.ink} fill={HabitatColors.lime} />
+            <Text className="ml-1.5" style={{ color: HabitatColors.ink, fontSize: 12, fontWeight: '900' }}>
+              {streakDays} DAY{streakDays === 1 ? '' : 'S'}
+            </Text>
+          </View>
+        </View>
+        <Text
+          className="mt-5 uppercase"
+          style={{ color: HabitatColors.green, fontSize: 12, fontWeight: '900', letterSpacing: 2 }}
+        >
+          {greeting}
+        </Text>
+        <Text
+          className="mt-1 uppercase"
+          style={[Typography.title, { color: HabitatColors.ink, maxWidth: 280 }]}
+        >
+          {userName.split(' ')[0]}, stay with it.
+        </Text>
+        <Text className="mt-2" style={[Typography.subtitle, { color: HabitatColors.muted }]}>
+          Day {habitFreeDays} without {habitName || 'your habit'}.
+        </Text>
       </View>
+
+      <Pressable
+        onPress={handleLogout}
+        accessibilityRole="button"
+        accessibilityLabel="Log out"
+        className="mt-1 h-10 w-10 items-center justify-center border-2 active:opacity-60"
+        style={{ borderColor: HabitatColors.ink, backgroundColor: HabitatColors.surface }}
+      >
+        <LogOut size={16} color={HabitatColors.ink} />
+      </Pressable>
     </View>
   );
 }

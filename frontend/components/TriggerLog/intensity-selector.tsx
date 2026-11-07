@@ -1,7 +1,8 @@
-import { ScrollView, TouchableOpacity, View, Text } from 'react-native';
+import { TouchableOpacity, View, Text } from 'react-native';
 import { Typography } from '@/constants/typography';
+import { HabitatColors } from '@/constants/theme';
 
-const SCALE = Array.from({ length: 5 }, (_, i) => i + 1);
+const SCALE = Array.from({ length: 5 }, (_, index) => index + 1);
 
 type IntensitySelectorProps = {
   value: number | null;
@@ -17,37 +18,32 @@ export default function IntensitySelector({
   return (
     <View className="mt-5">
       <View className="flex-row items-baseline justify-between">
-        <Text className="text-emerald-100/50 uppercase" style={Typography.sectionLabel}>
+        <Text className="uppercase" style={[Typography.sectionLabel, { color: HabitatColors.green }]}>
           {label}
         </Text>
-        <Text className="text-white text-sm font-semibold">
+        <Text className="text-sm font-bold" style={{ color: HabitatColors.ink }}>
           {value ?? '—'} / 5
         </Text>
       </View>
-
-      <View
-        className='justify-between flex-row pt-2'
-      >
-        {SCALE.map((n) => {
-          const isSelected = value === n;
+      <View className="flex-row pt-2" style={{ gap: 7 }}>
+        {SCALE.map((number) => {
+          const isSelected = value === number;
           return (
             <TouchableOpacity
-              key={n}
-              onPress={() => onChange(n)}
+              key={number}
+              onPress={() => onChange(number)}
               activeOpacity={0.8}
               accessibilityRole="button"
-              accessibilityLabel={`Intensity ${n} out of 10`}
+              accessibilityLabel={`Intensity ${number} out of 5`}
               accessibilityState={{ selected: isSelected }}
-              className={`w-16 h-10 rounded-full items-center justify-center ${
-                isSelected ? 'bg-lime-600' : 'bg-emerald-900/60 border border-emerald-800/60'
-              }`}
+              className="h-10 flex-1 items-center justify-center border-2"
+              style={{
+                backgroundColor: isSelected ? HabitatColors.green : HabitatColors.surface,
+                borderColor: HabitatColors.ink,
+              }}
             >
-              <Text
-                className={`text-sm font-semibold ${
-                  isSelected ? 'text-emerald-950' : 'text-emerald-100/70'
-                }`}
-              >
-                {n}
+              <Text className="text-sm font-black" style={{ color: isSelected ? HabitatColors.surface : HabitatColors.ink }}>
+                {number}
               </Text>
             </TouchableOpacity>
           );

@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { Alert, ScrollView, Text, View, Pressable } from 'react-native';
 import { Trash2, X } from 'lucide-react-native';
 import SwipeableModal, { SwipeableModalRef } from '../General/SwipeableModal';
-import type { Trigger } from '../../app/lib/storage/trigger-storage';
+import type { Trigger } from '../../functions/triggers';
 
 type TriggerReasoningModalProps = {
   trigger: Trigger | null;

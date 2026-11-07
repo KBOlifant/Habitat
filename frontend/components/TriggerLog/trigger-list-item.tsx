@@ -1,6 +1,7 @@
 import { Alert, View, Text, Pressable } from 'react-native';
 import { AlertTriangle, Trash2 } from 'lucide-react-native';
-import type { Trigger } from '../../app/lib/storage/trigger-storage';
+import type { Trigger } from '../../functions/triggers';
+import { HabitatColors } from '@/constants/theme';
 
 type TriggerListItemProps = {
   trigger: Trigger;
@@ -27,12 +28,13 @@ function formatLoggedAt(iso: string): string {
 }
 
 function intensityColor(intensity: number): string {
-  if (intensity >= 4) return '#f87171'; // red
-  if (intensity >= 3) return '#facc15'; // yellow
-  return '#4ade80'; // green
+  if (intensity >= 4) return HabitatColors.danger;
+  if (intensity >= 3) return '#8A6A00';
+  return HabitatColors.green;
 }
 
 export default function TriggerListItem({ trigger, onPress, onDelete }: TriggerListItemProps) {
+  const tint = intensityColor(trigger.intensity);
   const handleDelete = () => {
     if (!onDelete) return;
 
@@ -57,16 +59,20 @@ export default function TriggerListItem({ trigger, onPress, onDelete }: TriggerL
   };
 
   return (
-    <Pressable onPress={onPress} className="bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-4 flex-row items-start">
+    <Pressable
+      onPress={onPress}
+      className="flex-row items-start border-2 p-4"
+      style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}
+    >
       <View className="flex-1">
         <View className="flex-row items-center">
-          <Text className="text-white text-sm font-semibold">
+          <Text className="text-sm font-black uppercase" style={{ color: HabitatColors.ink }}>
             {trigger.name}
           </Text>
           {trigger.relapsed && (
-            <View className="flex-row items-center bg-red-500/15 rounded-full px-2 py-0.5 ml-2">
-              <AlertTriangle size={10} color="#f87171" />
-              <Text className="text-red-400 text-[10px] font-semibold ml-1">
+            <View className="ml-2 flex-row items-center px-2 py-0.5" style={{ backgroundColor: HabitatColors.lime }}>
+              <AlertTriangle size={10} color={HabitatColors.ink} />
+              <Text className="ml-1 text-[9px] font-black uppercase" style={{ color: HabitatColors.ink }}>
                 Relapsed
               </Text>
             </View>
@@ -75,25 +81,26 @@ export default function TriggerListItem({ trigger, onPress, onDelete }: TriggerL
 
         {!!trigger.reason && (
           <Text
-            className="text-emerald-100/50 text-sm mt-1"
+            className="mt-1 text-sm"
+            style={{ color: HabitatColors.muted }}
             numberOfLines={2}
           >
             {trigger.reason}
           </Text>
         )}
 
-        <Text className="text-emerald-100/30 text-sm mt-2">
+        <Text className="mt-2 text-xs" style={{ color: HabitatColors.muted }}>
           {formatLoggedAt(trigger.loggedAt)}
         </Text>
       </View>
 
       <View
-        className="w-9 h-9 rounded-full items-center justify-center ml-3"
-        style={{ backgroundColor: `${intensityColor(trigger.intensity)}20` }}
+        className="ml-3 h-8 w-8 items-center justify-center border"
+        style={{ backgroundColor: HabitatColors.canvas, borderColor: HabitatColors.ink }}
       >
         <Text
           className="text-sm font-bold"
-          style={{ color: intensityColor(trigger.intensity) }}
+          style={{ color: tint }}
         >
           {trigger.intensity}
         </Text>
@@ -107,9 +114,9 @@ export default function TriggerListItem({ trigger, onPress, onDelete }: TriggerL
         hitSlop={8}
         accessibilityRole="button"
         accessibilityLabel={`Delete ${trigger.name}`}
-        className="w-9 h-9 rounded-full items-center justify-center ml-2 bg-red-500/10"
+        className="ml-2 h-8 w-8 items-center justify-center"
       >
-        <Trash2 size={16} color="#f87171" />
+        <Trash2 size={16} color={HabitatColors.danger} />
       </Pressable>
     </Pressable>
   );

@@ -1,6 +1,7 @@
 import { TouchableOpacity, View, Text } from 'react-native';
 import { ChevronLeft } from 'lucide-react-native';
 import { Typography } from '@/constants/typography';
+import { HabitatColors } from '@/constants/theme';
 
 type ProgressHeaderProps = {
   onBack?: () => void;
@@ -9,21 +10,20 @@ type ProgressHeaderProps = {
 
 export default function ProgressHeader({
   onBack,
-  subtitle = 'Your journey, made visible.',
+  subtitle = 'A clear view of the work. Missing a day is information, not failure.',
 }: ProgressHeaderProps) {
   return (
     <View className="px-6">
-      <TouchableOpacity
-        onPress={onBack}
-        activeOpacity={0.7}
-        className="flex-row items-center self-start"
-      >
-        <ChevronLeft size={16} color="#d1e7d4" />
-        <Text className="text-emerald-100/80 text-sm ml-0.5">Back</Text>
+      <TouchableOpacity onPress={onBack} activeOpacity={0.7} className="flex-row items-center self-start">
+        <ChevronLeft size={17} color={HabitatColors.ink} />
+        <Text className="ml-1 text-sm font-bold" style={{ color: HabitatColors.ink }}>Back</Text>
       </TouchableOpacity>
-
-      <Text className="text-white mt-3" style={Typography.title}>Progress</Text>
-      <Text className="text-emerald-100/60 mt-1" style={Typography.subtitle}>{subtitle}</Text>
+      <Text className="mt-4 uppercase" style={[Typography.title, { color: HabitatColors.ink }]}>
+        Your progress.
+      </Text>
+      <Text className="mt-2" style={[Typography.subtitle, { color: HabitatColors.muted }]}>
+        {subtitle}
+      </Text>
     </View>
   );
 }

@@ -1,49 +1,70 @@
 import { TouchableOpacity, View, Text } from 'react-native';
 import { Link } from 'expo-router';
-import { TriangleAlert, BarChart3 } from 'lucide-react-native';
+import { TriangleAlert, BarChart3, NotebookPen } from 'lucide-react-native';
+import { HabitatColors } from '@/constants/theme';
 
 type HomeAdditionalButtonsProps = {
-  triggerStreakDays?: number;
+  triggerCount?: number;
 };
 
-export default function AdditionalButtons({
-  triggerStreakDays = 1,
-}: HomeAdditionalButtonsProps) {
+export default function AdditionalButtons({ triggerCount = 0 }: HomeAdditionalButtonsProps) {
   return (
-    <View className="mt-5">
-      {/* Log Trigger / Progress row */}
-      <View className="flex-row" style={{ gap: 12 }}>
-        <Link href="/triggers" asChild>
-          <TouchableOpacity
-            activeOpacity={0.85}
-            className="flex-1 bg-emerald-900/60 border border-emerald-800/60 rounded-2xl p-4"
-          >
-            <TriangleAlert size={18} color="#eab308" />
-            <Text className="text-white font-semibold text-sm mt-2">
-              Log Trigger
+    <View className="mt-4 flex-row" style={{ gap: 10 }}>
+      <Link href="/triggers" asChild>
+        <TouchableOpacity
+          activeOpacity={0.85}
+          className="min-h-[145px] flex-1 justify-between border-2 p-4"
+          style={{
+            backgroundColor: HabitatColors.surface,
+            borderColor: HabitatColors.ink,
+            shadowColor: HabitatColors.ink,
+            shadowOffset: { width: 3, height: 4 },
+            shadowOpacity: 1,
+            shadowRadius: 0,
+          }}
+        >
+          <TriangleAlert size={20} color={HabitatColors.ink} />
+          <View>
+            <Text className="text-base font-black uppercase" style={{ color: HabitatColors.ink }}>
+              Log a trigger
             </Text>
-            <Text className="text-emerald-100/60 text-sm mt-0.5">
-              Track what sets you off
+            <Text className="mt-1 text-xs font-medium" style={{ color: HabitatColors.muted }}>
+              {triggerCount} entr{triggerCount === 1 ? 'y' : 'ies'} recorded
             </Text>
-          </TouchableOpacity>
-        </Link>
+          </View>
+        </TouchableOpacity>
+      </Link>
 
-        <Link href="/dashboard" asChild>
-          <TouchableOpacity
-            activeOpacity={0.85}
-            className="flex-1 bg-emerald-900/60 border border-emerald-800/60 rounded-2xl p-4"
-          >
-            <BarChart3 size={18} color="#a3e635" />
-            <Text className="text-white font-semibold text-sm mt-2">
+      <Link href="/dashboard" asChild>
+        <TouchableOpacity
+          activeOpacity={0.85}
+          className="min-h-[145px] flex-1 justify-between border-2 p-4"
+          style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}
+        >
+          <BarChart3 size={20} color={HabitatColors.ink} />
+          <View>
+            <Text className="text-base font-black uppercase" style={{ color: HabitatColors.ink }}>
               Progress
             </Text>
-            <Text className="text-emerald-100/60 text-sm mt-0.5">
-              {triggerStreakDays}-day streak
+            <Text className="mt-1 text-xs font-medium" style={{ color: HabitatColors.muted }}>
+              See your month
             </Text>
-          </TouchableOpacity>
-        </Link>
-      </View>
+          </View>
+        </TouchableOpacity>
+      </Link>
 
+      <Link href="/check-in-notes" asChild>
+        <TouchableOpacity
+          activeOpacity={0.85}
+          className="min-h-[145px] flex-1 justify-between border-2 p-4"
+          style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}
+        >
+          <NotebookPen size={20} color={HabitatColors.ink} />
+          <Text className="text-base font-black uppercase" style={{ color: HabitatColors.ink }}>
+            Field notes
+          </Text>
+        </TouchableOpacity>
+      </Link>
     </View>
   );
 }

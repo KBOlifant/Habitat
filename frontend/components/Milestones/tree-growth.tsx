@@ -1,7 +1,7 @@
-// Target path: components/Milestones/tree-growth.tsx
 import { View, Text } from 'react-native';
 import { Typography } from '@/constants/typography';
-import { Check, Circle } from 'lucide-react-native';
+import { Check } from 'lucide-react-native';
+import { HabitatColors } from '@/constants/theme';
 
 export type TreeStageState = 'complete' | 'current' | 'locked';
 
@@ -12,12 +12,13 @@ export type TreeStage = {
 };
 
 const STAGE_DEFINITIONS: { title: string; subtitle: string; threshold: number }[] = [
-  { title: 'Dormant seed', subtitle: 'Day 0', threshold: 0 },
+  { title: 'Dormant seed', subtitle: 'Starting point', threshold: 0 },
   { title: 'First sprout', subtitle: '1+ days', threshold: 1 },
+  { title: 'Taking root', subtitle: '3+ days', threshold: 3 },
   { title: 'Young sapling', subtitle: '7+ days', threshold: 7 },
-  { title: 'Juvenile bonsai', subtitle: '14+ days', threshold: 14 },
-  { title: 'Mature bonsai', subtitle: '30+ days', threshold: 30 },
-  { title: 'Ancient wisdom', subtitle: '90+ days', threshold: 90 },
+  { title: 'Growing bonsai', subtitle: '14+ days', threshold: 14 },
+  { title: 'Formed bonsai', subtitle: '30+ days', threshold: 30 },
+  { title: 'Ancient wisdom', subtitle: '60+ days', threshold: 60 },
 ];
 
 function computeStages(streakDays: number): TreeStage[] {
@@ -25,7 +26,6 @@ function computeStages(streakDays: number): TreeStage[] {
   STAGE_DEFINITIONS.forEach((stage, index) => {
     if (streakDays >= stage.threshold) currentIndex = index;
   });
-
   return STAGE_DEFINITIONS.map((stage, index) => ({
     title: stage.title,
     subtitle: stage.subtitle,
@@ -34,72 +34,68 @@ function computeStages(streakDays: number): TreeStage[] {
 }
 
 type TreeGrowthProps = {
-  /** Current unbroken streak in days — same number shown in StatsRow/Milestones. Drives which stage is "current". */
   streakDays?: number;
-  /** Escape hatch to render an explicit set of stages instead of deriving them from streakDays. */
   stages?: TreeStage[];
 };
-
-function StageIcon({ state }: { state: TreeStage['state'] }) {
-  if (state === 'complete' || state === 'current') {
-    return (
-      <View className="w-6 h-6 rounded-full bg-emerald-500 items-center justify-center">
-        <Check size={14} color="#052e16" strokeWidth={3} />
-      </View>
-    );
-  }
-  return (
-    <View className="w-6 h-6 rounded-full border border-emerald-800/60 items-center justify-center">
-      <Circle size={8} color="#3f5a44" fill="#3f5a44" />
-    </View>
-  );
-}
 
 export default function TreeGrowth({ streakDays = 0, stages }: TreeGrowthProps) {
   const resolvedStages = stages ?? computeStages(streakDays);
 
   return (
-    <View className="mx-6 mt-5 bg-emerald-900/40 border border-emerald-800/50 rounded-2xl p-5">
-      <Text className="text-emerald-100/50 uppercase mb-4" style={Typography.sectionLabel}>
-        Tree Growth
+    <View className="mx-6 mt-5">
+      <Text className="uppercase" style={[Typography.sectionLabel, { color: HabitatColors.green }]}>
+        Tree growth
       </Text>
-
-      {resolvedStages.map((stage, index) => {
-        const isLocked = stage.state === 'locked';
-        return (
-          <View
-            key={stage.title}
-            className={`flex-row items-center ${index === 0 ? '' : 'mt-4'}`}
-          >
-            <StageIcon state={stage.state} />
-
-            <View className="flex-1 ml-3">
-              <Text
-                className={`text-base font-semibold ${
-                  isLocked ? 'text-emerald-100/35' : 'text-white'
-                }`}
+      <Text className="mb-3 mt-1 text-xl font-black uppercase" style={{ color: HabitatColors.ink }}>
+        Seven forms.
+      </Text>
+      <View className="border-2" style={{ borderColor: HabitatColors.ink }}>
+        {resolvedStages.map((stage, index) => {
+          const isCurrent = stage.state === 'current';
+          const isComplete = stage.state === 'complete';
+          return (
+            <View
+              key={stage.title}
+              className="flex-row items-center px-3 py-3"
+              style={{
+                minHeight: 62,
+                backgroundColor: isCurrent ? HabitatColors.lime : HabitatColors.surface,
+                borderBottomWidth: index === resolvedStages.length - 1 ? 0 : 2,
+                borderColor: HabitatColors.ink,
+              }}
+            >
+              <View
+                className="mr-3 h-8 w-8 items-center justify-center border-2"
+                style={{
+                  backgroundColor: isComplete ? HabitatColors.green : 'transparent',
+                  borderColor: HabitatColors.ink,
+                }}
               >
-                {stage.title}
-              </Text>
-              <Text
-                className={`text-sm mt-0.5 ${
-                  isLocked ? 'text-emerald-100/25' : 'text-emerald-100/50'
-                }`}
-              >
-                {stage.subtitle}
-              </Text>
-            </View>
-
-            {stage.state === 'current' && (
-              <View className="bg-emerald-700/50 border border-emerald-600/50 rounded-full px-2.5 py-1">
-                <Text className="text-emerald-200 text-xs font-semibold">
-                  Current
+                {isComplete ? (
+                  <Check size={17} color={HabitatColors.surface} strokeWidth={3} />
+                ) : (
+                  <Text className="text-xs font-black" style={{ color: HabitatColors.ink }}>
+                    {index + 1}
+                  </Text>
+                )}
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-black uppercase" style={{ color: HabitatColors.ink }}>
+                  {stage.title}
+                </Text>
+                <Text className="mt-0.5 text-xs" style={{ color: HabitatColors.muted }}>
+                  {stage.subtitle}
                 </Text>
               </View>
-            )}
-          </View>
-        );
-      })}
+              {isCurrent && (
+                <Text className="ml-2 text-[9px] font-black uppercase" style={{ color: HabitatColors.ink }}>
+                  Current
+                </Text>
+              )}
+            </View>
+          );
+        })}
+      </View>
     </View>
   );
 }

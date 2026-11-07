@@ -1,17 +1,16 @@
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View, useColorScheme } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
-import { onAuthStateChanged, type User } from 'firebase/auth';
-import { LinearGradient } from 'expo-linear-gradient';
+import type { User } from 'firebase/auth';
 import '../global.css';
-import { Gradients } from '@/constants/theme';
-import { auth, db } from '../lib/firebase';
+import { HabitatColors } from '@/constants/theme';
+import { observeAuthState } from '../../functions/auth';
+import { getCheckInNotes, deleteCheckIn } from '../../functions/swipes';
 import { goBackOrHome } from '../lib/navigation';
 import CheckInNotesHeader from '../../components/CheckInScreen/check-in-notes-header';
 import CheckInNoteListItem from '../../components/CheckInScreen/check-in-note-list-item';
 import ScreenTransition from '../../components/General/screen-transition';
-import { getTriggers, deleteTriggerFollowUp, type Trigger } from '../lib/storage/trigger-storage';
+import { getTriggers, deleteTriggerFollowUp, type Trigger } from '../../functions/triggers';
 
 type CheckInNote = {
   id: string;
@@ -36,20 +35,13 @@ export default function CheckInNotesScreen() {
     setIsLoading(true);
     try {
       const [checkInSnapshot, triggers] = await Promise.all([
-        getDocs(collection(db, 'users', user.uid, 'check_in_record')),
-        getTriggers(),
+        getCheckInNotes(user.uid),
+        getTriggers(user.uid),
       ]);
-      const checkInNotes = checkInSnapshot.docs
-        .map((document) => {
-          const data = document.data();
-          return {
-            id: document.id,
-            note: typeof data.note === 'string' ? data.note.trim() : '',
-            completedAt: typeof data.completedAt === 'string' ? data.completedAt : '',
-            source: 'check-in' as const,
-          };
-        })
-        .filter((record) => record.note.length > 0);
+      const checkInNotes: CheckInNote[] = checkInSnapshot.map((record) => ({
+        ...record,
+        source: 'check-in',
+      }));
       const triggerNotes: CheckInNote[] = triggers
         .filter((trigger): trigger is Trigger & { followUp: NonNullable<Trigger['followUp']> } =>
           typeof trigger.followUp?.note === 'string' && trigger.followUp.note.trim().length > 0,
@@ -78,9 +70,9 @@ export default function CheckInNotesScreen() {
     if (!user) return;
 
     if (note.source === 'trigger') {
-      await deleteTriggerFollowUp(note.id);
+      await deleteTriggerFollowUp(user.uid, note.id);
     } else {
-      await deleteDoc(doc(db, 'users', user.uid, 'check_in_record', note.id));
+      await deleteCheckIn(user.uid, note.id);
     }
     setNotes((existingNotes) =>
       existingNotes.filter((existingNote) => existingNote.id !== note.id),
@@ -94,15 +86,11 @@ export default function CheckInNotesScreen() {
   );
 
   useFocusEffect(
-    useCallback(() => onAuthStateChanged(auth, setUser), []),
+    useCallback(() => observeAuthState(setUser), []),
   );
 
-  const scheme = useColorScheme() ?? 'light';
-  const gradientColors =
-    scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
-
   return (
-    <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: HabitatColors.canvas }}>
       <ScreenTransition>
         <ScrollView
           contentContainerStyle={{ paddingTop: 64, paddingBottom: 120, flexGrow: 1 }}
@@ -112,12 +100,12 @@ export default function CheckInNotesScreen() {
 
         {isLoading ? (
           <View className="items-center mt-24">
-            <ActivityIndicator color="#4ade80" />
+            <ActivityIndicator color={HabitatColors.green} />
           </View>
         ) : notes.length === 0 ? (
           <View className="items-center px-10 mt-24">
-            <Text className="text-white text-base font-semibold text-center">No notes yet.</Text>
-            <Text className="text-emerald-100/40 text-sm mt-2 text-center leading-6">
+            <Text className="text-center text-base font-black uppercase" style={{ color: HabitatColors.ink }}>No notes yet.</Text>
+            <Text className="mt-2 text-center text-sm leading-6" style={{ color: HabitatColors.muted }}>
               Add an optional note at the end of a check-in to see it here.
             </Text>
           </View>
@@ -135,6 +123,6 @@ export default function CheckInNotesScreen() {
         )}
         </ScrollView>
       </ScreenTransition>
-    </LinearGradient>
+    </View>
   );
 }

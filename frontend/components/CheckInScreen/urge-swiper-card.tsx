@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { X, Check } from 'lucide-react-native';
+import { ArrowLeft, ArrowRight } from 'lucide-react-native';
+import { HabitatColors } from '@/constants/theme';
 
 type Props = {
   onStrongUrge?: () => void;
@@ -9,21 +10,28 @@ type Props = {
 
 export default function UrgeButtons({ onStrongUrge, onNoUrge }: Props) {
   return (
-    <View className="flex-row px-5 mt-10 gap-3">
+    <View className="flex-row px-5 mt-5" style={{ gap: 10 }}>
       <Pressable
         onPress={onStrongUrge}
-        className="flex-1 flex-row items-center justify-center bg-[#182518] border border-[#3a4a3a] rounded-2xl py-4 active:opacity-80"
+        accessibilityRole="button"
+        className="min-h-14 flex-1 flex-row items-center justify-center border-2 px-2"
+        style={{ borderColor: HabitatColors.ink, backgroundColor: HabitatColors.surface }}
       >
-        <X size={16} color="#c96b5f" />
-        <Text className="text-[#e8e4d8] text-base ml-2">Strong urdge</Text>
+        <ArrowLeft size={15} color={HabitatColors.ink} />
+        <Text className="ml-2 text-sm font-black uppercase" style={{ color: HabitatColors.ink }}>
+          Strong urge
+        </Text>
       </Pressable>
-
       <Pressable
         onPress={onNoUrge}
-        className="flex-1 flex-row items-center justify-center bg-[#e9c9b3] rounded-2xl py-4 active:opacity-80"
+        accessibilityRole="button"
+        className="min-h-14 flex-1 flex-row items-center justify-center border-2 px-2"
+        style={{ borderColor: HabitatColors.ink, backgroundColor: HabitatColors.lime }}
       >
-        <Check size={16} color="#2b2118" />
-        <Text className="text-[#2b2118] text-base ml-2 font-medium">No urge</Text>
+        <Text className="mr-2 text-sm font-black uppercase" style={{ color: HabitatColors.ink }}>
+          No urge
+        </Text>
+        <ArrowRight size={15} color={HabitatColors.ink} />
       </Pressable>
     </View>
   );

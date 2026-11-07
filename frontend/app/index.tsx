@@ -3,9 +3,8 @@ import { Animated, View, Text, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useColorScheme } from 'react-native';
-import { onAuthStateChanged } from 'firebase/auth';
+import { observeAuthState } from '../functions/auth';
 import { Gradients } from '@/constants/theme';
-import { auth } from './lib/firebase';
 import HabitatLogo from '@/components/Onboarding1/habitat-logo1-small.png';
 
 const SPLASH_DURATION = 1200;
@@ -36,7 +35,7 @@ export default function IndexRedirectScreen() {
       }),
     ]).start();
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = observeAuthState((user) => {
       setAuthState(!!user);
     });
 

@@ -2,17 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckInCard from './check-in-card';
+import UrgeButtons from './urge-swiper-card';
 import SwipeableCard from '../General/swipeable-card';
 import DevTimeTravel from '../Home/dev-time-travel';
-import { addDoc, collection, deleteDoc, getDocs } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth, db } from '../../app/lib/firebase';
+import { observeAuthState, getCurrentUser } from '../../functions/auth';
+import {
+  deleteAllCheckIns,
+  getCheckIns,
+  saveCheckIn,
+  saveDevelopmentCheckIn,
+  type CheckRecord,
+} from '../../functions/swipes';
 import { Typography } from '@/constants/typography';
+import { HabitatColors } from '@/constants/theme';
 import {
   getTriggers,
   updateTriggerFollowUp,
   type Trigger,
-} from '../../app/lib/storage/trigger-storage';
+} from '../../functions/triggers';
 
 const CHECK_PROGRESS_KEY = 'habitat_check_progress';
 
@@ -45,12 +52,12 @@ function RelapseNoteCard({
   const [note, setNote] = useState('');
 
   return (
-    <View className="mx-5 mt-8 rounded-3xl border border-[#2f3f2f] bg-[#182518] p-5">
-      <Text className="text-[#8a9a8a] text-sm">{step} / {totalSteps}</Text>
-      <Text className="mt-5 text-[#f3efe3]" style={Typography.title}>
+    <View className="mx-5 mt-8 border-2 p-5" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
+      <Text className="text-sm font-bold" style={{ color: HabitatColors.muted }}>{step} / {totalSteps}</Text>
+      <Text className="mt-5 uppercase" style={[Typography.title, { color: HabitatColors.ink }]}>
         Were you triggered by {trigger.name}?
       </Text>
-      <Text className="mt-3 text-[#b9c7b9] text-base leading-6">
+      <Text className="mt-3 text-base leading-6" style={{ color: HabitatColors.muted }}>
         This optional note can help you understand what happened.
       </Text>
 
@@ -62,11 +69,11 @@ function RelapseNoteCard({
             accessibilityRole="button"
             accessibilityState={{ selected: wasTriggered === value }}
             className={`flex-1 items-center rounded-xl border py-3 ${
-              wasTriggered === value ? 'border-lime-500 bg-lime-600' : 'border-[#6f8a6f]'
+              wasTriggered === value               ? 'border-[#1B1C16] bg-[#D7FF00]' : 'border-[#1B1C16]'
             }`}
           >
             <Text className={`text-base font-semibold ${
-              wasTriggered === value ? 'text-emerald-950' : 'text-[#b9c7b9]'
+              wasTriggered === value               ? 'text-[#1B1C16]' : 'text-[#62665D]'
             }`}>
               {value ? 'Yes' : 'No'}
             </Text>
@@ -80,30 +87,32 @@ function RelapseNoteCard({
         multiline
         maxLength={1000}
         placeholder="What did you notice? (Optional)"
-        placeholderTextColor="#6f8a6f"
+        placeholderTextColor={HabitatColors.muted}
         textAlignVertical="top"
         accessibilityLabel="Optional relapse note"
-        className="mt-5 min-h-[120px] rounded-2xl bg-[#a9b596] px-4 py-3 text-base text-[#2f3a2a]"
+        className="mt-5 min-h-[120px] border-2 px-4 py-3 text-base"
+        style={{ borderColor: HabitatColors.ink, backgroundColor: HabitatColors.canvas, color: HabitatColors.ink }}
       />
 
       <View className="mt-5 flex-row" style={{ gap: 10 }}>
         <Pressable
           onPress={onSkip}
           accessibilityRole="button"
-          className="flex-1 items-center rounded-xl border border-[#6f8a6f] py-3"
+          className="flex-1 items-center border-2 py-3"
+          style={{ borderColor: HabitatColors.ink }}
         >
-          <Text className="text-base font-semibold text-[#b9c7b9]">Skip</Text>
+          <Text className="text-base font-semibold" style={{ color: HabitatColors.ink }}>Skip</Text>
         </Pressable>
         <Pressable
           onPress={() => wasTriggered !== null && onSave(wasTriggered, note.trim())}
           disabled={wasTriggered === null}
           accessibilityRole="button"
           className={`flex-1 items-center rounded-xl py-3 ${
-            wasTriggered === null ? 'bg-emerald-800/50' : 'bg-lime-600'
+            wasTriggered === null ? 'bg-[#E7E4D9]' : 'bg-[#D7FF00]'
           }`}
         >
           <Text className={`text-base font-semibold ${
-            wasTriggered === null ? 'text-emerald-100/40' : 'text-emerald-950'
+            wasTriggered === null ? 'text-[#62665D]' : 'text-[#1B1C16]'
           }`}>
             Save note
           </Text>
@@ -112,14 +121,6 @@ function RelapseNoteCard({
     </View>
   );
 }
-
-export type CheckRecord = {
-  step: number;
-  title: string;
-  action: 'checked' | 'swiped';
-  answer?: 'strongUrge' | 'noUrge';
-  completedAt: string;
-};
 
 type SavedCheckProgress = {
   date: string;
@@ -157,7 +158,7 @@ export default function CardHolder() {
   const [isSavingRelapseNote, setIsSavingRelapseNote] = useState(false);
 
   useEffect(() => {
-    return onAuthStateChanged(auth, (user) => {
+    return observeAuthState((user) => {
       setUserId(user?.uid ?? null);
     });
   }, []);
@@ -168,7 +169,7 @@ export default function CardHolder() {
       return;
     }
 
-    getTriggers()
+    getTriggers(userId)
       .then((triggers) => {
         const unreviewedRelapse = triggers.find(
           (trigger) => trigger.relapsed && !trigger.followUp,
@@ -230,23 +231,18 @@ export default function CardHolder() {
   };
 
   const completeDevDay = async () => {
-    const currentUserId = auth.currentUser?.uid ?? userId;
+    const currentUserId = getCurrentUser()?.uid ?? userId;
     if (!currentUserId || isDevActionRunning) return;
 
     setIsDevActionRunning(true);
     setDevMessage(null);
 
     try {
-      const checkInCollection = collection(db, 'users', currentUserId, 'check_in_record');
-      const existingRecords = await getDocs(checkInCollection);
-      const alreadyCompleted = existingRecords.docs.some(
-        (record) => {
-          const data = record.data();
-          return (
-            data.completedDate === devDate ||
-            (typeof data.completedAt === 'string' && getLocalDate(data.completedAt) === devDate)
-          );
-        },
+      const existingRecords = await getCheckIns(currentUserId);
+      const alreadyCompleted = existingRecords.some((record) =>
+        record.completedDate === devDate ||
+        (typeof record.completedAt === 'string' &&
+          getLocalDate(record.completedAt) === devDate),
       );
 
       if (alreadyCompleted) {
@@ -254,23 +250,14 @@ export default function CardHolder() {
         return;
       }
 
-      const completedAt = new Date(`${devDate}T12:00:00`).toISOString();
       const completeChecks: CheckRecord[] = steps.map((step, stepIndex) => ({
         step: stepIndex + 1,
         title: step.title,
         action: 'checked',
-        completedAt,
+        completedAt: new Date(`${devDate}T12:00:00`).toISOString(),
       }));
 
-      await addDoc(checkInCollection, {
-        daily_check: true,
-        has_relapsed: false,
-        checks: completeChecks,
-        uid: currentUserId,
-        completedAt,
-        completedDate: devDate,
-        devGenerated: true,
-      });
+      await saveDevelopmentCheckIn(currentUserId, devDate, completeChecks);
 
       setDevMessage(`Completed ${devDate}.`);
     } catch (error) {
@@ -282,18 +269,16 @@ export default function CardHolder() {
   };
 
   const clearAllDevCheckIns = async () => {
-    const currentUserId = auth.currentUser?.uid ?? userId;
+    const currentUserId = getCurrentUser()?.uid ?? userId;
     if (!currentUserId || isDevActionRunning) return;
 
     setIsDevActionRunning(true);
     setDevMessage(null);
 
     try {
-      const checkInCollection = collection(db, 'users', currentUserId, 'check_in_record');
-      const records = await getDocs(checkInCollection);
-      await Promise.all(records.docs.map((record) => deleteDoc(record.ref)));
+      const deletedCount = await deleteAllCheckIns(currentUserId);
       await clearProgress();
-      setDevMessage(`Cleared ${records.size} daily check-in${records.size === 1 ? '' : 's'}.`);
+      setDevMessage(`Cleared ${deletedCount} daily check-in${deletedCount === 1 ? '' : 's'}.`);
     } catch (error) {
       console.error('Unable to clear daily check-ins', error);
       setDevMessage('Unable to clear daily check-ins.');
@@ -344,22 +329,14 @@ export default function CardHolder() {
   ) : null;
 
   const saveCompletedCheckIn = async (completeChecks: CheckRecord[], note?: string) => {
-    const currentUserId = auth.currentUser?.uid ?? userId;
+    const currentUserId = getCurrentUser()?.uid ?? userId;
     if (!currentUserId) {
       console.warn('All checks recorded locally because no Firebase user is signed in');
       return;
     }
 
     try {
-      const completedAt = new Date().toISOString();
-      await addDoc(collection(db, 'users', currentUserId, 'check_in_record'), {
-        daily_check: true,
-        has_relapsed: false,
-        checks: completeChecks,
-        ...(note ? { note, noteDate: getStorageDate() } : {}),
-        uid: currentUserId,
-        completedAt,
-      });
+      await saveCheckIn(currentUserId, completeChecks, note);
     } catch (error) {
       console.error('Unable to save completed check-in to Firestore', error);
     }
@@ -370,7 +347,8 @@ export default function CardHolder() {
 
     setIsSavingRelapseNote(true);
     try {
-      await updateTriggerFollowUp(relapseTrigger.id, { wasTriggered, note });
+      if (!userId) throw new Error('You must be signed in to save this note.');
+      await updateTriggerFollowUp(userId, relapseTrigger.id, { wasTriggered, note });
       await saveCompletedCheckIn(checks);
       setRelapseTrigger(null);
       setIndex(TOTAL_STEPS);
@@ -416,7 +394,7 @@ export default function CardHolder() {
       <>
         {devTools}
         <View className="px-5 mt-8">
-          <Text className="text-[#8a9a8a] text-sm">Loading saved progress...</Text>
+          <Text className="text-sm" style={{ color: HabitatColors.muted }}>Loading saved progress...</Text>
         </View>
       </>
     );
@@ -443,8 +421,8 @@ export default function CardHolder() {
     return (
       <View className="px-5 mt-8">
         {devTools}
-        <Text className="text-[#f3efe3] text-lg font-medium">All checks complete</Text>
-        <Text className="text-[#8a9a8a] text-sm mt-2">
+        <Text className="text-lg font-black uppercase" style={{ color: HabitatColors.ink }}>Practice complete</Text>
+        <Text className="mt-2 text-sm" style={{ color: HabitatColors.muted }}>
           {checks.length} / {steps.length} cards checked or swiped
         </Text>
         {__DEV__ && (
@@ -502,10 +480,10 @@ export default function CardHolder() {
         {renderCard(current, index)}
       </SwipeableCard>
 
-      {/* <UrgeButtons
+      <UrgeButtons
         onStrongUrge={() => recordCheck('checked', 'strongUrge')}
         onNoUrge={() => recordCheck('checked', 'noUrge')}
-      /> */}
+      />
     </>
   );
 }

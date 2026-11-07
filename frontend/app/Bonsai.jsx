@@ -397,17 +397,42 @@ export function BonsaiCanvas({ growth }) {
   const tree = useMemo(() => buildTree(seed, leavesPot, flowersPot, heightPot), [seed, leavesPot, flowersPot, heightPot]);
   const stage = getStage(growth);
   
-  return(
-    <>
-      <View className="mx-6 mt-4 rounded-3xl bg-sky-50 border border-stone-200 items-center justify-center py-4 shadow-sm" style={{ height: 380 }}>
+  const growthPercent = Math.round(growth * 100);
+
+  return (
+    <View
+      className="mt-5 border-2"
+      style={{
+        backgroundColor: '#FFFCF4',
+        borderColor: '#1B1C16',
+        shadowColor: '#1B1C16',
+        shadowOffset: { width: 3, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 0,
+      }}
+    >
+      <View className="items-center justify-center px-3 py-2" style={{ height: 270 }}>
         <BonsaiSvg tree={tree} growth={growth} />
       </View>
-
-      <View className="items-center mt-4">
-        <Text className="text-lg font-semibold text-emerald-800">{stage.label}</Text>
-        <Text className="text-stone-400 text-sm mt-1">{Math.round(growth * 100)}% grown</Text>
+      <View className="border-t-2 px-4 py-3" style={{ borderColor: '#1B1C16' }}>
+        <View className="flex-row items-center justify-between">
+          <Text className="text-sm font-bold" style={{ color: '#1B1C16' }}>
+            A small decision makes room for change.
+          </Text>
+          <Text className="ml-2 text-[10px] font-black uppercase" style={{ color: '#176A22' }}>
+            {stage.label}
+          </Text>
+        </View>
+        <View className="mt-3 flex-row items-center">
+          <View className="h-2 flex-1 border" style={{ borderColor: '#1B1C16', backgroundColor: '#E7E4D9' }}>
+            <View style={{ width: `${growthPercent}%`, height: '100%', backgroundColor: '#176A22' }} />
+          </View>
+          <Text className="ml-2 text-[10px] font-black" style={{ color: '#1B1C16' }}>
+            {growthPercent}% TO GROW
+          </Text>
+        </View>
       </View>
-    </>
+    </View>
   );
   
 }

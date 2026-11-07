@@ -1,5 +1,6 @@
 import { Alert, Pressable, Text, View } from 'react-native';
 import { Trash2 } from 'lucide-react-native';
+import { HabitatColors } from '@/constants/theme';
 
 type CheckInNoteListItemProps = {
   note: string;
@@ -44,22 +45,22 @@ export default function CheckInNoteListItem({
   };
 
   return (
-    <View className="rounded-3xl border border-[#2f3f2f] bg-[#182518] p-5">
+    <View className="border-2 p-5" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
       <View className="flex-row items-start justify-between">
         <View className="flex-1 pr-3">
-          <Text className="text-sm font-semibold text-[#8a9a8a]">
+          <Text className="text-sm font-bold" style={{ color: HabitatColors.muted }}>
             {formatDate(completedAt)}
           </Text>
-          <Text className="mt-3 text-base leading-6 text-[#b9c7b9]">{note}</Text>
+          <Text className="mt-3 text-base leading-6" style={{ color: HabitatColors.ink }}>{note}</Text>
         </View>
         <Pressable
           onPress={handleDelete}
           hitSlop={8}
           accessibilityRole="button"
           accessibilityLabel="Delete note"
-          className="h-9 w-9 items-center justify-center rounded-full bg-red-500/10"
+          className="h-9 w-9 items-center justify-center"
         >
-          <Trash2 size={16} color="#f87171" />
+          <Trash2 size={16} color={HabitatColors.danger} />
         </Pressable>
       </View>
     </View>

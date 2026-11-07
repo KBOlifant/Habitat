@@ -1,12 +1,9 @@
 import React from 'react';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 //import { LinearGradient } from 'expo-linear-gradient';
 import CheckInHeader from '../../components/CheckInScreen/check-in-header';
-import { Colors } from '@/constants/theme';
-import { Gradients } from '@/constants/theme';
-import { useColorScheme } from 'react-native';
+import { HabitatColors } from '@/constants/theme';
 import CardHolder from '../../components/CheckInScreen/card-holder';
 import { goBackOrHome } from '../lib/navigation';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -21,12 +18,8 @@ function useThemeColor(colorName: keyof typeof Colors.light) {
 export default function DailyCheckInScreen() {
   const router = useRouter();
 
-  const scheme = useColorScheme() ?? 'light';
-  const gradientColors =
-    scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
-
 return (
-  <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
+  <View style={{ flex: 1, backgroundColor: HabitatColors.canvas }}>
     <ScreenTransition>
       <ScrollView contentContainerStyle={{paddingBottom: 80}}>
         <View style={{ flex: 1 }}>
@@ -40,6 +33,6 @@ return (
         </View>
       </ScrollView>
     </ScreenTransition>
-  </LinearGradient>
+  </View>
 );
 }

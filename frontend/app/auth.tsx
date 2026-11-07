@@ -33,7 +33,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ArrowRight } from 'lucide-react-native';
 // import GoogleButton from '../components/Auth/GoogleButton';
-import { signInWithEmail, signUpWithEmail, authErrorMessage } from './lib/auth';
+import {
+  signInWithEmail,
+  signUpWithEmail,
+  authErrorMessage,
+} from '../functions/auth';
 import { Typography } from '@/constants/typography';
 
 type Mode = 'signIn' | 'signUp';

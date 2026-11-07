@@ -4,14 +4,14 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useColorScheme } from 'react-native';
 import { Gradients } from '@/constants/theme';
-import { collection, addDoc } from 'firebase/firestore';
 
 import './global.css';
 import HabitSelectHeader from '@/components/Onboarding2/habit-select-header';
 import HabitGrid from '@/components/Onboarding2/habit-grid';
 import OtherHabitInput from '@/components/Onboarding2/other-habit-input';
 import PlantSeedButton from '@/components/Onboarding2/plant-seed-button';
-import { auth, db } from './lib/firebase';
+import { getCurrentUser } from '../functions/auth';
+import { createHabit } from '../functions/users';
 import { goBackOrHome } from './lib/navigation';
 
 export default function HabitSelectScreen() {
@@ -42,7 +42,7 @@ export default function HabitSelectScreen() {
       return;
     }
 
-    const user = auth.currentUser;
+    const user = getCurrentUser();
     console.log('Attempting to save habit for uid:', user?.uid ?? 'none');
 
     if (!user) {
@@ -61,13 +61,7 @@ export default function HabitSelectScreen() {
         collectionPath: `users/${user.uid}/addiction_record`,
       });
 
-      const docRef = await addDoc(collection(db, 'users', user.uid, 'addiction_record'), {
-        uid: user.uid,
-        addiction: habit,
-        avg_daily_time_spent: '',
-      });
-
-      console.log('Document written with ID: ', docRef.id);
+      await createHabit(user.uid, habit);
       router.replace('/home');
     } catch (error) {
       const err = error as { code?: string; message?: string };

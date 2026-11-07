@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import '../global.css';
 import ProgressHeader from '../../components/Milestones/progress-header';
 import StatsRow from '../../components/Milestones/stats-row';
@@ -9,23 +8,22 @@ import Last30Days from '../../components/Milestones/last-30-days';
 import TreeGrowth from '../../components/Milestones/tree-growth';
 import Milestones from '../../components/Milestones/milestones';
 import DevTimeTravel from '../../components/Home/dev-time-travel';
-import { Gradients } from '@/constants/theme';
-import { useColorScheme } from 'react-native';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../app/lib/firebase';
+import { observeAuthState } from '../../functions/auth';
 import {
   fetchProgressStats,
   syncPlantState,
   getLocalDate,
   type ProgressStats,
-} from '../../app/lib/progress';
+} from '../../functions/progress';
 import { goBackOrHome } from '../lib/navigation';
 import ScreenTransition from '../../components/General/screen-transition';
+import { HabitatColors } from '@/constants/theme';
 
 const EMPTY_STATS: ProgressStats = {
   streak: 0,
   resisted: 0,
   relapses: 0,
+  checkIns: 0,
   last30Days: Array.from({ length: 30 }, () => 'missed'),
   streakStartDate: null,
 };
@@ -44,7 +42,7 @@ export default function ProgressScreen() {
   );
 
   useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+    const unsubscribeAuth = observeAuthState((user) => {
       if (!user) {
         setStats(EMPTY_STATS);
         return;
@@ -67,19 +65,15 @@ export default function ProgressScreen() {
     };
   }, [selectedDate, focusVersion]);
 
-  const scheme = useColorScheme() ?? 'light';
-  const gradientColors =
-    scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
-
   return (
-    <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: HabitatColors.canvas }}>
       <ScreenTransition>
         <ScrollView
-          className="pt-16"
+          className="pt-14"
           contentContainerStyle={{ paddingBottom: 120 }}
         >
           <ProgressHeader onBack={() => goBackOrHome(router)} />
-          <StatsRow streak={stats.streak} resisted={stats.resisted} relapses={stats.relapses} />
+          <StatsRow streak={stats.streak} resisted={stats.resisted} checkIns={stats.checkIns} />
           <Last30Days days={stats.last30Days} />
           <TreeGrowth streakDays={stats.streak} />
           <Milestones streakDays={stats.streak} />
@@ -89,6 +83,6 @@ export default function ProgressScreen() {
           /> */}
         </ScrollView>
       </ScreenTransition>
-    </LinearGradient>
+    </View>
   );
 }

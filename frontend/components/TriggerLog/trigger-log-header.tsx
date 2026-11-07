@@ -1,6 +1,7 @@
 import { TouchableOpacity, View, Text } from 'react-native';
 import { ChevronLeft, Plus } from 'lucide-react-native';
 import { Typography } from '@/constants/typography';
+import { HabitatColors } from '@/constants/theme';
 
 type TriggerLogHeaderProps = {
   onBack?: () => void;
@@ -11,39 +12,35 @@ type TriggerLogHeaderProps = {
 export default function TriggerLogHeader({
   onBack,
   onAdd,
-  subtitle = 'Awareness is the first step.',
+  subtitle = 'Record what happened without shame. Patterns get easier to change when visible.',
 }: TriggerLogHeaderProps) {
   return (
-    <View className="">
+    <View>
       <View className="flex-row items-start justify-between">
-        <View className="flex-1">
-          <TouchableOpacity
-            onPress={onBack}
-            activeOpacity={0.7}
-            accessibilityRole="button"
-            accessibilityLabel="Go back"
-            className="flex-row items-center self-start"
-          >
-            <ChevronLeft size={16} color="#d1e7d4" />
-            <Text className="text-emerald-100/80 text-sm ml-0.5">Back</Text>
+        <View className="flex-1 pr-3">
+          <TouchableOpacity onPress={onBack} activeOpacity={0.7} className="flex-row items-center self-start">
+            <ChevronLeft size={17} color={HabitatColors.ink} />
+            <Text className="ml-1 text-sm font-bold" style={{ color: HabitatColors.ink }}>Back</Text>
           </TouchableOpacity>
-
-          <Text className="text-white mt-3" style={Typography.title}>
-            Trigger Log
+          <Text className="mt-4 uppercase" style={[Typography.title, { color: HabitatColors.ink }]}>
+            Trigger log.
           </Text>
-          <Text className="text-emerald-100/60 mt-1" style={Typography.subtitle}>{subtitle}</Text>
+          <Text className="mt-2" style={[Typography.subtitle, { color: HabitatColors.muted }]}>
+            {subtitle}
+          </Text>
         </View>
-
         <TouchableOpacity
           onPress={onAdd}
           activeOpacity={0.85}
           accessibilityRole="button"
           accessibilityLabel="Log a new trigger"
-          className="w-11 h-11 rounded-full bg-lime-600 items-center justify-center"
+          className="h-11 w-11 items-center justify-center border-2"
+          style={{ backgroundColor: HabitatColors.lime, borderColor: HabitatColors.ink }}
         >
-          <Plus size={22} color="#052e16" strokeWidth={2.5} />
+          <Plus size={22} color={HabitatColors.ink} strokeWidth={2.5} />
         </TouchableOpacity>
       </View>
+      <View className="mt-5 h-0.5" style={{ backgroundColor: HabitatColors.ink }} />
     </View>
   );
 }

@@ -1,6 +1,5 @@
-import { ScrollView } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { useFocusEffect } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import '../global.css';
 import HomeHeader from '../../components/Home/home-header';
 import BonsaiScreen from '../../components/Home/bonsai-progess-screen';
@@ -9,13 +8,12 @@ import AdditionalButtons from '../../components/Home/home-additional-buttons';
 import QuoteSection from '../../components/Home/quote-section';
 import DevTimeTravel from '../../components/Home/dev-time-travel';
 import ScreenTransition from '../../components/General/screen-transition';
-import { useColorScheme } from 'react-native';
-import { Gradients } from '@/constants/theme';
+import { HabitatColors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth, db } from '../../app/lib/firebase';
-import { collection, getDocs } from 'firebase/firestore';
-import { fetchProgressStats, syncPlantState, getLocalDate } from '../../app/lib/progress';
+import type { User } from 'firebase/auth';
+import { observeAuthState } from '../../functions/auth';
+import { getPrimaryHabit } from '../../functions/users';
+import { fetchProgressStats, syncPlantState, getLocalDate } from '../../functions/progress';
 
 
 // Matches Tree Growth's "Ancient wisdom" stage (90+ days) so Home and the
@@ -29,6 +27,9 @@ export default function HomeScreen() {
   const initialDate = getLocalDate(new Date());
   const [currentDevDate, setDevDate] = useState(initialDate);
   const [progress, setProgress] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [triggerCount, setTriggerCount] = useState(0);
+  const [checkedInToday, setCheckedInToday] = useState(false);
   const [focusVersion, setFocusVersion] = useState(0);
 
   useFocusEffect(
@@ -38,7 +39,7 @@ export default function HomeScreen() {
   );
 
   useEffect(() => {
-    return onAuthStateChanged(auth, (user) => {
+    return observeAuthState((user) => {
       setCurrentUser(user);
       setUserName(user?.displayName ?? 'User');
       if (!user) setHabit('');
@@ -53,16 +54,8 @@ export default function HomeScreen() {
       }
 
       try {
-        const snapshot = await getDocs(
-          collection(db, 'users', currentUser.uid, 'addiction_record')
-        );
-        const retrievedHabit = snapshot.docs[0]?.data().addiction;
-
-        if (typeof retrievedHabit === 'string') {
-          setHabit(retrievedHabit);
-        } else {
-          setHabit('');
-        }
+        const retrievedHabit = await getPrimaryHabit(currentUser.uid);
+        setHabit(retrievedHabit?.name ?? '');
       } catch (error) {
         console.error('Error fetching habit:', error);
         setHabit('');
@@ -79,6 +72,9 @@ export default function HomeScreen() {
   useEffect(() => {
     if (!currentUser) {
       setProgress(0);
+      setStreak(0);
+      setTriggerCount(0);
+      setCheckedInToday(false);
       return;
     }
 
@@ -88,6 +84,9 @@ export default function HomeScreen() {
       .then((stats) => {
         if (cancelled) return;
         setProgress(Math.min(stats.streak / STREAK_DAYS_TO_FULL_GROWTH, 1));
+        setStreak(stats.streak);
+        setTriggerCount(stats.resisted + stats.relapses);
+        setCheckedInToday(stats.streak > 0);
         syncPlantState(currentUser.uid, stats);
       })
       .catch((error) => {
@@ -100,25 +99,27 @@ export default function HomeScreen() {
     };
   }, [currentUser, currentDevDate, focusVersion]);
 
-  const scheme = useColorScheme() ?? 'light';
-  const gradientColors =
-    scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
-
   return (
-    <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: HabitatColors.canvas }}>
       <ScreenTransition>
         <ScrollView
           className="px-6"
-          contentContainerStyle={{ paddingTop: 64, paddingBottom: 120 }}
+          contentContainerStyle={{ paddingTop: 58, paddingBottom: 120 }}
         >
-          <HomeHeader habitName={habit} userName={userName} />
+          <HomeHeader habitName={habit} userName={userName} streakDays={streak} habitFreeDays={streak} />
+          <View className="mt-4 flex-row items-center border-2 px-3 py-2" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
+            <View className="mr-2 h-3 w-3 border" style={{ backgroundColor: checkedInToday ? HabitatColors.green : HabitatColors.pale, borderColor: HabitatColors.ink }} />
+            <Text className="text-xs font-black uppercase tracking-wider" style={{ color: HabitatColors.ink }}>
+              {checkedInToday ? 'Practice complete' : 'A new day to begin'}
+            </Text>
+          </View>
           <BonsaiScreen progress={progress} />
-          <CheckInButton />
-          <AdditionalButtons />
+          <CheckInButton completed={checkedInToday} />
+          <AdditionalButtons triggerCount={triggerCount} />
           <QuoteSection />
           {/* <DevTimeTravel initialDate={initialDate} returnCurrentDate={(currentDate) => setDevDate(currentDate)} /> */}
         </ScrollView>
       </ScreenTransition>
-    </LinearGradient>
+    </View>
   );
 }

@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react';
 import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { signInWithGoogleIdToken, authErrorMessage } from '../../app/lib/auth';
+import { signInWithGoogleIdToken, authErrorMessage } from '../../functions/auth';
 
 WebBrowser.maybeCompleteAuthSession();
 

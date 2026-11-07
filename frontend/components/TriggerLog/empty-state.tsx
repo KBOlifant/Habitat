@@ -1,5 +1,6 @@
 import { View, Text } from 'react-native';
 import { Shield } from 'lucide-react-native';
+import { HabitatColors } from '@/constants/theme';
 
 type EmptyStateProps = {
   title?: string;
@@ -11,13 +12,13 @@ export default function EmptyState({
   subtitle = 'When urges arise, log them here. Awareness heals.',
 }: EmptyStateProps) {
   return (
-    <View className="items-center px-10 mt-24">
-      <Shield size={32} color="#5c6b52" strokeWidth={1.5} />
+    <View className="mx-6 mt-10 items-center border-2 px-6 py-10" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
+      <Shield size={32} color={HabitatColors.green} strokeWidth={1.5} />
 
-      <Text className="text-white text-base font-semibold mt-5 text-center">
+      <Text className="mt-5 text-center text-base font-black uppercase" style={{ color: HabitatColors.ink }}>
         {title}
       </Text>
-      <Text className="text-emerald-100/40 text-sm mt-2 text-center leading-6">
+      <Text className="mt-2 text-center text-sm leading-6" style={{ color: HabitatColors.muted }}>
         {subtitle}
       </Text>
     </View>

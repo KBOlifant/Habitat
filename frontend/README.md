@@ -1,50 +1,24 @@
-# Welcome to your Expo app 👋
+# Habitat
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Habitat is an Expo / React Native habit-recovery app. Firebase is the backend-as-a-service:
 
-## Get started
+- Firebase Authentication handles email/password and Google sign-in.
+- Cloud Firestore stores user profiles and app records.
 
-1. Install dependencies
+## Firebase data
 
-   ```bash
-   npm install
-   ```
+- `users/{uid}` — account profile
+- `users/{uid}/addiction_record/{recordId}` — selected habit
+- `users/{uid}/addiction_record/{recordId}/triggerLog/{triggerId}` — trigger entries and follow-up notes
+- `users/{uid}/check_in_record/{checkInId}` — daily swipe/check-in records and optional notes
+- `users/{uid}/plant_state/current` — derived bonsai progress cache
 
-2. Start the app
+The Firestore and Firebase Auth calls live in `functions/`, grouped by feature (`auth`, `users`, `swipes`, `triggers`, and `progress`). Screens and components import those functions rather than calling Firebase SDK methods directly. `app/lib/firebase.ts` is only responsible for Firebase initialization.
 
-   ```bash
-   npx expo start
-   ```
+## Run locally
 
-In the output, you'll find options to open the app in a
+1. Install dependencies with `npm install`.
+2. Set the required `EXPO_PUBLIC_FIREBASE_*` values in `.env` (see `.env.example`).
+3. Start Expo with `npm start`.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+The Expo Router routes are in `app/`; the mobile navigation maps Home, Check-in, Triggers, Progress, and Field Notes to the bottom bar.

@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, View, Text, ActivityIndicator, useColorScheme } from 'react-native';
+import { ScrollView, View, Text, ActivityIndicator } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { ChevronUp } from 'lucide-react-native';
-import { Gradients } from '@/constants/theme';
-import { onAuthStateChanged, type User } from 'firebase/auth';
+import { HabitatColors } from '@/constants/theme';
+import type { User } from 'firebase/auth';
 import TriggerReasoningModal from '../../components/TriggerLog/trigger-reasoning-modal';
 import '../global.css';
 import TriggerLogHeader from '../../components/TriggerLog/trigger-log-header';
@@ -12,7 +11,7 @@ import EmptyState from '../../components/TriggerLog/empty-state';
 import TriggerListItem from '../../components/TriggerLog/trigger-list-item';
 import LogTriggerModal from '../../components/TriggerLog/log-trigger-modal';
 import { useSwipeGesture } from '../lib/hooks/use-swipe-gesture';
-import { auth } from '../lib/firebase';
+import { observeAuthState } from '../../functions/auth';
 import { goBackOrHome } from '../lib/navigation';
 import ScreenTransition from '../../components/General/screen-transition';
 import {
@@ -21,7 +20,7 @@ import {
   deleteTrigger,
   type Trigger,
   type NewTriggerInput,
-} from '../lib/storage/trigger-storage';
+} from '../../functions/triggers';
 
 export default function TriggerLogScreen() {
   const router = useRouter();
@@ -30,10 +29,7 @@ export default function TriggerLogScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [selectedTrigger, setSelectedTrigger] = useState<Trigger | null>(null);
-
-  const scheme = useColorScheme() ?? 'light';
-  const gradientColors =
-    scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const loadTriggers = useCallback(async () => {
     if (!user) {
@@ -43,15 +39,19 @@ export default function TriggerLogScreen() {
     }
 
     setIsLoading(true);
+    setLoadError(null);
     try {
-      setTriggers(await getTriggers());
+      setTriggers(await getTriggers(user.uid));
+    } catch (error) {
+      console.error('Unable to load trigger logs', error);
+      setLoadError('Unable to load your trigger log. Please try again.');
     } finally {
       setIsLoading(false);
     }
   }, [user]);
 
   useEffect(() => {
-    return onAuthStateChanged(auth, setUser);
+    return observeAuthState(setUser);
   }, []);
 
   useFocusEffect(
@@ -61,14 +61,16 @@ export default function TriggerLogScreen() {
   );
 
   const handleSave = async (input: NewTriggerInput) => {
-    const trigger = await addTrigger(input);
+    if (!user) throw new Error('You must be signed in to save a trigger.');
+    const trigger = await addTrigger(user.uid, input);
 
     setTriggers((existingTriggers) => [trigger, ...existingTriggers]);
     setIsModalVisible(false);
   };
 
   const handleDelete = async (trigger: Trigger) => {
-    await deleteTrigger(trigger.id);
+    if (!user) throw new Error('You must be signed in to delete a trigger.');
+    await deleteTrigger(user.uid, trigger.id);
     setTriggers((existingTriggers) =>
       existingTriggers.filter((existingTrigger) => existingTrigger.id !== trigger.id),
     );
@@ -82,7 +84,7 @@ export default function TriggerLogScreen() {
   });
 
   return (
-    <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: HabitatColors.canvas }}>
       <ScreenTransition>
         <ScrollView
           contentContainerStyle={{ paddingTop: 64, paddingBottom: 120, flexGrow: 1 }}
@@ -95,8 +97,10 @@ export default function TriggerLogScreen() {
 
         {isLoading ? (
           <View className="items-center mt-24">
-            <ActivityIndicator color="#4ade80" />
+            <ActivityIndicator color={HabitatColors.green} />
           </View>
+        ) : loadError ? (
+          <Text className="mt-8 text-center" style={{ color: HabitatColors.danger }}>{loadError}</Text>
         ) : triggers.length === 0 ? (
           <EmptyState />
         ) : (
@@ -119,7 +123,7 @@ export default function TriggerLogScreen() {
         accessibilityLabel="Swipe up to log a trigger"
       >
         <ChevronUp size={16} color="#6b7a63" />
-        <Text className="text-emerald-100/40 text-sm mt-0.5">
+        <Text className="text-sm mt-0.5" style={{ color: HabitatColors.muted }}>
           Swipe up to log a trigger
         </Text>
       </View>
@@ -141,6 +145,6 @@ export default function TriggerLogScreen() {
         onSave={handleSave}
       />
 
-    </LinearGradient>
+    </View>
   );
 }

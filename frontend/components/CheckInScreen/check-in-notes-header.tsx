@@ -1,6 +1,7 @@
 import { Text, TouchableOpacity, View } from 'react-native';
 import { ChevronLeft } from 'lucide-react-native';
 import { Typography } from '@/constants/typography';
+import { HabitatColors } from '@/constants/theme';
 
 type CheckInNotesHeaderProps = { onBack: () => void };
 
@@ -13,11 +14,11 @@ export default function CheckInNotesHeader({ onBack }: CheckInNotesHeaderProps) 
         accessibilityLabel="Go back"
         className="flex-row items-center self-start"
       >
-        <ChevronLeft size={16} color="#d1e7d4" />
-        <Text className="ml-0.5 text-sm text-emerald-100/80">Back</Text>
+        <ChevronLeft size={16} color={HabitatColors.ink} />
+        <Text className="ml-0.5 text-sm font-bold" style={{ color: HabitatColors.ink }}>Back</Text>
       </TouchableOpacity>
-      <Text className="mt-3 text-white" style={Typography.title}>Check-In Notes</Text>
-      <Text className="mt-1 text-emerald-100/60" style={Typography.subtitle}>
+      <Text className="mt-3 uppercase" style={[Typography.title, { color: HabitatColors.ink }]}>Field notes.</Text>
+      <Text className="mt-1" style={[Typography.subtitle, { color: HabitatColors.muted }]}>
         A record of what you noticed.
       </Text>
     </View>

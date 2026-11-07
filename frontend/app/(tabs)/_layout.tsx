@@ -3,12 +3,9 @@ import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { HabitatColors } from '@/constants/theme';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       initialRouteName="home"
@@ -16,25 +13,23 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         animation: 'none',
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tabIconDefault,
+        tabBarActiveTintColor: HabitatColors.green,
+        tabBarInactiveTintColor: HabitatColors.muted,
         tabBarButton: HapticTab,
         tabBarStyle: {
           position: 'absolute',
-          left: 16,
-          right: 16,
-          bottom: 16,
-          borderRadius: 24,
-          height: 70,
-          paddingHorizontal: 10,
-          backgroundColor:
-            colorScheme === 'dark' ? 'rgba(15, 23, 42, 0.95)' : 'rgba(248, 250, 252, 0.95)',
-          borderTopWidth: 0,
-          shadowColor: '#000',
-          shadowOpacity: 0.12,
-          shadowRadius: 18,
-          elevation: 12,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 68,
+          paddingHorizontal: 2,
+          backgroundColor: HabitatColors.surface,
+          borderTopWidth: 2,
+          borderTopColor: HabitatColors.ink,
+          elevation: 0,
         },
+        tabBarLabelStyle: { fontSize: 9, fontWeight: '900', textTransform: 'uppercase' },
+        tabBarIconStyle: { marginTop: 4 },
       }}
     >
       <Tabs.Screen

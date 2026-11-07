@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Wind, X, Check } from 'lucide-react-native';
+import { Wind, ArrowLeft, ArrowRight } from 'lucide-react-native';
 import { Typography } from '@/constants/typography';
+import { HabitatColors } from '@/constants/theme';
 
 type Props = {
   step: number;
@@ -12,32 +13,49 @@ type Props = {
 
 export default function CheckInCard({ step, totalSteps, title, question }: Props) {
   return (
-    <View className="mx-5 mt-8 bg-[#182518] border border-[#2f3f2f] rounded-3xl p-5">
-      {/* Top row: progress + icon */}
+    <View
+      className="mx-5 mt-5 border-2 p-5"
+      style={{
+        minHeight: 350,
+        backgroundColor: HabitatColors.surface,
+        borderColor: HabitatColors.ink,
+        shadowColor: HabitatColors.ink,
+        shadowOffset: { width: 3, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 0,
+      }}
+    >
       <View className="flex-row items-center justify-between">
-        <Text className="text-[#8a9a8a] text-sm">
-          {step} / {totalSteps}
-        </Text>
-        <View className="w-11 h-11 rounded-full bg-[#3d5a44] items-center justify-center">
-          <Wind size={20} color="#cfe0cf" />
+        <View className="h-10 w-10 items-center justify-center border-2" style={{ backgroundColor: HabitatColors.pale, borderColor: HabitatColors.ink }}>
+          <Wind size={20} color={HabitatColors.ink} />
         </View>
+        <Text className="text-xs font-black" style={{ color: HabitatColors.ink }}>
+          {String(step).padStart(2, '0')} / {String(totalSteps).padStart(2, '0')}
+        </Text>
       </View>
 
-      {/* Title + question */}
-      <Text className="text-[#f3efe3] mt-5" style={Typography.title}>{title}</Text>
-      <Text className="text-[#b9c7b9] text-base leading-6 mt-3">
+      <Text className="mt-8 uppercase" style={[Typography.sectionLabel, { color: HabitatColors.green }]}>
+        Body scan
+      </Text>
+      <Text className="mt-2 uppercase" style={[Typography.title, { color: HabitatColors.ink }]}>
+        {title}
+      </Text>
+      <Text className="mt-4 text-base leading-7" style={{ color: HabitatColors.muted }}>
         {question}
       </Text>
 
-      {/* Bottom hint row */}
-      <View className="flex-row items-center justify-between mt-32">
+      <View className="mt-auto flex-row items-center justify-between border-t-2 pt-4" style={{ borderColor: HabitatColors.ink }}>
         <View className="flex-row items-center">
-          <X size={14} color="#6f8a6f" />
-          <Text className="text-[#6f8a6f] text-base ml-1.5">Mark Unchecked</Text>
+          <ArrowLeft size={14} color={HabitatColors.ink} />
+          <Text className="ml-1 text-[10px] font-black uppercase" style={{ color: HabitatColors.ink }}>
+            Swipe to reflect
+          </Text>
         </View>
         <View className="flex-row items-center">
-          <Text className="text-[#6f8a6f] text-base mr-1.5">Mark Checked</Text>
-          <Check size={14} color="#6f8a6f" />
+          <Text className="mr-1 text-[10px] font-black uppercase" style={{ color: HabitatColors.ink }}>
+            Keep going
+          </Text>
+          <ArrowRight size={14} color={HabitatColors.ink} />
         </View>
       </View>
     </View>
