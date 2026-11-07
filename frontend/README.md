@@ -13,7 +13,7 @@ Habitat is an Expo / React Native habit-recovery app. Firebase is the backend-as
 - `users/{uid}/check_in_record/{checkInId}` — daily swipe/check-in records and optional notes
 - `users/{uid}/plant_state/current` — derived bonsai progress cache
 
-The Firestore and Firebase Auth calls live in `functions/`, grouped by feature (`auth`, `users`, `swipes`, `triggers`, and `progress`). Screens and components import those functions rather than calling Firebase SDK methods directly. `app/lib/firebase.ts` is only responsible for Firebase initialization.
+The Firestore and Firebase Auth calls live in `functions/`, grouped by feature (`auth`, `users`, `swipes`, `triggers`, and `progress`). Screens and components import those functions rather than calling Firebase SDK methods directly. `functions/firebase.ts` only initializes Firebase for the data layer.
 
 ## Run locally
 

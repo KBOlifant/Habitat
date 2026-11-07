@@ -1,4 +1,4 @@
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, View, Text, useWindowDimensions } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import '../global.css';
 import HomeHeader from '../../components/Home/home-header';
@@ -6,12 +6,10 @@ import BonsaiScreen from '../../components/Home/bonsai-progess-screen';
 import CheckInButton from '../../components/Home/check-in-button';
 import AdditionalButtons from '../../components/Home/home-additional-buttons';
 import QuoteSection from '../../components/Home/quote-section';
-import DevTimeTravel from '../../components/Home/dev-time-travel';
 import ScreenTransition from '../../components/General/screen-transition';
 import { HabitatColors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
-import type { User } from 'firebase/auth';
-import { observeAuthState } from '../../functions/auth';
+import { observeAuthState, type AuthUser } from '../../functions/auth';
 import { getPrimaryHabit } from '../../functions/users';
 import { fetchProgressStats, syncPlantState, getLocalDate } from '../../functions/progress';
 
@@ -21,11 +19,12 @@ import { fetchProgressStats, syncPlantState, getLocalDate } from '../../function
 const STREAK_DAYS_TO_FULL_GROWTH = 90;
 
 export default function HomeScreen() {
+  const { width, height } = useWindowDimensions();
+  const isWide = width > height;
   const [userName, setUserName] = useState<string>('User');
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [habit, setHabit] = useState('');
-  const initialDate = getLocalDate(new Date());
-  const [currentDevDate, setDevDate] = useState(initialDate);
+  const currentDevDate = getLocalDate(new Date());
   const [progress, setProgress] = useState(0);
   const [streak, setStreak] = useState(0);
   const [triggerCount, setTriggerCount] = useState(0);
@@ -104,20 +103,27 @@ export default function HomeScreen() {
       <ScreenTransition>
         <ScrollView
           className="px-6"
-          contentContainerStyle={{ paddingTop: 58, paddingBottom: 120 }}
+          contentContainerStyle={{ paddingTop: isWide ? 24 : 58, paddingBottom: isWide ? 40 : 120, alignItems: 'center' }}
         >
-          <HomeHeader habitName={habit} userName={userName} streakDays={streak} habitFreeDays={streak} />
-          <View className="mt-4 flex-row items-center border-2 px-3 py-2" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
-            <View className="mr-2 h-3 w-3 border" style={{ backgroundColor: checkedInToday ? HabitatColors.green : HabitatColors.pale, borderColor: HabitatColors.ink }} />
-            <Text className="text-xs font-black uppercase tracking-wider" style={{ color: HabitatColors.ink }}>
-              {checkedInToday ? 'Practice complete' : 'A new day to begin'}
-            </Text>
+          <View style={{ width: '100%', maxWidth: 1080 }}>
+            <HomeHeader habitName={habit} userName={userName} streakDays={streak} habitFreeDays={streak} />
+            <View className="mt-4 flex-row items-center border-2 px-3 py-2" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
+              <View className="mr-2 h-3 w-3 border" style={{ backgroundColor: checkedInToday ? HabitatColors.green : HabitatColors.pale, borderColor: HabitatColors.ink }} />
+              <Text className="text-xs font-black uppercase tracking-wider" style={{ color: HabitatColors.ink }}>
+                {checkedInToday ? 'Practice complete' : 'A new day to begin'}
+              </Text>
+            </View>
+            <View className="mt-4" style={{ flexDirection: isWide ? 'row' : 'column', gap: 18, alignItems: 'flex-start' }}>
+              <View style={{ flex: 1.25, width: isWide ? undefined : '100%' }}>
+                <BonsaiScreen progress={progress} />
+                <CheckInButton completed={checkedInToday} />
+              </View>
+              <View style={{ flex: 1, width: isWide ? undefined : '100%' }}>
+                <AdditionalButtons triggerCount={triggerCount} />
+                <QuoteSection />
+              </View>
+            </View>
           </View>
-          <BonsaiScreen progress={progress} />
-          <CheckInButton completed={checkedInToday} />
-          <AdditionalButtons triggerCount={triggerCount} />
-          <QuoteSection />
-          {/* <DevTimeTravel initialDate={initialDate} returnCurrentDate={(currentDate) => setDevDate(currentDate)} /> */}
         </ScrollView>
       </ScreenTransition>
     </View>

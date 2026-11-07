@@ -1,6 +1,6 @@
 import { TouchableOpacity, View, Text } from 'react-native';
 import { Link } from 'expo-router';
-import { TriangleAlert, BarChart3, NotebookPen } from 'lucide-react-native';
+import { TriangleAlert, BarChart3 } from 'lucide-react-native';
 import { HabitatColors } from '@/constants/theme';
 
 type HomeAdditionalButtonsProps = {
@@ -50,19 +50,6 @@ export default function AdditionalButtons({ triggerCount = 0 }: HomeAdditionalBu
               See your month
             </Text>
           </View>
-        </TouchableOpacity>
-      </Link>
-
-      <Link href="/check-in-notes" asChild>
-        <TouchableOpacity
-          activeOpacity={0.85}
-          className="min-h-[145px] flex-1 justify-between border-2 p-4"
-          style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}
-        >
-          <NotebookPen size={20} color={HabitatColors.ink} />
-          <Text className="text-base font-black uppercase" style={{ color: HabitatColors.ink }}>
-            Field notes
-          </Text>
         </TouchableOpacity>
       </Link>
     </View>

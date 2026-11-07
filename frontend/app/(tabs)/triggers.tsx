@@ -1,18 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, View, Text, ActivityIndicator } from 'react-native';
+import { ScrollView, View, Text, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { ChevronUp } from 'lucide-react-native';
 import { HabitatColors } from '@/constants/theme';
-import type { User } from 'firebase/auth';
 import TriggerReasoningModal from '../../components/TriggerLog/trigger-reasoning-modal';
 import '../global.css';
 import TriggerLogHeader from '../../components/TriggerLog/trigger-log-header';
 import EmptyState from '../../components/TriggerLog/empty-state';
 import TriggerListItem from '../../components/TriggerLog/trigger-list-item';
 import LogTriggerModal from '../../components/TriggerLog/log-trigger-modal';
-import { useSwipeGesture } from '../lib/hooks/use-swipe-gesture';
-import { observeAuthState } from '../../functions/auth';
-import { goBackOrHome } from '../lib/navigation';
+import { useSwipeGesture } from '../../lib/hooks/use-swipe-gesture';
+import { observeAuthState, type AuthUser } from '../../functions/auth';
+import { goBackOrHome } from '../../lib/navigation';
 import ScreenTransition from '../../components/General/screen-transition';
 import {
   getTriggers,
@@ -24,10 +23,12 @@ import {
 
 export default function TriggerLogScreen() {
   const router = useRouter();
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
   const [triggers, setTriggers] = useState<Trigger[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [selectedTrigger, setSelectedTrigger] = useState<Trigger | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -87,25 +88,29 @@ export default function TriggerLogScreen() {
     <View style={{ flex: 1, backgroundColor: HabitatColors.canvas }}>
       <ScreenTransition>
         <ScrollView
-          contentContainerStyle={{ paddingTop: 64, paddingBottom: 120, flexGrow: 1 }}
+          contentContainerStyle={{ paddingTop: isLandscape ? 24 : 64, paddingBottom: isLandscape ? 24 : 120, flexGrow: 1 }}
           className="px-6"
         >
-        <TriggerLogHeader
-          onBack={() => goBackOrHome(router)}
-          onAdd={() => setIsModalVisible(true)}
-        />
-
-        {isLoading ? (
-          <View className="items-center mt-24">
-            <ActivityIndicator color={HabitatColors.green} />
+        <View style={{ flex: 1, flexDirection: isLandscape ? 'row' : 'column', gap: 24 }}>
+          <View style={isLandscape ? { width: '32%' } : undefined}>
+            <TriggerLogHeader
+              onBack={() => goBackOrHome(router)}
+              onAdd={() => setIsModalVisible(true)}
+            />
           </View>
-        ) : loadError ? (
-          <Text className="mt-8 text-center" style={{ color: HabitatColors.danger }}>{loadError}</Text>
-        ) : triggers.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <View className="mt-6" style={{ gap: 10 }}>
-            {triggers.map((trigger) => (
+
+          <View style={isLandscape ? { flex: 1 } : undefined}>
+            {isLoading ? (
+              <View className="items-center mt-24">
+                <ActivityIndicator color={HabitatColors.green} />
+              </View>
+            ) : loadError ? (
+              <Text className="mt-8 text-center" style={{ color: HabitatColors.danger }}>{loadError}</Text>
+            ) : triggers.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <View className="mt-6" style={{ gap: 10 }}>
+                {triggers.map((trigger) => (
                 <TriggerListItem
                   key={trigger.id}
                   trigger={trigger}
@@ -113,20 +118,22 @@ export default function TriggerLogScreen() {
                   onDelete={() => handleDelete(trigger)}
                 />
               ))}
-          </View>
-        )}
+              </View>
+            )}
 
-        <View
-        {...swipeUpHandlers}
-        className="items-center pt-2 pb-6 "
-        accessibilityRole="button"
-        accessibilityLabel="Swipe up to log a trigger"
-      >
-        <ChevronUp size={16} color="#6b7a63" />
-        <Text className="text-sm mt-0.5" style={{ color: HabitatColors.muted }}>
-          Swipe up to log a trigger
-        </Text>
-      </View>
+            <View
+              {...swipeUpHandlers}
+              className="items-center pt-2 pb-6"
+              accessibilityRole="button"
+              accessibilityLabel="Swipe up to log a trigger"
+            >
+              <ChevronUp size={16} color="#6b7a63" />
+              <Text className="text-sm mt-0.5" style={{ color: HabitatColors.muted }}>
+                Swipe up to log a trigger
+              </Text>
+            </View>
+          </View>
+        </View>
         </ScrollView>
       </ScreenTransition>
 

@@ -1,5 +1,5 @@
 import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
-import { db } from '../../app/lib/firebase';
+import { db } from '../firebase';
 
 export type CheckRecord = {
   step: number;

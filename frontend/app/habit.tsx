@@ -12,7 +12,7 @@ import OtherHabitInput from '@/components/Onboarding2/other-habit-input';
 import PlantSeedButton from '@/components/Onboarding2/plant-seed-button';
 import { getCurrentUser } from '../functions/auth';
 import { createHabit } from '../functions/users';
-import { goBackOrHome } from './lib/navigation';
+import { goBackOrHome } from '../lib/navigation';
 
 export default function HabitSelectScreen() {
   const router = useRouter();

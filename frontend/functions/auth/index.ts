@@ -10,7 +10,9 @@ import {
   type UserCredential,
 } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
-import { auth, db } from '../../app/lib/firebase';
+import { auth, db } from '../firebase';
+
+export type AuthUser = User;
 
 async function ensureUserDocument(credential: UserCredential, name?: string) {
   const userDocument = doc(db, 'users', credential.user.uid);
@@ -42,9 +44,7 @@ export async function signUpWithEmail(name: string, email: string, password: str
 }
 
 export async function signInWithEmail(email: string, password: string) {
-  const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
-  await ensureUserDocument(credential);
-  return credential;
+  return signInWithEmailAndPassword(auth, email.trim(), password);
 }
 
 export async function signInWithGoogleIdToken(idToken: string) {

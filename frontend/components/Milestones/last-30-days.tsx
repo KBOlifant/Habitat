@@ -45,7 +45,7 @@ export default function Last30Days({ days = EMPTY_30_DAYS }: Last30DaysProps) {
           <View
             key={index}
             style={{
-              width: '9%',
+              width: '9.5%',
               aspectRatio: 1,
               borderWidth: 1,
               borderColor: HabitatColors.ink,

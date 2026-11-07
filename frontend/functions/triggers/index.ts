@@ -7,7 +7,7 @@ import {
   getDocs,
   updateDoc,
 } from 'firebase/firestore';
-import { db } from '../../app/lib/firebase';
+import { db } from '../firebase';
 import { getPrimaryHabit } from '../users';
 
 export type TriggerFollowUp = {

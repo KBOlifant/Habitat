@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { PanResponder, PanResponderGestureState } from 'react-native';
+import { PanResponder, type PanResponderGestureState } from 'react-native';
 
 type SwipeDirection = 'up' | 'down' | 'left' | 'right';
 

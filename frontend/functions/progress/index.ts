@@ -1,5 +1,5 @@
 import { collection, doc, getDoc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore';
-import { db } from '../../app/lib/firebase';
+import { db } from '../firebase';
 import { getPrimaryHabit } from '../users';
 
 export type DayStatus = 'checked-in' | 'relapsed' | 'missed';

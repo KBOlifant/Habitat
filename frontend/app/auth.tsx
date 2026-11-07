@@ -9,7 +9,7 @@
 //
 // Data needs:
 //   - name (sign up only), email, password — local component state
-//   - Firebase Auth for email/password + Google credential sign-in (lib/auth.ts)
+//   - Firebase Auth for email/password + Google credential sign-in (functions/auth)
 //   - Firestore `users/{uid}` doc is created on first sign-up / first Google sign-in
 //
 // Edge cases handled:

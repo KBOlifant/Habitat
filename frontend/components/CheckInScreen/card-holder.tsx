@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
+import { Link } from 'expo-router';
+import { CircleCheck, Sprout } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckInCard from './check-in-card';
 import UrgeButtons from './urge-swiper-card';
@@ -37,6 +39,7 @@ type RelapseNoteCardProps = {
   step: number;
   totalSteps: number;
   trigger: Trigger;
+  error?: string | null;
   onSkip: () => void;
   onSave: (wasTriggered: boolean, note: string) => void;
 };
@@ -45,6 +48,7 @@ function RelapseNoteCard({
   step,
   totalSteps,
   trigger,
+  error,
   onSkip,
   onSave,
 }: RelapseNoteCardProps) {
@@ -60,6 +64,11 @@ function RelapseNoteCard({
       <Text className="mt-3 text-base leading-6" style={{ color: HabitatColors.muted }}>
         This optional note can help you understand what happened.
       </Text>
+      {error ? (
+        <Text className="mt-3 text-sm" style={{ color: HabitatColors.danger }} accessibilityLiveRegion="polite">
+          {error}
+        </Text>
+      ) : null}
 
       <View className="mt-5 flex-row" style={{ gap: 10 }}>
         {([true, false] as const).map((value) => (
@@ -156,6 +165,7 @@ export default function CardHolder() {
   const [devMessage, setDevMessage] = useState<string | null>(null);
   const [relapseTrigger, setRelapseTrigger] = useState<Trigger | null>(null);
   const [isSavingRelapseNote, setIsSavingRelapseNote] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     return observeAuthState((user) => {
@@ -331,27 +341,26 @@ export default function CardHolder() {
   const saveCompletedCheckIn = async (completeChecks: CheckRecord[], note?: string) => {
     const currentUserId = getCurrentUser()?.uid ?? userId;
     if (!currentUserId) {
-      console.warn('All checks recorded locally because no Firebase user is signed in');
-      return;
+      throw new Error('You must be signed in to save this check-in.');
     }
 
-    try {
-      await saveCheckIn(currentUserId, completeChecks, note);
-    } catch (error) {
-      console.error('Unable to save completed check-in to Firestore', error);
-    }
+    await saveCheckIn(currentUserId, completeChecks, note);
   };
 
   const finishRelapseNote = async (wasTriggered: boolean, note: string) => {
     if (!relapseTrigger || isSavingRelapseNote) return;
 
     setIsSavingRelapseNote(true);
+    setSaveError(null);
     try {
       if (!userId) throw new Error('You must be signed in to save this note.');
       await updateTriggerFollowUp(userId, relapseTrigger.id, { wasTriggered, note });
       await saveCompletedCheckIn(checks);
       setRelapseTrigger(null);
       setIndex(TOTAL_STEPS);
+    } catch (error) {
+      console.error('Unable to save the completed check-in', error);
+      setSaveError('Your check-in could not be saved. Please try again.');
     } finally {
       setIsSavingRelapseNote(false);
     }
@@ -385,8 +394,14 @@ export default function CardHolder() {
       return;
     }
 
-    await saveCompletedCheckIn(completeChecks);
-    setIndex(TOTAL_STEPS);
+    setSaveError(null);
+    try {
+      await saveCompletedCheckIn(completeChecks);
+      setIndex(TOTAL_STEPS);
+    } catch (error) {
+      console.error('Unable to save the completed check-in', error);
+      setSaveError('Your check-in could not be saved. Please try again.');
+    }
   };
 
   if (!isHydrated) {
@@ -408,6 +423,7 @@ export default function CardHolder() {
           step={steps.length + 1}
           totalSteps={TOTAL_STEPS}
           trigger={relapseTrigger}
+          error={saveError}
           onSkip={async () => {
             await finishRelapseNote(false, '');
           }}
@@ -419,19 +435,47 @@ export default function CardHolder() {
 
   if (index >= steps.length) {
     return (
-      <View className="px-5 mt-8">
+      <View className="mx-5 mt-8 border-2 p-6" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
         {devTools}
-        <Text className="text-lg font-black uppercase" style={{ color: HabitatColors.ink }}>Practice complete</Text>
-        <Text className="mt-2 text-sm" style={{ color: HabitatColors.muted }}>
-          {checks.length} / {steps.length} cards checked or swiped
+        <View className="mt-4 h-12 w-12 items-center justify-center border-2" style={{ backgroundColor: HabitatColors.lime, borderColor: HabitatColors.ink }}>
+          <CircleCheck size={26} color={HabitatColors.ink} />
+        </View>
+        <Text className="mt-6 uppercase" style={[Typography.sectionLabel, { color: HabitatColors.green }]}>
+          Practice complete
         </Text>
+        <Text className="mt-2 uppercase" style={[Typography.title, { color: HabitatColors.ink }]}>
+          You stayed present.
+        </Text>
+        <Text className="mt-3 text-base leading-6" style={{ color: HabitatColors.muted }}>
+          That pause is the practice. Your tree has what it needs for today.
+        </Text>
+        <View className="mt-5 flex-row items-center">
+          <Sprout size={17} color={HabitatColors.green} />
+          <Text className="ml-2 text-xs font-black uppercase" style={{ color: HabitatColors.ink }}>
+            {checks.length} of {steps.length} reflections complete
+          </Text>
+        </View>
+        <Link href="/home" asChild>
+          <Pressable
+            accessibilityRole="button"
+            className="mt-6 min-h-14 flex-row items-center justify-center border-2 px-4"
+            style={{ backgroundColor: HabitatColors.lime, borderColor: HabitatColors.ink }}
+          >
+            <Text className="text-sm font-black uppercase" style={{ color: HabitatColors.ink }}>
+              Return home
+            </Text>
+          </Pressable>
+        </Link>
         {__DEV__ && (
           <Pressable
             accessibilityRole="button"
             onPress={clearProgress}
-            className="mt-5 self-start rounded-xl border border-[#6f8a6f] px-4 py-2"
+            className="mt-4 self-center border-b py-1"
+            style={{ borderColor: HabitatColors.ink }}
           >
-            <Text className="text-[#9cc49c]">Clear saved progress</Text>
+            <Text className="text-xs font-bold" style={{ color: HabitatColors.muted }}>
+              Clear saved progress
+            </Text>
           </Pressable>
         )}
       </View>
@@ -463,9 +507,10 @@ export default function CardHolder() {
           <Pressable
             accessibilityRole="button"
             onPress={clearProgress}
-            className="mt-2 self-start border rounded-lg p-2 bg-red-200 border-red-600"
+            className="mt-2 self-start border-2 px-3 py-2"
+            style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}
           >
-            <Text className="text-[#c96b5f] text-sm font-semibold">Clear saved progress</Text>
+            <Text className="text-xs font-bold" style={{ color: HabitatColors.muted }}>Clear saved progress</Text>
           </Pressable>
         )}
       </View>
@@ -479,6 +524,12 @@ export default function CardHolder() {
       >
         {renderCard(current, index)}
       </SwipeableCard>
+
+      {saveError ? (
+        <Text className="mx-6 mt-3 text-center text-sm" style={{ color: HabitatColors.danger }} accessibilityLiveRegion="polite">
+          {saveError}
+        </Text>
+      ) : null}
 
       <UrgeButtons
         onStrongUrge={() => recordCheck('checked', 'strongUrge')}

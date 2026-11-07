@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import '../global.css';
 import ProgressHeader from '../../components/Milestones/progress-header';
@@ -7,7 +7,6 @@ import StatsRow from '../../components/Milestones/stats-row';
 import Last30Days from '../../components/Milestones/last-30-days';
 import TreeGrowth from '../../components/Milestones/tree-growth';
 import Milestones from '../../components/Milestones/milestones';
-import DevTimeTravel from '../../components/Home/dev-time-travel';
 import { observeAuthState } from '../../functions/auth';
 import {
   fetchProgressStats,
@@ -15,7 +14,7 @@ import {
   getLocalDate,
   type ProgressStats,
 } from '../../functions/progress';
-import { goBackOrHome } from '../lib/navigation';
+import { goBackOrHome } from '../../lib/navigation';
 import ScreenTransition from '../../components/General/screen-transition';
 import { HabitatColors } from '@/constants/theme';
 
@@ -29,9 +28,11 @@ const EMPTY_STATS: ProgressStats = {
 };
 
 export default function ProgressScreen() {
+  const { width, height } = useWindowDimensions();
+  const isWide = width > height;
   const router = useRouter();
   const currentDate = getLocalDate(new Date());
-  const [selectedDate, setSelectedDate] = useState(currentDate);
+  const selectedDate = currentDate;
   const [stats, setStats] = useState<ProgressStats>(EMPTY_STATS);
   const [focusVersion, setFocusVersion] = useState(0);
 
@@ -69,18 +70,22 @@ export default function ProgressScreen() {
     <View style={{ flex: 1, backgroundColor: HabitatColors.canvas }}>
       <ScreenTransition>
         <ScrollView
-          className="pt-14"
-          contentContainerStyle={{ paddingBottom: 120 }}
+          className="px-6"
+          contentContainerStyle={{ paddingTop: isWide ? 24 : 56, paddingBottom: isWide ? 40 : 120, alignItems: 'center' }}
         >
-          <ProgressHeader onBack={() => goBackOrHome(router)} />
-          <StatsRow streak={stats.streak} resisted={stats.resisted} checkIns={stats.checkIns} />
-          <Last30Days days={stats.last30Days} />
-          <TreeGrowth streakDays={stats.streak} />
-          <Milestones streakDays={stats.streak} />
-          {/* <DevTimeTravel
-            initialDate={currentDate}
-            returnCurrentDate={setSelectedDate}
-          /> */}
+          <View style={{ width: '100%', maxWidth: 1080 }}>
+            <ProgressHeader onBack={() => goBackOrHome(router)} />
+            <View style={{ flexDirection: isWide ? 'row' : 'column', alignItems: 'flex-start' }}>
+              <View style={{ flex: 1, width: isWide ? undefined : '100%' }}>
+                <StatsRow streak={stats.streak} resisted={stats.resisted} checkIns={stats.checkIns} />
+                <TreeGrowth streakDays={stats.streak} />
+              </View>
+              <View style={{ flex: 1, width: isWide ? undefined : '100%' }}>
+                <Last30Days days={stats.last30Days} />
+                <Milestones streakDays={stats.streak} />
+              </View>
+            </View>
+          </View>
         </ScrollView>
       </ScreenTransition>
     </View>

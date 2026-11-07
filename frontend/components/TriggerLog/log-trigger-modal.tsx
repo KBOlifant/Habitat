@@ -232,8 +232,13 @@ export default function LogTriggerModal({
                     numberOfLines={3}
                     accessibilityLabel="Reason for the trigger"
                     className="border-2 px-4 py-3.5 text-base"
-                    style={{ borderColor: HabitatColors.ink, backgroundColor: HabitatColors.surface, color: HabitatColors.ink }}
-                    style={{ minHeight: 80, textAlignVertical: 'top' }}
+                    style={{
+                      minHeight: 80,
+                      textAlignVertical: 'top',
+                      borderColor: HabitatColors.ink,
+                      backgroundColor: HabitatColors.surface,
+                      color: HabitatColors.ink,
+                    }}
                   />
 
                   <IntensitySelector
