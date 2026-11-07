@@ -111,7 +111,7 @@ export default function SwipeableCard({
           {nextCard && (
             <Animated.View
               pointerEvents="none"
-              style={[StyleSheet.absoluteFillObject, styles.nextCard]}
+              style={[StyleSheet.absoluteFill, styles.nextCard]}
             >
               {nextCard}
             </Animated.View>

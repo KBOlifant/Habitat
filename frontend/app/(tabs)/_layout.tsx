@@ -1,5 +1,5 @@
-import { Tabs } from 'expo-router';
-import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { Tabs } from 'expo-router/js-tabs';
+import type { BottomTabBarProps } from 'expo-router/js-tabs';
 import React from 'react';
 import { Text, View, useWindowDimensions } from 'react-native';
 
@@ -7,7 +7,9 @@ import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { HabitatColors } from '@/constants/theme';
 
-function LandscapeTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+export const unstable_settings = { anchor: 'home' };
+
+function LandscapeTabBar({ state, descriptors, emitter, navigateToTab }: BottomTabBarProps) {
   const { height } = useWindowDimensions();
   const itemHeight = Math.min(98, (height - 16) / state.routes.length);
 
@@ -34,14 +36,14 @@ function LandscapeTabBar({ state, descriptors, navigation }: BottomTabBarProps) 
             : (options.title ?? route.name);
 
         const onPress = () => {
-          const event = navigation.emit({
+          const event = emitter.emit({
             type: 'tabPress',
             target: route.key,
             canPreventDefault: true,
           });
 
           if (!focused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
+            navigateToTab(route.key);
           }
         };
 
@@ -54,7 +56,7 @@ function LandscapeTabBar({ state, descriptors, navigation }: BottomTabBarProps) 
             testID={options.tabBarButtonTestID}
             onPress={onPress}
             onLongPress={() =>
-              navigation.emit({ type: 'tabLongPress', target: route.key })
+              emitter.emit({ type: 'tabLongPress', target: route.key })
             }
             style={{
               width: '100%',
@@ -93,7 +95,6 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      initialRouteName="home"
       backBehavior="history"
       tabBar={isLandscape ? (props) => <LandscapeTabBar {...props} /> : undefined}
       screenOptions={{

@@ -1,61 +1,32 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated } from 'react-native';
-import { useFocusEffect } from 'expo-router';
-import { View, Text } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 import { Image } from 'expo-image';
-import { BonsaiCanvas } from '../../app/Bonsai';
+
+const BONSAI_STATES = [
+  require('../../assets/images/bonsai-states/bonsai_1_seed.png'),
+  require('../../assets/images/bonsai-states/bonsai_2_sprout.png'),
+  require('../../assets/images/bonsai-states/bonsai_3_sapling.png'),
+  require('../../assets/images/bonsai-states/bonsai_4_young_tree.png'),
+  require('../../assets/images/bonsai-states/bonsai_5_mature.png'),
+];
 
 type BonsaiScreenProps = {
-  progress?: number; // Optional, default to 0
+  progress?: number; // 0..1, split evenly across the five bonsai states
 };
 
 export default function BonsaiScreen({ progress = 0 }: BonsaiScreenProps) {
-  const animatedProgress = useRef(new Animated.Value(0)).current;
-  const progressRef = useRef(progress);
-  const [visibleProgress, setVisibleProgress] = useState(0);
-
-  progressRef.current = Math.min(Math.max(progress, 0), 1);
-
-  useEffect(() => {
-    const listenerId = animatedProgress.addListener(({ value }) => {
-      setVisibleProgress(value);
-    });
-
-    return () => animatedProgress.removeListener(listenerId);
-  }, [animatedProgress]);
-
-  useEffect(() => {
-    Animated.timing(animatedProgress, {
-      toValue: progressRef.current,
-      duration: 900,
-      useNativeDriver: false,
-    }).start();
-  }, [animatedProgress, progress]);
-
-  useFocusEffect(
-    useCallback(() => {
-      animatedProgress.stopAnimation();
-      animatedProgress.setValue(0);
-      setVisibleProgress(0);
-
-      const animationFrame = requestAnimationFrame(() => {
-        Animated.timing(animatedProgress, {
-          toValue: progressRef.current,
-          duration: 900,
-          useNativeDriver: false,
-        }).start();
-      });
-
-      return () => {
-        cancelAnimationFrame(animationFrame);
-        animatedProgress.stopAnimation();
-      };
-    }, [animatedProgress]),
-  );
+  const clamped = Math.min(Math.max(progress, 0), 1);
+  const stage = Math.min(BONSAI_STATES.length - 1, Math.floor(clamped * BONSAI_STATES.length));
 
   return (
     <View>
-      <BonsaiCanvas growth={visibleProgress} />
+      <Image
+        source={BONSAI_STATES[stage]}
+        style={{ width: '100%', aspectRatio: 1 }}
+        contentFit="contain"
+        transition={600}
+        accessibilityLabel={`Bonsai growth stage ${stage + 1} of ${BONSAI_STATES.length}`}
+      />
     </View>
   );
 }
