@@ -6,9 +6,9 @@ A calm habit-change companion built with Expo and React Native. Pick a habit to 
 
 ## Mockups
 
-<img src="frontend/assets/images/mockups/hab_mockup3.png" alt="Home screen with the bonsai, daily check-in button and daily quote" width="32%">
-<img src="frontend/assets/images/mockups/hab_mockup2.png" alt="Check-in card and progress dashboard" width="32%">
-<img src="frontend/assets/images/mockups/hab_mockup1.png" alt="Check-in and dashboard in landscape with the side navigation" width="32%">
+<img src="frontend/assets/images/mockups/hab_mockup3.png" alt="Home screen with the bonsai, daily check-in button and daily quote" width="100%">
+<img src="frontend/assets/images/mockups/hab_mockup2.png" alt="Check-in card and progress dashboard" width="100%">
+<img src="frontend/assets/images/mockups/hab_mockup1.png" alt="Check-in and dashboard in landscape with the side navigation" width="100%">
 
 ## Features
 
