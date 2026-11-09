@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { ScrollView, View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useColorScheme } from 'react-native';
 import { Gradients } from '@/constants/theme';
 
 import './global.css';
@@ -20,9 +19,6 @@ export default function HabitSelectScreen() {
   const [otherHabit, setOtherHabit] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const scheme = useColorScheme() ?? 'light';
-  const gradientColors =
-    scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
 
   const isOtherSelected = selected === 'other';
   const canContinue = !isSaving && (isOtherSelected ? otherHabit.trim().length > 0 : !!selected);
@@ -81,7 +77,7 @@ export default function HabitSelectScreen() {
   };
 
   return (
-    <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
+    <LinearGradient colors={Gradients.dark.darkGradient} style={{ flex: 1 }}>
       <ScrollView
         className="px-6"
         contentContainerStyle={{ paddingTop: 64, paddingBottom: 40, flexGrow: 1 }}

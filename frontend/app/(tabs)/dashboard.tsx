@@ -11,11 +11,12 @@ import { observeAuthState } from '../../functions/auth';
 import {
   fetchProgressStats,
   syncPlantState,
-  getLocalDate,
   type ProgressStats,
 } from '../../functions/progress';
 import { goBackOrHome } from '../../lib/navigation';
 import ScreenTransition from '../../components/General/screen-transition';
+import DevTimeTravel from '../../components/Home/dev-time-travel';
+import { useDevClock } from '../../lib/dev-clock';
 import { HabitatColors } from '@/constants/theme';
 
 const EMPTY_STATS: ProgressStats = {
@@ -31,7 +32,7 @@ export default function ProgressScreen() {
   const { width, height } = useWindowDimensions();
   const isWide = width > height;
   const router = useRouter();
-  const currentDate = getLocalDate(new Date());
+  const { today: currentDate } = useDevClock();
   const selectedDate = currentDate;
   const [stats, setStats] = useState<ProgressStats>(EMPTY_STATS);
   const [focusVersion, setFocusVersion] = useState(0);
@@ -76,14 +77,17 @@ export default function ProgressScreen() {
           <View style={{ width: '100%', maxWidth: 1080 }}>
             <ProgressHeader onBack={() => goBackOrHome(router)} />
             <View style={{ flexDirection: isWide ? 'row' : 'column', alignItems: 'flex-start' }}>
-              <View style={{ flex: 1, width: isWide ? undefined : '100%' }}>
+              <View style={{ flex: isWide ? 1 : undefined, width: isWide ? undefined : '100%' }}>
                 <StatsRow streak={stats.streak} resisted={stats.resisted} checkIns={stats.checkIns} />
                 <TreeGrowth streakDays={stats.streak} />
               </View>
-              <View style={{ flex: 1, width: isWide ? undefined : '100%' }}>
+              <View style={{ flex: isWide ? 1 : undefined, width: isWide ? undefined : '100%' }}>
                 <Last30Days days={stats.last30Days} />
                 <Milestones streakDays={stats.streak} />
               </View>
+            </View>
+            <View className="px-6">
+              <DevTimeTravel />
             </View>
           </View>
         </ScrollView>

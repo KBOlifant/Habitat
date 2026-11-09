@@ -102,7 +102,7 @@ export default function TriggerLogScreen() {
           <View style={isLandscape ? { flex: 1 } : undefined}>
             {isLoading ? (
               <View className="items-center mt-24">
-                <ActivityIndicator color={HabitatColors.green} />
+                <ActivityIndicator color={HabitatColors.accent} />
               </View>
             ) : loadError ? (
               <Text className="mt-8 text-center" style={{ color: HabitatColors.danger }}>{loadError}</Text>
@@ -127,7 +127,7 @@ export default function TriggerLogScreen() {
               accessibilityRole="button"
               accessibilityLabel="Swipe up to log a trigger"
             >
-              <ChevronUp size={16} color="#6b7a63" />
+              <ChevronUp size={16} color={HabitatColors.muted} />
               <Text className="text-sm mt-0.5" style={{ color: HabitatColors.muted }}>
                 Swipe up to log a trigger
               </Text>

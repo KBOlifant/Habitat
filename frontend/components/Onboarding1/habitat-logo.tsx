@@ -139,7 +139,7 @@ export default function HabitatLogo({
       <Text className="text-emerald-100/50 text-xs font-semibold tracking-[3px] uppercase mt-3">
         Welcome to
       </Text>
-      <Text className="text-white mt-1" style={Typography.title}>{appName}</Text>
+      <Text className="text-[#e9e6d8] mt-1" style={Typography.title}>{appName}</Text>
       <Text className="text-emerald-100/60 text-center mt-3" style={Typography.subtitle}>
         {tagline}
       </Text>

@@ -19,10 +19,10 @@ export default function TriggerLogHeader({
       <View className="flex-row items-start justify-between">
         <View className="flex-1 pr-3">
           <TouchableOpacity onPress={onBack} activeOpacity={0.7} className="flex-row items-center self-start">
-            <ChevronLeft size={17} color={HabitatColors.ink} />
-            <Text className="ml-1 text-sm font-bold" style={{ color: HabitatColors.ink }}>Back</Text>
+            <ChevronLeft size={17} color={HabitatColors.text} />
+            <Text className="ml-1 text-sm font-bold" style={{ color: HabitatColors.text }}>Back</Text>
           </TouchableOpacity>
-          <Text className="mt-4 uppercase" style={[Typography.title, { color: HabitatColors.ink }]}>
+          <Text className="mt-4" style={[Typography.title, { color: HabitatColors.text }]}>
             Trigger log.
           </Text>
           <Text className="mt-2" style={[Typography.subtitle, { color: HabitatColors.muted }]}>
@@ -34,13 +34,13 @@ export default function TriggerLogHeader({
           activeOpacity={0.85}
           accessibilityRole="button"
           accessibilityLabel="Log a new trigger"
-          className="h-11 w-11 items-center justify-center border-2"
-          style={{ backgroundColor: HabitatColors.lime, borderColor: HabitatColors.ink }}
+          className="h-11 w-11 items-center justify-center rounded-full"
+          style={{ backgroundColor: HabitatColors.primary }}
         >
-          <Plus size={22} color={HabitatColors.ink} strokeWidth={2.5} />
+          <Plus size={22} color={HabitatColors.onPrimary} strokeWidth={2.5} />
         </TouchableOpacity>
       </View>
-      <View className="mt-5 h-0.5" style={{ backgroundColor: HabitatColors.ink }} />
+      <View className="mt-5 h-px" style={{ backgroundColor: HabitatColors.border }} />
     </View>
   );
 }

@@ -3,7 +3,6 @@ import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useColorScheme } from 'react-native';
 import { Gradients } from '@/constants/theme';
 
 import './global.css';
@@ -15,9 +14,6 @@ const NAME_KEY = 'habitat_user_name';
 export default function WelcomeScreen() {
   const router = useRouter();
   const [name, setName] = useState('');
-  const scheme = useColorScheme() ?? 'light';
-  const gradientColors =
-    scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
 
   const handleContinue = async () => {
     await SecureStore.setItemAsync(NAME_KEY, name.trim());
@@ -25,7 +21,7 @@ export default function WelcomeScreen() {
   };
 
   return (
-    <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
+    <LinearGradient colors={Gradients.dark.darkGradient} style={{ flex: 1 }}>
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}

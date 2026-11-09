@@ -105,11 +105,11 @@ export default function CheckInNotesScreen() {
           <View style={isLandscape ? { flex: 1 } : undefined}>
             {isLoading ? (
               <View className="items-center mt-24">
-                <ActivityIndicator color={HabitatColors.green} />
+                <ActivityIndicator color={HabitatColors.accent} />
               </View>
             ) : notes.length === 0 ? (
               <View className="items-center px-10 mt-24">
-                <Text className="text-center text-base font-black uppercase" style={{ color: HabitatColors.ink }}>No notes yet.</Text>
+                <Text className="text-center text-base font-semibold" style={{ color: HabitatColors.text }}>No notes yet.</Text>
                 <Text className="mt-2 text-center text-sm leading-6" style={{ color: HabitatColors.muted }}>
                   Add an optional note at the end of a check-in to see it here.
                 </Text>

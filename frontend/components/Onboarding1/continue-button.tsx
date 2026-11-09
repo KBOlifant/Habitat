@@ -24,7 +24,7 @@ export default function ContinueButton({
     >
       <Text
         className={`text-base font-semibold ${
-          disabled ? 'text-emerald-100/40' : 'text-white'
+          disabled ? 'text-emerald-100/40' : 'text-[#e9e6d8]'
         }`}
       >
         {label}

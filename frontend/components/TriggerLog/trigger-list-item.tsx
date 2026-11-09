@@ -1,6 +1,7 @@
 import { Alert, View, Text, Pressable } from 'react-native';
 import { AlertTriangle, Trash2 } from 'lucide-react-native';
 import type { Trigger } from '../../functions/triggers';
+import { getNow } from '@/lib/dev-clock';
 import { HabitatColors } from '@/constants/theme';
 
 type TriggerListItemProps = {
@@ -11,7 +12,7 @@ type TriggerListItemProps = {
 
 function formatLoggedAt(iso: string): string {
   const date = new Date(iso);
-  const today = new Date();
+  const today = getNow();
   const isToday = date.toDateString() === today.toDateString();
 
   const time = date.toLocaleTimeString(undefined, {
@@ -29,8 +30,8 @@ function formatLoggedAt(iso: string): string {
 
 function intensityColor(intensity: number): string {
   if (intensity >= 4) return HabitatColors.danger;
-  if (intensity >= 3) return '#8A6A00';
-  return HabitatColors.green;
+  if (intensity >= 3) return '#d9b36c';
+  return HabitatColors.accent;
 }
 
 export default function TriggerListItem({ trigger, onPress, onDelete }: TriggerListItemProps) {
@@ -61,18 +62,18 @@ export default function TriggerListItem({ trigger, onPress, onDelete }: TriggerL
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-start border-2 p-4"
-      style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}
+      className="flex-row items-start rounded-2xl border p-4"
+      style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.border }}
     >
       <View className="flex-1">
         <View className="flex-row items-center">
-          <Text className="text-sm font-black uppercase" style={{ color: HabitatColors.ink }}>
+          <Text className="text-sm font-semibold" style={{ color: HabitatColors.text }}>
             {trigger.name}
           </Text>
           {trigger.relapsed && (
-            <View className="ml-2 flex-row items-center px-2 py-0.5" style={{ backgroundColor: HabitatColors.lime }}>
-              <AlertTriangle size={10} color={HabitatColors.ink} />
-              <Text className="ml-1 text-[9px] font-black uppercase" style={{ color: HabitatColors.ink }}>
+            <View className="ml-2 flex-row items-center rounded-full px-2 py-0.5" style={{ backgroundColor: HabitatColors.danger }}>
+              <AlertTriangle size={11} color={HabitatColors.onHighlight} />
+              <Text className="ml-1 text-[11px] font-semibold" style={{ color: HabitatColors.onHighlight }}>
                 Relapsed
               </Text>
             </View>
@@ -95,8 +96,8 @@ export default function TriggerListItem({ trigger, onPress, onDelete }: TriggerL
       </View>
 
       <View
-        className="ml-3 h-8 w-8 items-center justify-center border"
-        style={{ backgroundColor: HabitatColors.canvas, borderColor: HabitatColors.ink }}
+        className="ml-3 h-8 w-8 items-center justify-center rounded-full border"
+        style={{ backgroundColor: HabitatColors.canvas, borderColor: HabitatColors.border }}
       >
         <Text
           className="text-sm font-bold"

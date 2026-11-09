@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import { Flame, LogOut } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { signOutUser } from '@/functions/auth';
@@ -25,7 +25,7 @@ export default function HomeHeader({
   const handleLogout = async () => {
     try {
       await signOutUser();
-      router.replace('/auth');
+      router.replace({ pathname: '/auth', params: { mode: 'signIn' } });
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -35,28 +35,36 @@ export default function HomeHeader({
     <View className="flex-row items-start">
       <View className="flex-1 pr-3">
         <View
-          className="flex-row items-center justify-between border-b-2 pb-3"
-          style={{ borderColor: HabitatColors.ink }}
+          className="flex-row items-center justify-between border-b pb-3"
+          style={{ borderColor: HabitatColors.border }}
         >
-          <Text style={{ color: HabitatColors.ink, fontSize: 19, fontWeight: '900', letterSpacing: 0.5 }}>
-            ROOTS.
-          </Text>
           <View className="flex-row items-center">
-            <Flame size={16} color={HabitatColors.ink} fill={HabitatColors.lime} />
-            <Text className="ml-1.5" style={{ color: HabitatColors.ink, fontSize: 12, fontWeight: '900' }}>
-              {streakDays} DAY{streakDays === 1 ? '' : 'S'}
+            <Image
+              source={require('../../assets/images/HabitatIcon.png')}
+              accessibilityLabel="Habitat logo"
+              className="mr-2.5 rounded-xl"
+              style={{ width: 36, height: 36 }}
+            />
+            <Text style={{ color: HabitatColors.text, fontSize: 19, fontWeight: '600', letterSpacing: 0.5 }}>
+              Habitat
+            </Text>
+          </View>
+          <View className="flex-row items-center">
+            <Flame size={16} color={HabitatColors.text} fill={HabitatColors.primary} />
+            <Text className="ml-1.5" style={{ color: HabitatColors.text, fontSize: 12, fontWeight: '600' }}>
+              {streakDays} day{streakDays === 1 ? '' : 's'}
             </Text>
           </View>
         </View>
         <Text
           className="mt-5 uppercase"
-          style={{ color: HabitatColors.green, fontSize: 12, fontWeight: '900', letterSpacing: 2 }}
+          style={{ color: HabitatColors.accent, fontSize: 12, fontWeight: '600', letterSpacing: 2 }}
         >
           {greeting}
         </Text>
         <Text
-          className="mt-1 uppercase"
-          style={[Typography.title, { color: HabitatColors.ink, maxWidth: 280 }]}
+          className="mt-1"
+          style={[Typography.title, { color: HabitatColors.text, maxWidth: 280 }]}
         >
           {userName.split(' ')[0]}, stay with it.
         </Text>
@@ -69,10 +77,10 @@ export default function HomeHeader({
         onPress={handleLogout}
         accessibilityRole="button"
         accessibilityLabel="Log out"
-        className="mt-1 h-10 w-10 items-center justify-center border-2 active:opacity-60"
-        style={{ borderColor: HabitatColors.ink, backgroundColor: HabitatColors.surface }}
+        className="mt-1 h-10 w-10 items-center justify-center rounded-full border active:opacity-60"
+        style={{ borderColor: HabitatColors.border, backgroundColor: HabitatColors.surface }}
       >
-        <LogOut size={16} color={HabitatColors.ink} />
+        <LogOut size={16} color={HabitatColors.text} />
       </Pressable>
     </View>
   );

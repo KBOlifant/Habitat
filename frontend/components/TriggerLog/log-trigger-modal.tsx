@@ -169,34 +169,34 @@ export default function LogTriggerModal({
           >
             <TouchableWithoutFeedback onPress={() => {}}>
               <Animated.View
-                className="border-t-2 pt-5"
+                className="rounded-t-3xl border-t pt-5"
                 style={{
                   width: isWide || isLandscape ? Math.min(width * 0.85, 560) : '100%',
                   maxHeight: isLandscape ? height * 0.8 : height * 0.92,
                   paddingHorizontal: isLandscape ? 32 : 24,
                   paddingBottom: isLandscape ? 20 : 32,
                   backgroundColor: HabitatColors.canvas,
-                  borderColor: HabitatColors.ink,
+                  borderColor: HabitatColors.border,
                   transform: [{ translateY }],
                 }}
                 accessibilityViewIsModal
               >
                 {/* Drag zone: grabber + header. */}
                 <View {...panResponder.panHandlers}>
-                  <View className="mb-4 h-1 w-10 self-center" style={{ backgroundColor: HabitatColors.ink }} />
+                  <View className="mb-4 h-1 w-10 self-center rounded-full" style={{ backgroundColor: HabitatColors.muted }} />
 
                   <View className="flex-row items-center justify-between">
-                    <Text className="text-xl font-black uppercase" style={{ color: HabitatColors.ink }}>
+                    <Text className="text-xl font-semibold" style={{ color: HabitatColors.text }}>
                       Log the moment.
                     </Text>
                     <TouchableOpacity
                       onPress={handleClose}
                       accessibilityRole="button"
                       accessibilityLabel="Close"
-                      className="h-9 w-9 items-center justify-center border-2"
-                      style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}
+                      className="h-9 w-9 items-center justify-center rounded-full border"
+                      style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.border }}
                     >
-                      <X size={18} color={HabitatColors.ink} />
+                      <X size={18} color={HabitatColors.text} />
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -207,7 +207,7 @@ export default function LogTriggerModal({
                   keyboardShouldPersistTaps="handled"
                   contentContainerStyle={{ paddingBottom: 4 }}
                 >
-                  <Text className="mt-5 mb-2 uppercase" style={[Typography.sectionLabel, { color: HabitatColors.green }]}>
+                  <Text className="mt-5 mb-2 uppercase" style={[Typography.sectionLabel, { color: HabitatColors.accent }]}>
                     Trigger Name
                   </Text>
                   <TextInput
@@ -216,11 +216,11 @@ export default function LogTriggerModal({
                     placeholder="e.g. Stressful meeting"
                     placeholderTextColor={HabitatColors.muted}
                     accessibilityLabel="Trigger name"
-                    className="border-2 px-4 py-3.5 text-base"
-                    style={{ borderColor: HabitatColors.ink, backgroundColor: HabitatColors.surface, color: HabitatColors.ink }}
+                    className="rounded-2xl border px-4 py-3.5 text-base"
+                    style={{ borderColor: HabitatColors.border, backgroundColor: HabitatColors.surface, color: HabitatColors.text }}
                   />
 
-                  <Text className="mt-5 mb-2 uppercase" style={[Typography.sectionLabel, { color: HabitatColors.green }]}>
+                  <Text className="mt-5 mb-2 uppercase" style={[Typography.sectionLabel, { color: HabitatColors.accent }]}>
                     Notes & Reasoning
                   </Text>
                   <TextInput
@@ -231,13 +231,13 @@ export default function LogTriggerModal({
                     multiline
                     numberOfLines={3}
                     accessibilityLabel="Reason for the trigger"
-                    className="border-2 px-4 py-3.5 text-base"
+                    className="rounded-2xl border px-4 py-3.5 text-base"
                     style={{
                       minHeight: 80,
                       textAlignVertical: 'top',
-                      borderColor: HabitatColors.ink,
+                      borderColor: HabitatColors.border,
                       backgroundColor: HabitatColors.surface,
-                      color: HabitatColors.ink,
+                      color: HabitatColors.text,
                     }}
                   />
 
@@ -265,17 +265,12 @@ export default function LogTriggerModal({
                     activeOpacity={0.85}
                     accessibilityRole="button"
                     accessibilityLabel="Save trigger"
-                    className={`mt-6 py-4 items-center justify-center border-2 ${
-                      canSave && !isSaving ? 'bg-[#D7FF00]' : 'bg-[#E7E4D9]'
-                    }`}
-                    style={{ borderColor: HabitatColors.ink }}
+                    className="mt-6 py-4 items-center justify-center rounded-full"
+                    style={{ backgroundColor: canSave && !isSaving ? HabitatColors.primary : HabitatColors.raised }}
                   >
                     <Text
-                      className={`text-base font-black uppercase ${
-                        canSave && !isSaving
-                          ? 'text-[#1B1C16]'
-                          : 'text-[#62665D]'
-                      }`}
+                      className="text-base font-semibold"
+                      style={{ color: canSave && !isSaving ? HabitatColors.onPrimary : HabitatColors.muted }}
                     >
                       {isSaving ? 'Saving…' : 'Save trigger'}
                     </Text>

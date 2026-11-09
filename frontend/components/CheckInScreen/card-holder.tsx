@@ -7,6 +7,7 @@ import CheckInCard from './check-in-card';
 import UrgeButtons from './urge-swiper-card';
 import SwipeableCard from '../General/swipeable-card';
 import DevTimeTravel from '../Home/dev-time-travel';
+import { getNow, useDevClock } from '../../lib/dev-clock';
 import { observeAuthState, getCurrentUser } from '../../functions/auth';
 import {
   deleteAllCheckIns,
@@ -56,9 +57,9 @@ function RelapseNoteCard({
   const [note, setNote] = useState('');
 
   return (
-    <View className="mx-5 mt-8 border-2 p-5" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
+    <View className="mx-5 mt-8 rounded-2xl border p-5" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.border }}>
       <Text className="text-sm font-bold" style={{ color: HabitatColors.muted }}>{step} / {totalSteps}</Text>
-      <Text className="mt-5 uppercase" style={[Typography.title, { color: HabitatColors.ink }]}>
+      <Text className="mt-5" style={[Typography.title, { color: HabitatColors.text }]}>
         Were you triggered by {trigger.name}?
       </Text>
       <Text className="mt-3 text-base leading-6" style={{ color: HabitatColors.muted }}>
@@ -77,13 +78,13 @@ function RelapseNoteCard({
             onPress={() => setWasTriggered(value)}
             accessibilityRole="button"
             accessibilityState={{ selected: wasTriggered === value }}
-            className={`flex-1 items-center rounded-xl border py-3 ${
-              wasTriggered === value               ? 'border-[#1B1C16] bg-[#D7FF00]' : 'border-[#1B1C16]'
-            }`}
+            className="flex-1 items-center rounded-full border py-3"
+            style={{
+              backgroundColor: wasTriggered === value ? HabitatColors.highlight : 'transparent',
+              borderColor: wasTriggered === value ? HabitatColors.highlight : HabitatColors.border,
+            }}
           >
-            <Text className={`text-base font-semibold ${
-              wasTriggered === value               ? 'text-[#1B1C16]' : 'text-[#62665D]'
-            }`}>
+            <Text className="text-base font-semibold" style={{ color: wasTriggered === value ? HabitatColors.onHighlight : HabitatColors.muted }}>
               {value ? 'Yes' : 'No'}
             </Text>
           </Pressable>
@@ -99,30 +100,27 @@ function RelapseNoteCard({
         placeholderTextColor={HabitatColors.muted}
         textAlignVertical="top"
         accessibilityLabel="Optional relapse note"
-        className="mt-5 min-h-[120px] border-2 px-4 py-3 text-base"
-        style={{ borderColor: HabitatColors.ink, backgroundColor: HabitatColors.canvas, color: HabitatColors.ink }}
+        className="mt-5 min-h-[120px] rounded-2xl border px-4 py-3 text-base"
+        style={{ borderColor: HabitatColors.border, backgroundColor: HabitatColors.canvas, color: HabitatColors.text }}
       />
 
       <View className="mt-5 flex-row" style={{ gap: 10 }}>
         <Pressable
           onPress={onSkip}
           accessibilityRole="button"
-          className="flex-1 items-center border-2 py-3"
-          style={{ borderColor: HabitatColors.ink }}
+          className="flex-1 items-center rounded-full border py-3"
+          style={{ borderColor: HabitatColors.border }}
         >
-          <Text className="text-base font-semibold" style={{ color: HabitatColors.ink }}>Skip</Text>
+          <Text className="text-base font-semibold" style={{ color: HabitatColors.text }}>Skip</Text>
         </Pressable>
         <Pressable
           onPress={() => wasTriggered !== null && onSave(wasTriggered, note.trim())}
           disabled={wasTriggered === null}
           accessibilityRole="button"
-          className={`flex-1 items-center rounded-xl py-3 ${
-            wasTriggered === null ? 'bg-[#E7E4D9]' : 'bg-[#D7FF00]'
-          }`}
+          className="flex-1 items-center rounded-full py-3"
+          style={{ backgroundColor: wasTriggered === null ? HabitatColors.raised : HabitatColors.primary }}
         >
-          <Text className={`text-base font-semibold ${
-            wasTriggered === null ? 'text-[#62665D]' : 'text-[#1B1C16]'
-          }`}>
+          <Text className="text-base font-semibold" style={{ color: wasTriggered === null ? HabitatColors.muted : HabitatColors.onPrimary }}>
             Save note
           </Text>
         </Pressable>
@@ -138,7 +136,7 @@ type SavedCheckProgress = {
 };
 
 const getStorageDate = () => {
-  const now = new Date();
+  const now = getNow();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
   const day = String(now.getDate()).padStart(2, '0');
@@ -160,7 +158,7 @@ export default function CardHolder() {
   const [checks, setChecks] = useState<CheckRecord[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [devDate, setDevDate] = useState(getStorageDate());
+  const { enabled: devClockEnabled, today: devDate } = useDevClock();
   const [isDevActionRunning, setIsDevActionRunning] = useState(false);
   const [devMessage, setDevMessage] = useState<string | null>(null);
   const [relapseTrigger, setRelapseTrigger] = useState<Trigger | null>(null);
@@ -196,14 +194,14 @@ export default function CardHolder() {
     const loadProgress = async () => {
       try {
         const savedProgress = await AsyncStorage.getItem(CHECK_PROGRESS_KEY);
-        if (savedProgress) {
-          const parsedProgress = JSON.parse(savedProgress) as SavedCheckProgress;
-          if (parsedProgress.date === getStorageDate()) {
-            setIndex(Math.min(parsedProgress.index, steps.length));
-            setChecks(parsedProgress.checks);
-          } else {
-            await AsyncStorage.removeItem(CHECK_PROGRESS_KEY);
-          }
+        const parsedProgress = savedProgress ? (JSON.parse(savedProgress) as SavedCheckProgress) : null;
+        if (parsedProgress?.date === getStorageDate()) {
+          setIndex(Math.min(parsedProgress.index, steps.length));
+          setChecks(parsedProgress.checks);
+        } else {
+          setIndex(0);
+          setChecks([]);
+          if (parsedProgress) await AsyncStorage.removeItem(CHECK_PROGRESS_KEY);
         }
       } catch (error) {
         console.warn('Unable to load check progress', error);
@@ -213,7 +211,7 @@ export default function CardHolder() {
     };
 
     loadProgress();
-  }, []);
+  }, [devDate]);
 
   React.useEffect(() => {
     if (!isHydrated) return;
@@ -299,36 +297,35 @@ export default function CardHolder() {
 
   const devTools = __DEV__ ? (
     <View className="px-5 mt-5 ">
-      <DevTimeTravel
-        initialDate={getStorageDate()}
-        returnCurrentDate={setDevDate}
-      />
+      <DevTimeTravel />
 
-      <View className="flex-row mt-3" style={{ gap: 10 }}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Complete simulated day"
-          disabled={isDevActionRunning || !userId}
-          onPress={completeDevDay}
-          className="flex-1 rounded-xl bg-lime-600 px-3 py-3 items-center"
-        >
-          <Text className="text-emerald-950 text-sm font-semibold text-center">
-            {isDevActionRunning ? 'Working...' : 'Complete this day'}
-          </Text>
-        </Pressable>
+      {devClockEnabled && (
+        <View className="flex-row mt-3" style={{ gap: 10 }}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Complete simulated day"
+            disabled={isDevActionRunning || !userId}
+            onPress={completeDevDay}
+            className="flex-1 rounded-xl bg-[#6b7a4f] px-3 py-3 items-center"
+          >
+            <Text className="text-[#e9e6d8] text-sm font-semibold text-center">
+              {isDevActionRunning ? 'Working...' : 'Complete this day'}
+            </Text>
+          </Pressable>
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Clear all daily check-ins"
-          disabled={isDevActionRunning || !userId}
-          onPress={clearAllDevCheckIns}
-          className="flex-1 rounded-xl border border-red-400/60 bg-red-950/40 px-3 py-3 items-center"
-        >
-          <Text className="text-red-200 text-sm font-semibold text-center">
-            Clear all check-ins
-          </Text>
-        </Pressable>
-      </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Clear all daily check-ins"
+            disabled={isDevActionRunning || !userId}
+            onPress={clearAllDevCheckIns}
+            className="flex-1 rounded-xl border border-red-400/60 bg-red-950/40 px-3 py-3 items-center"
+          >
+            <Text className="text-red-200 text-sm font-semibold text-center">
+              Clear all check-ins
+            </Text>
+          </Pressable>
+        </View>
+      )}
 
       {devMessage && (
         <Text className="text-emerald-100/60 text-sm text-center mt-2">
@@ -374,7 +371,7 @@ export default function CardHolder() {
       step: index + 1,
       title: current.title,
       action,
-      completedAt: new Date().toISOString(),
+      completedAt: getNow().toISOString(),
       ...(answer ? { answer } : {}),
     };
 
@@ -435,33 +432,33 @@ export default function CardHolder() {
 
   if (index >= steps.length) {
     return (
-      <View className="mx-5 mt-8 border-2 p-6" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
+      <View className="mx-5 mt-8 rounded-2xl border p-6" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.border }}>
         {devTools}
-        <View className="mt-4 h-12 w-12 items-center justify-center border-2" style={{ backgroundColor: HabitatColors.lime, borderColor: HabitatColors.ink }}>
-          <CircleCheck size={26} color={HabitatColors.ink} />
+        <View className="mt-4 h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: HabitatColors.highlight }}>
+          <CircleCheck size={26} color={HabitatColors.onHighlight} />
         </View>
-        <Text className="mt-6 uppercase" style={[Typography.sectionLabel, { color: HabitatColors.green }]}>
+        <Text className="mt-6 uppercase" style={[Typography.sectionLabel, { color: HabitatColors.accent }]}>
           Practice complete
         </Text>
-        <Text className="mt-2 uppercase" style={[Typography.title, { color: HabitatColors.ink }]}>
+        <Text className="mt-2" style={[Typography.title, { color: HabitatColors.text }]}>
           You stayed present.
         </Text>
         <Text className="mt-3 text-base leading-6" style={{ color: HabitatColors.muted }}>
           That pause is the practice. Your tree has what it needs for today.
         </Text>
         <View className="mt-5 flex-row items-center">
-          <Sprout size={17} color={HabitatColors.green} />
-          <Text className="ml-2 text-xs font-black uppercase" style={{ color: HabitatColors.ink }}>
+          <Sprout size={17} color={HabitatColors.accent} />
+          <Text className="ml-2 text-xs font-semibold" style={{ color: HabitatColors.text }}>
             {checks.length} of {steps.length} reflections complete
           </Text>
         </View>
         <Link href="/home" asChild>
           <Pressable
             accessibilityRole="button"
-            className="mt-6 min-h-14 flex-row items-center justify-center border-2 px-4"
-            style={{ backgroundColor: HabitatColors.lime, borderColor: HabitatColors.ink }}
+            className="mt-6 min-h-14 flex-row items-center justify-center rounded-full px-4"
+            style={{ backgroundColor: HabitatColors.primary }}
           >
-            <Text className="text-sm font-black uppercase" style={{ color: HabitatColors.ink }}>
+            <Text className="text-base font-semibold" style={{ color: HabitatColors.onPrimary }}>
               Return home
             </Text>
           </Pressable>
@@ -471,7 +468,7 @@ export default function CardHolder() {
             accessibilityRole="button"
             onPress={clearProgress}
             className="mt-4 self-center border-b py-1"
-            style={{ borderColor: HabitatColors.ink }}
+            style={{ borderColor: HabitatColors.border }}
           >
             <Text className="text-xs font-bold" style={{ color: HabitatColors.muted }}>
               Clear saved progress
@@ -496,19 +493,18 @@ export default function CardHolder() {
 
   return (
     <>
-{/*     
-      {devTools} */}
+{devTools}
 
       <View className="px-5 mt-5">
-        <Text className="text-[#8a9a8a] text-sm">
+        <Text className="text-[#a9b08e] text-sm">
           {checks.length} / {steps.length} checks completed
         </Text>
         {__DEV__ && (
           <Pressable
             accessibilityRole="button"
             onPress={clearProgress}
-            className="mt-2 self-start border-2 px-3 py-2"
-            style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}
+            className="mt-2 self-start rounded-2xl border px-3 py-2"
+            style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.border }}
           >
             <Text className="text-xs font-bold" style={{ color: HabitatColors.muted }}>Clear saved progress</Text>
           </Pressable>

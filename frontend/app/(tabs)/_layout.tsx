@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, View, useWindowDimensions } from 'react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { ChartColumn, CircleCheck, Flame, House, NotebookPen } from 'lucide-react-native';
 import { HabitatColors } from '@/constants/theme';
 
 export const unstable_settings = { anchor: 'home' };
@@ -20,15 +20,15 @@ function LandscapeTabBar({ state, descriptors, emitter, navigateToTab }: BottomT
         height: '100%',
         paddingTop: 16,
         backgroundColor: HabitatColors.canvas,
-        borderRightWidth: 2,
-        borderRightColor: HabitatColors.ink,
+        borderRightWidth: 1,
+        borderRightColor: HabitatColors.border,
       }}
     >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const focused = state.index === index;
         const color = focused
-          ? (options.tabBarActiveTintColor ?? HabitatColors.green)
+          ? HabitatColors.onHighlight
           : (options.tabBarInactiveTintColor ?? HabitatColors.muted);
         const label =
           typeof options.tabBarLabel === 'string'
@@ -59,12 +59,14 @@ function LandscapeTabBar({ state, descriptors, emitter, navigateToTab }: BottomT
               emitter.emit({ type: 'tabLongPress', target: route.key })
             }
             style={{
-              width: '100%',
+              width: 80,
+              alignSelf: 'center',
+              borderRadius: 20,
               height: itemHeight,
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: focused
-                ? (options.tabBarActiveBackgroundColor ?? HabitatColors.lime)
+                ? HabitatColors.highlight
                 : 'transparent',
             }}
           >
@@ -74,9 +76,8 @@ function LandscapeTabBar({ state, descriptors, emitter, navigateToTab }: BottomT
                 numberOfLines={1}
                 style={{
                   color,
-                  fontSize: 9,
-                  fontWeight: '900',
-                  textTransform: 'uppercase',
+                  fontSize: 11,
+                  fontWeight: '600',
                 }}
               >
                 {label}
@@ -101,26 +102,31 @@ export default function TabLayout() {
         headerShown: false,
         animation: 'none',
         tabBarPosition: isLandscape ? 'left' : 'bottom',
-        tabBarActiveTintColor: HabitatColors.green,
+        tabBarActiveTintColor: HabitatColors.accent,
         tabBarInactiveTintColor: HabitatColors.muted,
-        tabBarActiveBackgroundColor: HabitatColors.lime,
         tabBarButton: HapticTab,
         tabBarStyle: {
               position: 'absolute',
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: 68,
-              paddingHorizontal: 2,
+              left: 16,
+              right: 16,
+              bottom: 16,
+              height: 70,
+              paddingBottom: 0,
+              borderRadius: 24,
+              paddingHorizontal: 6,
               backgroundColor: HabitatColors.surface,
-              borderTopWidth: 2,
-              borderTopColor: HabitatColors.ink,
-              elevation: 0,
+              borderWidth: 1,
+              borderTopWidth: 1,
+              borderColor: HabitatColors.border,
+              borderTopColor: HabitatColors.border,
+              shadowColor: '#000',
+              shadowOpacity: 0.25,
+              shadowRadius: 18,
+              elevation: 12,
             },
         tabBarLabelStyle: {
-          fontSize: 9,
-          fontWeight: '900',
-          textTransform: 'uppercase',
+          fontSize: 11,
+          fontWeight: '600',
         },
         tabBarIconStyle: { marginTop: 4 },
       }}
@@ -130,7 +136,7 @@ export default function TabLayout() {
         options={{
           title: 'Check-In',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={26} name="checkmark.circle.fill" color={color} />
+            <CircleCheck size={24} color={color} />
           ),
         }}
       />
@@ -139,7 +145,7 @@ export default function TabLayout() {
         name="triggers"
         options={{
           title: 'Triggers',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="flame.fill" color={color} />,
+          tabBarIcon: ({ color }) => <Flame size={24} color={color} />,
         }}
       />
 
@@ -147,7 +153,7 @@ export default function TabLayout() {
         name="home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="house.fill" color={color} />,
+          tabBarIcon: ({ color }) => <House size={24} color={color} />,
         }}
       />
 
@@ -155,7 +161,7 @@ export default function TabLayout() {
         name="dashboard"
         options={{
           title: 'Dashboard',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="chart.bar.fill" color={color} />,
+          tabBarIcon: ({ color }) => <ChartColumn size={24} color={color} />,
         }}
       />
 
@@ -163,7 +169,7 @@ export default function TabLayout() {
         name="check-in-notes"
         options={{
           title: 'Notes',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="note.text" color={color} />,
+          tabBarIcon: ({ color }) => <NotebookPen size={24} color={color} />,
         }}
       />
     </Tabs>

@@ -209,12 +209,12 @@ export const SwipeableModal = forwardRef<SwipeableModalRef, SwipeableModalProps>
           {/* Panel */}
           <GestureDetector gesture={pan}>
             <Animated.View
-              className={`bg-white ${roundedClass} ${sizeClass} ${className}`}
+              className={`bg-[#232b1a] ${roundedClass} ${sizeClass} ${className}`}
               style={panelStyle}
             >
               {showHandle && (axis === 'y') && (
                 <View className="items-center pt-2 pb-1">
-                  <View className="w-10 h-1.5 rounded-full bg-gray-300" />
+                  <View className="w-10 h-1.5 rounded-full bg-[#3a4230]" />
                 </View>
               )}
               {children}

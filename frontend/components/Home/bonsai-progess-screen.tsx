@@ -22,7 +22,7 @@ export default function BonsaiScreen({ progress = 0 }: BonsaiScreenProps) {
     <View>
       <Image
         source={BONSAI_STATES[stage]}
-        style={{ width: '100%', aspectRatio: 1 }}
+        style={{ width: '100%', aspectRatio: 1, borderRadius: 24 }}
         contentFit="contain"
         transition={600}
         accessibilityLabel={`Bonsai growth stage ${stage + 1} of ${BONSAI_STATES.length}`}

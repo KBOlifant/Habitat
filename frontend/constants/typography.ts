@@ -2,19 +2,19 @@ import type { TextStyle } from 'react-native';
 
 export const Typography = {
   title: {
-    fontSize: 32,
-    lineHeight: 35,
-    fontWeight: '900',
-    letterSpacing: -0.8,
+    fontFamily: 'Fraunces_700Bold',
+    fontSize: 30,
+    lineHeight: 36,
   } satisfies TextStyle,
   subtitle: {
+    fontFamily: 'Fraunces_400Regular',
     fontSize: 16,
     lineHeight: 24,
   } satisfies TextStyle,
   sectionLabel: {
     fontSize: 12,
     lineHeight: 16,
-    fontWeight: '800',
+    fontWeight: '600',
     letterSpacing: 2,
   } satisfies TextStyle,
 } as const;

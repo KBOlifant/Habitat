@@ -34,13 +34,13 @@ export default function HabitGrid({
             onPress={() => onSelect(habit)}
             activeOpacity={0.85}
             className={`rounded-2xl py-4 items-center justify-center ${
-              isSelected ? 'bg-lime-600' : 'bg-[#a9b596]'
+              isSelected ? 'bg-[#6b7a4f]' : 'bg-[#a9b596]'
             }`}
             style={{ width: '47%' }}
           >
             <Text
               className={`text-base font-medium ${
-                isSelected ? 'text-emerald-950' : 'text-[#2f3a2a]'
+                isSelected ? 'text-[#e9e6d8]' : 'text-[#2f3a2a]'
               }`}
             >
               {habit}

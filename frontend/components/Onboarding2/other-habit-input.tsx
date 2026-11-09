@@ -33,7 +33,7 @@ export default function OtherHabitInput({
           autoFocus={isEditing}
           placeholder="Something else..."
           placeholderTextColor="#8a9a80"
-          className="flex-1 text-white text-base font-semibold ml-3 py-4"
+          className="flex-1 text-[#e9e6d8] text-base font-semibold ml-3 py-4"
         />
       </View>
     );
@@ -46,7 +46,7 @@ export default function OtherHabitInput({
       className="mx-6 mt-3 bg-emerald-900/60 border border-emerald-800/60 rounded-2xl px-4 py-4 flex-row items-center"
     >
       <Plus size={18} color="#d1e7d4" />
-      <Text className="text-white text-base font-semibold ml-3">
+      <Text className="text-[#e9e6d8] text-base font-semibold ml-3">
         Something else...
       </Text>
     </TouchableOpacity>

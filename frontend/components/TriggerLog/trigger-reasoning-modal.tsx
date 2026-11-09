@@ -79,17 +79,17 @@ export const TriggerReasoningModalInner = forwardRef<
     >
       <View className="flex-row items-start justify-between mb-1">
         <View className="flex-1 pr-4">
-          <Text className="text-sm font-medium text-emerald-600 uppercase tracking-wide">
+          <Text className="text-sm font-medium text-[#b9bf9d] uppercase tracking-wide">
             {shown.name ?? 'Trigger'}
           </Text>
-          <Text className="text-gray-400 text-sm mt-0.5">{formattedDate}</Text>
+          <Text className="text-[#a9b08e] text-sm mt-0.5">{formattedDate}</Text>
         </View>
         <Pressable
           onPress={onClose}
           hitSlop={12}
-          className="w-8 h-8 rounded-full bg-gray-100 items-center justify-center"
+          className="w-8 h-8 rounded-full bg-[#2e3723] items-center justify-center"
         >
-          <X size={16} color="#6b7280" />
+          <X size={16} color="#a9b08e" />
         </Pressable>
       </View>
 
@@ -97,7 +97,7 @@ export const TriggerReasoningModalInner = forwardRef<
         className="mt-4 max-h-[60vh]"
         showsVerticalScrollIndicator={false}
       >
-        <Text className="text-base leading-6 text-gray-800">
+        <Text className="text-base leading-6 text-[#e9e6d8]">
           {shown.reason?.trim() ? shown.reason : 'No notes were added for this entry.'}
         </Text>
       </ScrollView>
@@ -106,10 +106,10 @@ export const TriggerReasoningModalInner = forwardRef<
         onPress={handleDelete}
         accessibilityRole="button"
         accessibilityLabel="Delete trigger log"
-        className="mt-5 flex-row items-center justify-center rounded-xl border border-red-300/40 bg-red-500/10 py-3"
+        className="mt-5 flex-row items-center justify-center rounded-full border border-[#e0a37a]/40 bg-[#e0a37a]/10 py-3"
       >
-        <Trash2 size={16} color="#dc2626" />
-        <Text className="ml-2 text-sm font-semibold text-red-600">Delete trigger log</Text>
+        <Trash2 size={16} color="#e0a37a" />
+        <Text className="ml-2 text-sm font-semibold text-[#e0a37a]">Delete trigger log</Text>
       </Pressable>
     </SwipeableModal>
   );

@@ -28,9 +28,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowRight } from 'lucide-react-native';
 // import GoogleButton from '../components/Auth/GoogleButton';
 import {
@@ -39,13 +41,15 @@ import {
   authErrorMessage,
 } from '../functions/auth';
 import { Typography } from '@/constants/typography';
+import { Gradients } from '@/constants/theme';
 
 type Mode = 'signIn' | 'signUp';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function AuthScreen() {
-  const [mode, setMode] = useState<Mode>('signIn');
+  const { mode: initialMode } = useLocalSearchParams<{ mode?: string }>();
+  const [mode, setMode] = useState<Mode>(initialMode === 'signIn' ? 'signIn' : 'signUp');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -90,131 +94,139 @@ export default function AuthScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#181f11]">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1"
-      >
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          keyboardShouldPersistTaps="handled"
+    <LinearGradient colors={Gradients.dark.darkGradient} style={{ flex: 1 }}>
+      <SafeAreaView className="flex-1">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          className="flex-1"
         >
-          <View className="flex-1 justify-between px-6 pb-8 pt-10">
-            {/* Header */}
-            <View>
-              <Text className="text-center text-xs tracking-[3px] text-[#a9b08e]">
-                WELCOME TO
-              </Text>
-              <Text
-                className="mt-2 text-center text-[#e9e6d8]"
-                style={Typography.title}
-              >
-                Habitat
-              </Text>
-              <Text className="mt-3 text-center text-[#a9b08e]" style={Typography.subtitle}>
-                {isSignUp
-                  ? 'Break habits. Grow stillness.\nTend your inner bonsai.'
-                  : 'Welcome back — your bonsai\nhas been waiting.'}
-              </Text>
-            </View>
-
-            {/* Form */}
-            <View className="mt-10 gap-4">
-              {isSignUp && (
-                <Field
-                  label="YOUR NAME"
-                  value={name}
-                  onChangeText={setName}
-                  placeholder="How shall we call you?"
-                  autoCapitalize="words"
-                  accessibilityLabel="Your name"
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View className="flex-1 justify-between px-6 pb-8 pt-10">
+              {/* Header */}
+              <View>
+                <Image
+                  source={require('../assets/images/HabitatIcon.png')}
+                  accessibilityLabel="Habitat logo"
+                  className="mb-5 self-center rounded-3xl"
+                  style={{ width: 96, height: 96 }}
                 />
-              )}
-
-              <Field
-                label="EMAIL"
-                value={email}
-                onChangeText={setEmail}
-                placeholder="you@example.com"
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                accessibilityLabel="Email address"
-              />
-
-              <Field
-                label="PASSWORD"
-                value={password}
-                onChangeText={setPassword}
-                placeholder={isSignUp ? 'At least 6 characters' : 'Your password'}
-                secureTextEntry
-                accessibilityLabel="Password"
-              />
-
-              {error && (
-                <Text
-                  className="text-center text-base text-[#e0a37a]"
-                  accessibilityLiveRegion="polite"
-                >
-                  {error}
+                <Text className="text-center text-xs tracking-[3px] text-[#a9b08e]">
+                  WELCOME TO
                 </Text>
-              )}
-
-              {/* Primary CTA */}
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={isSignUp ? 'Create account' : 'Sign in'}
-                disabled={!canSubmit}
-                onPress={handleSubmit}
-                className="mt-2 flex-row items-center justify-center rounded-full bg-[#6b7a4f] px-6 py-4 active:opacity-80 disabled:opacity-40"
-                style={{ minHeight: 44 }}
-              >
-                {submitting ? (
-                  <ActivityIndicator color="#e9e6d8" />
-                ) : (
-                  <View className="flex-row items-center gap-2">
-                    <Text className="text-base font-semibold text-[#e9e6d8]">
-                      {isSignUp ? 'Create account' : 'Sign in'}
-                    </Text>
-                    <ArrowRight size={18} color="#e9e6d8" />
-                  </View>
-                )}
-              </Pressable>
-
-              {/* Divider */}
-              <View className="my-2 flex-row items-center gap-3">
-                <View className="h-px flex-1 bg-[#3a4230]" />
-                <Text className="text-xs text-[#a9b08e]">or</Text>
-                <View className="h-px flex-1 bg-[#3a4230]" />
+                <Text
+                  className="mt-2 text-center text-[#e9e6d8]"
+                  style={Typography.title}
+                >
+                  Habitat
+                </Text>
+                <Text className="mt-3 text-center text-[#a9b08e]" style={Typography.subtitle}>
+                  {isSignUp
+                    ? 'Break habits. Grow stillness.\nTend your inner bonsai.'
+                    : 'Welcome back — your bonsai\nhas been waiting.'}
+                </Text>
               </View>
 
-              {/* <GoogleButton
-                onError={setError}
-                onSuccess={() => router.replace('/')}
-              /> */}
-            </View>
+              {/* Form */}
+              <View className="mt-10 gap-4">
+                {isSignUp && (
+                  <Field
+                    label="YOUR NAME"
+                    value={name}
+                    onChangeText={setName}
+                    placeholder="How shall we call you?"
+                    autoCapitalize="words"
+                    accessibilityLabel="Your name"
+                  />
+                )}
 
-            {/* Footer toggle */}
-            <Pressable
-              onPress={toggleMode}
-              accessibilityRole="button"
-              accessibilityLabel={
-                isSignUp ? 'Switch to sign in' : 'Switch to sign up'
-              }
-              className="mt-8 items-center py-2"
-              style={{ minHeight: 44, justifyContent: 'center' }}
-            >
-              <Text className="text-base text-[#a9b08e]">
-                {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
-                <Text className="font-semibold text-[#e9e6d8]">
-                  {isSignUp ? 'Sign in' : 'Sign up'}
+                <Field
+                  label="EMAIL"
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="you@example.com"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="email-address"
+                  accessibilityLabel="Email address"
+                />
+
+                <Field
+                  label="PASSWORD"
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder={isSignUp ? 'At least 6 characters' : 'Your password'}
+                  secureTextEntry
+                  accessibilityLabel="Password"
+                />
+
+                {error && (
+                  <Text
+                    className="text-center text-base text-[#e0a37a]"
+                    accessibilityLiveRegion="polite"
+                  >
+                    {error}
+                  </Text>
+                )}
+
+                {/* Primary CTA */}
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={isSignUp ? 'Create account' : 'Sign in'}
+                  disabled={!canSubmit}
+                  onPress={handleSubmit}
+                  className="mt-2 flex-row items-center justify-center rounded-full bg-[#6b7a4f] px-6 py-4 active:opacity-80 disabled:opacity-40"
+                  style={{ minHeight: 44 }}
+                >
+                  {submitting ? (
+                    <ActivityIndicator color="#e9e6d8" />
+                  ) : (
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-base font-semibold text-[#e9e6d8]">
+                        {isSignUp ? 'Create account' : 'Sign in'}
+                      </Text>
+                      <ArrowRight size={18} color="#e9e6d8" />
+                    </View>
+                  )}
+                </Pressable>
+
+                {/* Divider */}
+                <View className="my-2 flex-row items-center gap-3">
+                  <View className="h-px flex-1 bg-[#3a4230]" />
+                  <Text className="text-xs text-[#a9b08e]">or</Text>
+                  <View className="h-px flex-1 bg-[#3a4230]" />
+                </View>
+
+                {/* <GoogleButton
+                  onError={setError}
+                  onSuccess={() => router.replace('/')}
+                /> */}
+              </View>
+
+              {/* Footer toggle */}
+              <Pressable
+                onPress={toggleMode}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  isSignUp ? 'Switch to sign in' : 'Switch to sign up'
+                }
+                className="mt-8 items-center py-2"
+                style={{ minHeight: 44, justifyContent: 'center' }}
+              >
+                <Text className="text-base text-[#a9b08e]">
+                  {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
+                  <Text className="font-semibold text-[#e9e6d8]">
+                    {isSignUp ? 'Sign in' : 'Sign up'}
+                  </Text>
                 </Text>
-              </Text>
-            </Pressable>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 

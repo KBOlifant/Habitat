@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, View, Text, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useColorScheme } from 'react-native';
 import { observeAuthState } from '../functions/auth';
 import { Gradients } from '@/constants/theme';
 import HabitatLogo from '@/components/Onboarding1/habitat-logo1-small.png';
@@ -12,9 +11,6 @@ const EXIT_DURATION = 240;
 
 export default function IndexRedirectScreen() {
   const router = useRouter();
-  const scheme = useColorScheme() ?? 'light';
-  const gradientColors =
-    scheme === 'dark' ? Gradients.dark.darkGradient : Gradients.light.lightGradient;
   const [isLoggedIn, setAuthState] = useState<boolean | null>(null);
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const logoScale = useRef(new Animated.Value(0.2)).current;
@@ -64,7 +60,7 @@ export default function IndexRedirectScreen() {
 
   return (
     <Animated.View style={{ flex: 1, opacity: screenOpacity }}>
-      <LinearGradient colors={gradientColors} style={{ flex: 1 }}>
+      <LinearGradient colors={Gradients.dark.darkGradient} style={{ flex: 1 }}>
         <View className="flex-1 items-center justify-center px-6">
           <Animated.View
             style={{

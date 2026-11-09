@@ -1,3 +1,4 @@
+import { getNow } from '../../lib/dev-clock';
 import {
   addDoc,
   collection,
@@ -62,7 +63,7 @@ export async function getTriggers(uid: string): Promise<Trigger[]> {
 
 export async function addTrigger(uid: string, input: NewTriggerInput): Promise<Trigger> {
   const { collection: triggerLog, habitId } = await getTriggerLogCollection(uid);
-  const loggedAt = new Date().toISOString();
+  const loggedAt = getNow().toISOString();
   const createdTrigger = await addDoc(triggerLog, {
     addictionRecordID: habitId,
     ...input,

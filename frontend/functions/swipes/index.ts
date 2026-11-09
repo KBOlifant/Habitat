@@ -1,3 +1,4 @@
+import { getNow } from '../../lib/dev-clock';
 import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -24,9 +25,9 @@ export async function saveCheckIn(
     daily_check: true,
     has_relapsed: false,
     checks,
-    ...(note ? { note, noteDate: getLocalDate(new Date()) } : {}),
+    ...(note ? { note, noteDate: getLocalDate(getNow()) } : {}),
     uid,
-    completedAt: new Date().toISOString(),
+    completedAt: getNow().toISOString(),
   });
 }
 

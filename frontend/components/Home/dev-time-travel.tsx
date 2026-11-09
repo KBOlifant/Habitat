@@ -1,92 +1,89 @@
-import { useState } from 'react';
-import { TouchableOpacity, View, Text } from 'react-native';
-import { Minus, Plus, FlaskConical } from 'lucide-react-native';
+import { Pressable, View, Text } from 'react-native';
+import { FlaskConical, Minus, Plus } from 'lucide-react-native';
+import { Typography } from '@/constants/typography';
+import { HabitatColors } from '@/constants/theme';
+import { resetDevClock, setDevClockEnabled, shiftDevClock, useDevClock } from '@/lib/dev-clock';
 
-const MIN_DATE = new Date(2000, 0, 1);
-const MAX_DATE = new Date(2100, 11, 31);
+function StepButton({ label, onPress, Icon }: { label: string; onPress: () => void; Icon: typeof Plus }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      className="h-11 w-11 items-center justify-center rounded-full active:opacity-70"
+      style={{ backgroundColor: HabitatColors.raised }}
+    >
+      <Icon size={18} color={HabitatColors.text} />
+    </Pressable>
+  );
+}
 
-type DevTimeTravelProps = {
-  initialDate?: string; // 'YYYY-MM-DD'
-  returnCurrentDate?: (currentDate: string) => void;
-};
+export default function DevTimeTravel() {
+  const { enabled, date } = useDevClock();
+  if (!__DEV__) return null;
 
-export const parseDate = (value: string): Date => {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-  if (!match) return new Date();
-
-  const [, year, month, day] = match;
-  const parsed = new Date(Number(year), Number(month) - 1, Number(day));
-  const isValidDate =
-    parsed.getFullYear() === Number(year) &&
-    parsed.getMonth() === Number(month) - 1 &&
-    parsed.getDate() === Number(day);
-
-  return isValidDate ? parsed : new Date();
-};
-
-const formatIsoDate = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
-export default function DevTimeTravel({
-  initialDate = '2026-07-18',
-  returnCurrentDate
-}: DevTimeTravelProps) {
-  const [date, setDate] = useState(() => parseDate(initialDate));
-
-  const shiftDate = (deltaDays: number) => {
-    const next = new Date(date);
-    next.setDate(next.getDate() + deltaDays);
-
-    if (next < MIN_DATE || next > MAX_DATE) return;
-
-    setDate(next);
-    returnCurrentDate?.(formatIsoDate(next));
-  };
-
-  const isToday = date.toDateString() === new Date().toDateString();
-  const isoDate = formatIsoDate(date);
+  const shown = new Date(`${date}T12:00:00`);
+  const isRealToday = shown.toDateString() === new Date().toDateString();
 
   return (
-    <View className="mt-4 bg-emerald-950 border border-dashed border-emerald-800/60 rounded-2xl p-4">
-      <View className="flex-row items-center mb-3">
-        <FlaskConical size={13} color="#84cc16" />
-        <Text className="text-lime-500 text-xs font-bold tracking-[1.5px] uppercase ml-1.5">
-          Dev Time Travel
-        </Text>
-      </View>
-
+    <View
+      className="mt-4 rounded-2xl border border-dashed p-4"
+      style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.primary }}
+    >
       <View className="flex-row items-center justify-between">
-        <TouchableOpacity
-          onPress={() => shiftDate(-1)}
-          activeOpacity={0.7}
-          className="w-9 h-9 rounded-full bg-emerald-900 items-center justify-center"
-        >
-          <Minus size={16} color="white" />
-        </TouchableOpacity>
-
-        <View className="items-center">
-          <Text className="text-white font-semibold text-base">
-            {isToday ? 'Today' : date.toDateString()}
+        <View className="flex-row items-center">
+          <FlaskConical size={14} color={HabitatColors.accent} />
+          <Text className="ml-2 uppercase" style={[Typography.sectionLabel, { color: HabitatColors.accent }]}>
+            Time travel
           </Text>
-          <Text className="text-emerald-100/50 text-sm mt-0.5">{isoDate}</Text>
         </View>
-
-        <TouchableOpacity
-          onPress={() => shiftDate(1)}
-          activeOpacity={0.7}
-          className="w-9 h-9 rounded-full bg-emerald-900 items-center justify-center"
+        <Pressable
+          onPress={() => setDevClockEnabled(!enabled)}
+          accessibilityRole="switch"
+          accessibilityState={{ checked: enabled }}
+          accessibilityLabel="Dev time travel"
+          className="min-h-11 min-w-16 items-center justify-center rounded-full px-4 active:opacity-70"
+          style={{ backgroundColor: enabled ? HabitatColors.highlight : HabitatColors.raised }}
         >
-          <Plus size={16} color="white" />
-        </TouchableOpacity>
+          <Text
+            className="text-sm font-semibold"
+            style={{ color: enabled ? HabitatColors.onHighlight : HabitatColors.muted }}
+          >
+            {enabled ? 'On' : 'Off'}
+          </Text>
+        </Pressable>
       </View>
 
-      <Text className="text-emerald-100/40 text-sm text-center mt-3">
-        Simulates streak as if it were that day
-      </Text>
+      {enabled && (
+        <>
+          <View className="mt-4 flex-row items-center justify-between">
+            <StepButton label="Previous day" onPress={() => shiftDevClock(-1)} Icon={Minus} />
+            <View className="items-center">
+              <Text className="text-base font-semibold" style={{ color: HabitatColors.text }}>
+                {isRealToday ? 'Today' : shown.toDateString()}
+              </Text>
+              <Text className="mt-0.5 text-sm" style={{ color: HabitatColors.muted }}>
+                {date}
+              </Text>
+            </View>
+            <StepButton label="Next day" onPress={() => shiftDevClock(1)} Icon={Plus} />
+          </View>
+          <Text className="mt-3 text-center text-sm" style={{ color: HabitatColors.muted }}>
+            The whole app acts as if it's this day.
+          </Text>
+          {!isRealToday && (
+            <Pressable
+              onPress={resetDevClock}
+              accessibilityRole="button"
+              className="mt-1 min-h-11 items-center justify-center active:opacity-70"
+            >
+              <Text className="text-sm font-semibold" style={{ color: HabitatColors.text }}>
+                Back to today
+              </Text>
+            </Pressable>
+          )}
+        </>
+      )}
     </View>
   );
 }

@@ -24,17 +24,17 @@ export default function RelapseCheckbox({
       style={{ minHeight: 44 }}
     >
       <View
-        className={`w-6 h-6 rounded-md items-center justify-center border ${
-          checked
-            ? 'bg-[#D7FF00] border-[#1B1C16]'
-            : 'bg-[#FFFCF4] border-[#1B1C16]'
-        }`}
-        style={{ borderWidth: 2 }}
+        className="w-6 h-6 rounded-md items-center justify-center"
+        style={{
+          borderWidth: 1,
+          backgroundColor: checked ? HabitatColors.highlight : HabitatColors.surface,
+          borderColor: checked ? HabitatColors.highlight : HabitatColors.border,
+        }}
       >
-        {checked && <Check size={14} color={HabitatColors.ink} strokeWidth={3} />}
+        {checked && <Check size={14} color={HabitatColors.onHighlight} strokeWidth={3} />}
       </View>
 
-      <Text className="ml-3 text-sm font-bold" style={{ color: HabitatColors.ink }}>{label}</Text>
+      <Text className="ml-3 text-sm font-bold" style={{ color: HabitatColors.text }}>{label}</Text>
     </TouchableOpacity>
   );
 }

@@ -18,10 +18,10 @@ export default function IntensitySelector({
   return (
     <View className="mt-5">
       <View className="flex-row items-baseline justify-between">
-        <Text className="uppercase" style={[Typography.sectionLabel, { color: HabitatColors.green }]}>
+        <Text className="uppercase" style={[Typography.sectionLabel, { color: HabitatColors.accent }]}>
           {label}
         </Text>
-        <Text className="text-sm font-bold" style={{ color: HabitatColors.ink }}>
+        <Text className="text-sm font-bold" style={{ color: HabitatColors.text }}>
           {value ?? '—'} / 5
         </Text>
       </View>
@@ -36,13 +36,13 @@ export default function IntensitySelector({
               accessibilityRole="button"
               accessibilityLabel={`Intensity ${number} out of 5`}
               accessibilityState={{ selected: isSelected }}
-              className="h-10 flex-1 items-center justify-center border-2"
+              className="h-10 flex-1 items-center justify-center rounded-full border"
               style={{
-                backgroundColor: isSelected ? HabitatColors.green : HabitatColors.surface,
-                borderColor: HabitatColors.ink,
+                backgroundColor: isSelected ? HabitatColors.highlight : HabitatColors.surface,
+                borderColor: HabitatColors.border,
               }}
             >
-              <Text className="text-sm font-black" style={{ color: isSelected ? HabitatColors.surface : HabitatColors.ink }}>
+              <Text className="text-sm font-bold" style={{ color: isSelected ? HabitatColors.onHighlight : HabitatColors.text }}>
                 {number}
               </Text>
             </TouchableOpacity>

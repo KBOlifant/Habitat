@@ -14,24 +14,24 @@ export default function UrgeButtons({ onStrongUrge, onNoUrge }: Props) {
       <Pressable
         onPress={onStrongUrge}
         accessibilityRole="button"
-        className="min-h-14 flex-1 flex-row items-center justify-center border-2 px-2"
-        style={{ borderColor: HabitatColors.ink, backgroundColor: HabitatColors.surface }}
+        className="min-h-14 flex-1 flex-row items-center justify-center rounded-full border px-2"
+        style={{ borderColor: HabitatColors.border, backgroundColor: HabitatColors.surface }}
       >
-        <ArrowLeft size={15} color={HabitatColors.ink} />
-        <Text className="ml-2 text-sm font-black uppercase" style={{ color: HabitatColors.ink }}>
+        <ArrowLeft size={15} color={HabitatColors.text} />
+        <Text className="ml-2 text-sm font-semibold" style={{ color: HabitatColors.text }}>
           Strong urge
         </Text>
       </Pressable>
       <Pressable
         onPress={onNoUrge}
         accessibilityRole="button"
-        className="min-h-14 flex-1 flex-row items-center justify-center border-2 px-2"
-        style={{ borderColor: HabitatColors.ink, backgroundColor: HabitatColors.lime }}
+        className="min-h-14 flex-1 flex-row items-center justify-center rounded-full px-2"
+        style={{ backgroundColor: HabitatColors.primary }}
       >
-        <Text className="mr-2 text-sm font-black uppercase" style={{ color: HabitatColors.ink }}>
+        <Text className="mr-2 text-sm font-semibold" style={{ color: HabitatColors.onPrimary }}>
           No urge
         </Text>
-        <ArrowRight size={15} color={HabitatColors.ink} />
+        <ArrowRight size={15} color={HabitatColors.onPrimary} />
       </Pressable>
     </View>
   );

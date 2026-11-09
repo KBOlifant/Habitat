@@ -51,8 +51,8 @@ export default function TodaysReflection({
   );
 
   return (
-    <View className="mt-4 border-2" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
-      <View className="overflow-hidden border-b-2" style={{ borderColor: HabitatColors.ink }}>
+    <View className="mt-4 overflow-hidden rounded-2xl border" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.border }}>
+      <View className="overflow-hidden border-b" style={{ borderColor: HabitatColors.border }}>
         <Image
           source={QuoteImage}
           resizeMode="cover"
@@ -62,21 +62,21 @@ export default function TodaysReflection({
         <View
           pointerEvents="none"
           className="absolute inset-0"
-          style={{ backgroundColor: 'rgba(243, 240, 230, 0.3)' }}
+          style={{ backgroundColor: 'rgba(24, 31, 17, 0.3)' }}
         />
       </View>
       <View className="p-4">
-        <Text className="mb-2 uppercase" style={[Typography.sectionLabel, { color: HabitatColors.green }]}>
+        <Text className="mb-2 uppercase" style={[Typography.sectionLabel, { color: HabitatColors.accent }]}>
           Field note
         </Text>
       {isLoading ? (
         <View className="mt-4 flex-row items-center">
-          <ActivityIndicator size="small" color={HabitatColors.green} />
+          <ActivityIndicator size="small" color={HabitatColors.accent} />
           <Text className="ml-2 text-sm" style={{ color: HabitatColors.muted }}>Finding today&apos;s reflection...</Text>
         </View>
       ) : (
         <>
-          <Text className="text-base font-semibold leading-6" style={{ color: HabitatColors.ink }}>
+          <Text className="text-base font-semibold leading-6" style={{ color: HabitatColors.text }}>
             “{quoteText}”
           </Text>
           {author && <Text className="mt-2 text-xs" style={{ color: HabitatColors.muted }}>— {author}</Text>}

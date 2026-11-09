@@ -24,7 +24,7 @@ export default function HabitSelectHeader({
         <Text className="text-emerald-100/80 text-sm ml-0.5">Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-white mt-4" style={Typography.title}>
+      <Text className="text-[#e9e6d8] mt-4" style={Typography.title}>
         What habit are{'\n'}you breaking, {userName}?
       </Text>
       <Text className="text-emerald-100/60 mt-2" style={Typography.subtitle}>{subtitle}</Text>

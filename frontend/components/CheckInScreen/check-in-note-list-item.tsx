@@ -45,13 +45,13 @@ export default function CheckInNoteListItem({
   };
 
   return (
-    <View className="border-2 p-5" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
+    <View className="rounded-2xl border p-5" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.border }}>
       <View className="flex-row items-start justify-between">
         <View className="flex-1 pr-3">
           <Text className="text-sm font-bold" style={{ color: HabitatColors.muted }}>
             {formatDate(completedAt)}
           </Text>
-          <Text className="mt-3 text-base leading-6" style={{ color: HabitatColors.ink }}>{note}</Text>
+          <Text className="mt-3 text-base leading-6" style={{ color: HabitatColors.text }}>{note}</Text>
         </View>
         <Pressable
           onPress={handleDelete}

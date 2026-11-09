@@ -9,14 +9,18 @@ const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
 export const HabitatColors = {
-  canvas: '#F3F0E6',
-  surface: '#FFFCF4',
-  ink: '#1B1C16',
-  muted: '#62665D',
-  lime: '#D7FF00',
-  green: '#176A22',
-  pale: '#E7E4D9',
-  danger: '#B42318',
+  canvas: '#181f11',
+  surface: '#232b1a',
+  raised: '#2e3723',
+  border: '#3a4230',
+  text: '#e9e6d8',
+  muted: '#a9b08e',
+  primary: '#6b7a4f',
+  onPrimary: '#e9e6d8',
+  highlight: '#e9e6d8',
+  onHighlight: '#2b2f22',
+  accent: '#b9bf9d',
+  danger: '#e0a37a',
 } as const;
 
 export const Colors = {
@@ -39,13 +43,10 @@ export const Colors = {
 };
 
 export const Gradients = {
-  light:{
-    lightGradient: ['#ffffff', '#e6f4f8'] as const,
+  dark: {
+    darkGradient: ['#3b4628', '#1d2514', '#15190B'] as const,
   },
-  dark:{
-    darkGradient: ['#292F1A', '#15190B'] as const,
-  }
-}
+};
 
 export const Fonts = Platform.select({
   ios: {

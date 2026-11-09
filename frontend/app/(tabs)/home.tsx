@@ -11,7 +11,9 @@ import { HabitatColors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
 import { observeAuthState, type AuthUser } from '../../functions/auth';
 import { getPrimaryHabit } from '../../functions/users';
-import { fetchProgressStats, syncPlantState, getLocalDate } from '../../functions/progress';
+import { fetchProgressStats, syncPlantState } from '../../functions/progress';
+import DevTimeTravel from '../../components/Home/dev-time-travel';
+import { useDevClock } from '../../lib/dev-clock';
 
 
 // Matches Tree Growth's "Ancient wisdom" stage (90+ days) so Home and the
@@ -24,7 +26,7 @@ export default function HomeScreen() {
   const [userName, setUserName] = useState<string>('User');
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [habit, setHabit] = useState('');
-  const currentDevDate = getLocalDate(new Date());
+  const { today: currentDevDate } = useDevClock();
   const [progress, setProgress] = useState(0);
   const [streak, setStreak] = useState(0);
   const [triggerCount, setTriggerCount] = useState(0);
@@ -107,22 +109,23 @@ export default function HomeScreen() {
         >
           <View style={{ width: '100%', maxWidth: 1080 }}>
             <HomeHeader habitName={habit} userName={userName} streakDays={streak} habitFreeDays={streak} />
-            <View className="mt-4 flex-row items-center border-2 px-3 py-2" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}>
-              <View className="mr-2 h-3 w-3 border" style={{ backgroundColor: checkedInToday ? HabitatColors.green : HabitatColors.pale, borderColor: HabitatColors.ink }} />
-              <Text className="text-xs font-black uppercase tracking-wider" style={{ color: HabitatColors.ink }}>
+            <View className="mt-4 flex-row items-center rounded-full border px-4 py-2" style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.border }}>
+              <View className="mr-2 h-2.5 w-2.5 rounded-full border" style={{ backgroundColor: checkedInToday ? HabitatColors.accent : HabitatColors.raised, borderColor: HabitatColors.border }} />
+              <Text className="text-xs font-semibold" style={{ color: HabitatColors.text }}>
                 {checkedInToday ? 'Practice complete' : 'A new day to begin'}
               </Text>
             </View>
             <View className="mt-4" style={{ flexDirection: isWide ? 'row' : 'column', gap: 18, alignItems: 'flex-start' }}>
-              <View style={{ flex: 1.25, width: isWide ? undefined : '100%' }}>
+              <View style={{ flex: isWide ? 1.25 : undefined, width: isWide ? undefined : '100%' }}>
                 <BonsaiScreen progress={progress} />
                 <CheckInButton completed={checkedInToday} />
               </View>
-              <View style={{ flex: 1, width: isWide ? undefined : '100%' }}>
+              <View style={{ flex: isWide ? 1 : undefined, width: isWide ? undefined : '100%' }}>
                 <AdditionalButtons triggerCount={triggerCount} />
                 <QuoteSection />
               </View>
             </View>
+            <DevTimeTravel />
           </View>
         </ScrollView>
       </ScreenTransition>

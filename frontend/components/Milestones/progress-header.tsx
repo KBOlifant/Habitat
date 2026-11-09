@@ -15,10 +15,10 @@ export default function ProgressHeader({
   return (
     <View className="px-6">
       <TouchableOpacity onPress={onBack} activeOpacity={0.7} className="flex-row items-center self-start">
-        <ChevronLeft size={17} color={HabitatColors.ink} />
-        <Text className="ml-1 text-sm font-bold" style={{ color: HabitatColors.ink }}>Back</Text>
+        <ChevronLeft size={17} color={HabitatColors.text} />
+        <Text className="ml-1 text-sm font-bold" style={{ color: HabitatColors.text }}>Back</Text>
       </TouchableOpacity>
-      <Text className="mt-4 uppercase" style={[Typography.title, { color: HabitatColors.ink }]}>
+      <Text className="mt-4" style={[Typography.title, { color: HabitatColors.text }]}>
         Your progress.
       </Text>
       <Text className="mt-2" style={[Typography.subtitle, { color: HabitatColors.muted }]}>

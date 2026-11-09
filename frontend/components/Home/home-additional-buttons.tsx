@@ -13,19 +13,15 @@ export default function AdditionalButtons({ triggerCount = 0 }: HomeAdditionalBu
       <Link href="/triggers" asChild>
         <TouchableOpacity
           activeOpacity={0.85}
-          className="min-h-[145px] flex-1 justify-between border-2 p-4"
+          className="min-h-[145px] flex-1 justify-between rounded-2xl border p-4"
           style={{
             backgroundColor: HabitatColors.surface,
-            borderColor: HabitatColors.ink,
-            shadowColor: HabitatColors.ink,
-            shadowOffset: { width: 3, height: 4 },
-            shadowOpacity: 1,
-            shadowRadius: 0,
+            borderColor: HabitatColors.border,
           }}
         >
-          <TriangleAlert size={20} color={HabitatColors.ink} />
+          <TriangleAlert size={20} color={HabitatColors.text} />
           <View>
-            <Text className="text-base font-black uppercase" style={{ color: HabitatColors.ink }}>
+            <Text className="text-base font-semibold" style={{ color: HabitatColors.text }}>
               Log a trigger
             </Text>
             <Text className="mt-1 text-xs font-medium" style={{ color: HabitatColors.muted }}>
@@ -38,12 +34,12 @@ export default function AdditionalButtons({ triggerCount = 0 }: HomeAdditionalBu
       <Link href="/dashboard" asChild>
         <TouchableOpacity
           activeOpacity={0.85}
-          className="min-h-[145px] flex-1 justify-between border-2 p-4"
-          style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.ink }}
+          className="min-h-[145px] flex-1 justify-between rounded-2xl border p-4"
+          style={{ backgroundColor: HabitatColors.surface, borderColor: HabitatColors.border }}
         >
-          <BarChart3 size={20} color={HabitatColors.ink} />
+          <BarChart3 size={20} color={HabitatColors.text} />
           <View>
-            <Text className="text-base font-black uppercase" style={{ color: HabitatColors.ink }}>
+            <Text className="text-base font-semibold" style={{ color: HabitatColors.text }}>
               Progress
             </Text>
             <Text className="mt-1 text-xs font-medium" style={{ color: HabitatColors.muted }}>
