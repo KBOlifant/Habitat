@@ -3,7 +3,10 @@ import { useSyncExternalStore } from 'react';
 // Development-only simulated date. Held in memory on purpose: a reload always
 // returns to the real date, so a forgotten toggle can't keep writing fake dates.
 
-type DevClockState = { enabled: boolean; date: string };
+/** Master switch for every dev tool (time travel, complete/clear day, clear progress). */
+export const DEV_TOOLS = false;
+
+type DevClockState ={ enabled: boolean; date: string };
 
 const toIsoDate = (date: Date): string => {
   const year = date.getFullYear();
@@ -30,7 +33,7 @@ const setState = (next: DevClockState) => {
 /** The current moment: the simulated day (at the real time of day) when time travel is on. */
 export function getNow(): Date {
   const now = new Date();
-  if (!__DEV__ || !state.enabled) return now;
+  if (!DEV_TOOLS || !state.enabled) return now;
 
   const [year, month, day] = state.date.split('-').map(Number);
   now.setFullYear(year, month - 1, day);
@@ -54,5 +57,5 @@ export function resetDevClock() {
 export function useDevClock() {
   const clock = useSyncExternalStore(subscribe, getState, getState);
   // Derived from `clock` rather than getNow() so the React Compiler can't cache a stale date.
-  return { ...clock, today: __DEV__ && clock.enabled ? clock.date : toIsoDate(new Date()) };
+  return { ...clock, today: DEV_TOOLS && clock.enabled ? clock.date : toIsoDate(new Date()) };
 }

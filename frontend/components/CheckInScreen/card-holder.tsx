@@ -7,7 +7,7 @@ import CheckInCard from './check-in-card';
 import UrgeButtons from './urge-swiper-card';
 import SwipeableCard from '../General/swipeable-card';
 import DevTimeTravel from '../Home/dev-time-travel';
-import { getNow, useDevClock } from '../../lib/dev-clock';
+import { DEV_TOOLS, getNow, useDevClock } from '../../lib/dev-clock';
 import { observeAuthState, getCurrentUser } from '../../functions/auth';
 import {
   deleteAllCheckIns,
@@ -295,7 +295,7 @@ export default function CardHolder() {
     }
   };
 
-  const devTools = __DEV__ ? (
+  const devTools = DEV_TOOLS ? (
     <View className="px-5 mt-5 ">
       <DevTimeTravel />
 
@@ -463,7 +463,7 @@ export default function CardHolder() {
             </Text>
           </Pressable>
         </Link>
-        {__DEV__ && (
+        {DEV_TOOLS && (
           <Pressable
             accessibilityRole="button"
             onPress={clearProgress}
@@ -499,7 +499,7 @@ export default function CardHolder() {
         <Text className="text-[#a9b08e] text-sm">
           {checks.length} / {steps.length} checks completed
         </Text>
-        {__DEV__ && (
+        {DEV_TOOLS && (
           <Pressable
             accessibilityRole="button"
             onPress={clearProgress}

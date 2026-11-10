@@ -2,7 +2,7 @@ import { Pressable, View, Text } from 'react-native';
 import { FlaskConical, Minus, Plus } from 'lucide-react-native';
 import { Typography } from '@/constants/typography';
 import { HabitatColors } from '@/constants/theme';
-import { resetDevClock, setDevClockEnabled, shiftDevClock, useDevClock } from '@/lib/dev-clock';
+import { DEV_TOOLS, resetDevClock, setDevClockEnabled, shiftDevClock, useDevClock } from '@/lib/dev-clock';
 
 function StepButton({ label, onPress, Icon }: { label: string; onPress: () => void; Icon: typeof Plus }) {
   return (
@@ -20,7 +20,7 @@ function StepButton({ label, onPress, Icon }: { label: string; onPress: () => vo
 
 export default function DevTimeTravel() {
   const { enabled, date } = useDevClock();
-  if (!__DEV__) return null;
+  if (!DEV_TOOLS) return null;
 
   const shown = new Date(`${date}T12:00:00`);
   const isRealToday = shown.toDateString() === new Date().toDateString();
