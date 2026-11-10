@@ -87,7 +87,7 @@ export default function ProgressScreen() {
               </View>
             </View>
             <View className="px-6">
-              <DevTimeTravel />
+              <DevTimeTravel onChanged={() => setFocusVersion((version) => version + 1)} />
             </View>
           </View>
         </ScrollView>

@@ -48,6 +48,40 @@ export async function saveDevelopmentCheckIn(
   });
 }
 
+export const DAILY_CHECK_TITLES = [
+  'Mood Check',
+  'Urge Check',
+  'Minfullness Check',
+  "Today's Intention",
+];
+
+/** Dev only: records a fully completed check-in for `date`, unless that day is already complete. */
+export async function completeDevDay(
+  uid: string,
+  date: string,
+): Promise<'completed' | 'already-complete'> {
+  const existing = await getCheckIns(uid);
+  const alreadyComplete = existing.some(
+    (record) =>
+      record.completedDate === date ||
+      (typeof record.completedAt === 'string' && getLocalDate(record.completedAt) === date),
+  );
+  if (alreadyComplete) return 'already-complete';
+
+  const completedAt = new Date(`${date}T12:00:00`).toISOString();
+  await saveDevelopmentCheckIn(
+    uid,
+    date,
+    DAILY_CHECK_TITLES.map((title, index) => ({
+      step: index + 1,
+      title,
+      action: 'checked' as const,
+      completedAt,
+    })),
+  );
+  return 'completed';
+}
+
 export async function getCheckInNotes(uid: string): Promise<CheckInNoteRecord[]> {
   const snapshot = await getDocs(collection(db, 'users', uid, 'check_in_record'));
   return snapshot.docs

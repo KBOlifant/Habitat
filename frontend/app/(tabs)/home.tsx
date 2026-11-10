@@ -16,10 +16,6 @@ import DevTimeTravel from '../../components/Home/dev-time-travel';
 import { useDevClock } from '../../lib/dev-clock';
 
 
-// Matches Tree Growth's "Ancient wisdom" stage (90+ days) so Home and the
-// Progress screen agree on what a "fully grown" bonsai means.
-const STREAK_DAYS_TO_FULL_GROWTH = 90;
-
 export default function HomeScreen() {
   const { width, height } = useWindowDimensions();
   const isWide = width > height;
@@ -27,7 +23,6 @@ export default function HomeScreen() {
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [habit, setHabit] = useState('');
   const { today: currentDevDate } = useDevClock();
-  const [progress, setProgress] = useState(0);
   const [streak, setStreak] = useState(0);
   const [triggerCount, setTriggerCount] = useState(0);
   const [checkedInToday, setCheckedInToday] = useState(false);
@@ -66,13 +61,10 @@ export default function HomeScreen() {
     fetchHabit();
   }, [currentUser, focusVersion]);
 
-  // Bonsai growth was previously a fixed 90-day window off a hardcoded date,
-  // completely disconnected from Firestore. It now tracks the same "current
-  // streak" used on the Progress screen (components/Milestones/tree-growth.tsx),
-  // so a relapse or missed check-in correctly sets the bonsai back too.
+  // The bonsai follows the same current streak as the Progress screen's growth stages,
+  // so a relapse or missed check-in correctly sets it back too.
   useEffect(() => {
     if (!currentUser) {
-      setProgress(0);
       setStreak(0);
       setTriggerCount(0);
       setCheckedInToday(false);
@@ -84,7 +76,6 @@ export default function HomeScreen() {
     fetchProgressStats(currentUser.uid, currentDevDate)
       .then((stats) => {
         if (cancelled) return;
-        setProgress(Math.min(stats.streak / STREAK_DAYS_TO_FULL_GROWTH, 1));
         setStreak(stats.streak);
         setTriggerCount(stats.resisted + stats.relapses);
         setCheckedInToday(stats.streak > 0);
@@ -92,7 +83,7 @@ export default function HomeScreen() {
       })
       .catch((error) => {
         console.error('Unable to load bonsai progress from Firestore', error);
-        if (!cancelled) setProgress(0);
+        if (!cancelled) setStreak(0);
       });
 
     return () => {
@@ -117,7 +108,7 @@ export default function HomeScreen() {
             </View>
             <View className="mt-4" style={{ flexDirection: isWide ? 'row' : 'column', gap: 18, alignItems: 'flex-start' }}>
               <View style={{ flex: isWide ? 1.25 : undefined, width: isWide ? undefined : '100%' }}>
-                <BonsaiScreen progress={progress} />
+                <BonsaiScreen streakDays={streak} />
                 <CheckInButton completed={checkedInToday} />
               </View>
               <View style={{ flex: isWide ? 1 : undefined, width: isWide ? undefined : '100%' }}>
@@ -125,7 +116,7 @@ export default function HomeScreen() {
                 <QuoteSection />
               </View>
             </View>
-            <DevTimeTravel />
+            <DevTimeTravel onChanged={() => setFocusVersion((version) => version + 1)} />
           </View>
         </ScrollView>
       </ScreenTransition>

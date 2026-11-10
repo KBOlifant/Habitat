@@ -10,13 +10,25 @@ const BONSAI_STATES = [
   require('../../assets/images/bonsai-states/bonsai_5_mature.png'),
 ];
 
+// Streak days at which the bonsai moves to the next picture. These match the "Seven forms" on the
+// dashboard (components/Milestones/tree-growth.tsx): first sprout at 1+, young sapling at 7+,
+// formed bonsai at 30+ and ancient wisdom at 60+, so Home and Dashboard agree.
+export const BONSAI_STAGE_STARTS = [0, 1, 7, 30, 60];
+
+export function bonsaiStageForStreak(streakDays: number): number {
+  let stage = 0;
+  BONSAI_STAGE_STARTS.forEach((start, index) => {
+    if (streakDays >= start) stage = index;
+  });
+  return stage;
+}
+
 type BonsaiScreenProps = {
-  progress?: number; // 0..1, split evenly across the five bonsai states
+  streakDays?: number;
 };
 
-export default function BonsaiScreen({ progress = 0 }: BonsaiScreenProps) {
-  const clamped = Math.min(Math.max(progress, 0), 1);
-  const stage = Math.min(BONSAI_STATES.length - 1, Math.floor(clamped * BONSAI_STATES.length));
+export default function BonsaiScreen({ streakDays = 0 }: BonsaiScreenProps) {
+  const stage = bonsaiStageForStreak(streakDays);
 
   return (
     <View>

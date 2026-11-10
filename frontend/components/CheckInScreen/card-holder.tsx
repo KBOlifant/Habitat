@@ -11,9 +11,8 @@ import { getNow, useDevClock } from '../../lib/dev-clock';
 import { observeAuthState, getCurrentUser } from '../../functions/auth';
 import {
   deleteAllCheckIns,
-  getCheckIns,
+  completeDevDay as saveCompletedDevDay,
   saveCheckIn,
-  saveDevelopmentCheckIn,
   type CheckRecord,
 } from '../../functions/swipes';
 import { Typography } from '@/constants/typography';
@@ -246,28 +245,10 @@ export default function CardHolder() {
     setDevMessage(null);
 
     try {
-      const existingRecords = await getCheckIns(currentUserId);
-      const alreadyCompleted = existingRecords.some((record) =>
-        record.completedDate === devDate ||
-        (typeof record.completedAt === 'string' &&
-          getLocalDate(record.completedAt) === devDate),
+      const result = await saveCompletedDevDay(currentUserId, devDate);
+      setDevMessage(
+        result === 'completed' ? `Completed ${devDate}.` : `${devDate} is already complete.`,
       );
-
-      if (alreadyCompleted) {
-        setDevMessage(`${devDate} is already complete.`);
-        return;
-      }
-
-      const completeChecks: CheckRecord[] = steps.map((step, stepIndex) => ({
-        step: stepIndex + 1,
-        title: step.title,
-        action: 'checked',
-        completedAt: new Date(`${devDate}T12:00:00`).toISOString(),
-      }));
-
-      await saveDevelopmentCheckIn(currentUserId, devDate, completeChecks);
-
-      setDevMessage(`Completed ${devDate}.`);
     } catch (error) {
       console.error('Unable to create dev check-in', error);
       setDevMessage('Unable to complete that day.');
@@ -297,7 +278,7 @@ export default function CardHolder() {
 
   const devTools = __DEV__ ? (
     <View className="px-5 mt-5 ">
-      <DevTimeTravel />
+      <DevTimeTravel showActions={false} />
 
       {devClockEnabled && (
         <View className="flex-row mt-3" style={{ gap: 10 }}>
